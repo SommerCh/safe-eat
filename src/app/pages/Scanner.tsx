@@ -321,8 +321,7 @@ import { Button } from "../components/ui/button";
 import { Camera, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
-// 1. KLIK PÅ "SHOW KEY" I GOOGLE CLOUD OG SÆT DEN IND HER:
-const GEMINI_API_KEY = "HER_INDSÆTTER_DU_DIN_NØGLE";
+const GEMINI_API_KEY = "AIzaSyBFWf-2zoiWNkvNYljY-Hql85Vh8oGZKQY";
 
 export function Scanner() {
   const navigate = useNavigate();
@@ -337,16 +336,21 @@ export function Scanner() {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: "environment" },
         });
-        if (videoRef.current) videoRef.current.srcObject = stream;
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
       } catch (err) {
         console.error("Kamerafejl:", err);
-        toast.error("Kunne ikke starte kameraet");
+        toast.error("Kunne ikke få adgang til kameraet");
       }
     }
     startCamera();
+
     return () => {
-      const currentStream = videoRef.current?.srcObject as MediaStream;
-      currentStream?.getTracks().forEach((track) => track.stop());
+      if (videoRef.current?.srcObject) {
+        const currentStream = videoRef.current.srcObject as MediaStream;
+        currentStream.getTracks().forEach((track) => track.stop());
+      }
     };
   }, []);
 
@@ -357,19 +361,25 @@ export function Scanner() {
     try {
       const canvas = canvasRef.current;
       const video = videoRef.current;
+
+      // Sæt canvas størrelse til videoens opløsning
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
       const ctx = canvas.getContext("2d");
-      if (!ctx) throw new Error("Billedfejl");
+      if (!ctx) throw new Error("Kunne ikke oprette billed-context");
 
+      // Tegn det aktuelle billede fra kameraet på canvas
       ctx.drawImage(video, 0, 0);
+
+      // Konverter billedet til base64 format (kvalitet 0.5 for hurtigere upload)
       const imageData = canvas.toDataURL("image/jpeg", 0.5);
       const base64Image = imageData.split(",")[1];
 
+      // Definer instruktionerne til AI'en
       const promptText = `
         Analyser ingredienslisten på dette billede.
         Tjek om produkterne er sikre for en person med disse allergier: ${profile.allergies.join(", ") || "Ingen"}.
-        Svar udelukkende med dette JSON format:
+        Svar udelukkende med et JSON-objekt i dette præcise format:
         {
           "isSafe": boolean,
           "foundAllergens": ["liste over fundne allergier"],
@@ -377,7 +387,7 @@ export function Scanner() {
         }
       `;
 
-      // Vi bruger v1beta, da det er mest fleksibelt i 2026
+      // Kald Gemini API med v1beta versionen
       const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
         {
@@ -389,7 +399,10 @@ export function Scanner() {
                 parts: [
                   { text: promptText },
                   {
-                    inline_data: { mime_type: "image/jpeg", data: base64Image },
+                    inline_data: {
+                      mime_type: "image/jpeg",
+                      data: base64Image,
+                    },
                   },
                 ],
               },
@@ -399,21 +412,29 @@ export function Scanner() {
       );
 
       const data = await response.json();
-      if (data.error) throw new Error(data.error.message);
+
+      if (data.error) {
+        throw new Error(data.error.message);
+      }
 
       const resultText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
       if (resultText) {
+        // Rens svaret for eventuelle markdown-tegn (som ```json)
         const cleanJson = resultText
           .replace(/```json/g, "")
           .replace(/```/g, "")
           .trim();
         const aiResult = JSON.parse(cleanJson);
+
+        // Gå til resultat-siden og send dataen med
         navigate("/result", { state: { aiResult } });
       } else {
-        throw new Error("AI kunne ikke læse teksten.");
+        throw new Error("AI kunne ikke læse teksten på billedet");
       }
     } catch (error: any) {
-      toast.error(error.message || "Fejl");
+      console.error("Scanner fejl:", error);
+      toast.error(error.message || "Der skete en fejl under scanningen");
     } finally {
       setIsScanning(false);
     }
@@ -422,6 +443,8 @@ export function Scanner() {
   return (
     <div className="min-h-screen bg-black relative flex flex-col items-center justify-center">
       <canvas ref={canvasRef} className="hidden" />
+
+      {/* Kamera Viewport */}
       <video
         ref={videoRef}
         autoPlay
@@ -430,7 +453,7 @@ export function Scanner() {
         className="absolute inset-0 w-full h-full object-cover"
       />
 
-      {/* Rammen */}
+      {/* Scannings-ramme */}
       <div className="relative w-72 h-80 pointer-events-none">
         <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-blue-400 rounded-tl-xl" />
         <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-blue-400 rounded-tr-xl" />
@@ -438,11 +461,23 @@ export function Scanner() {
         <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-blue-400 rounded-br-xl" />
       </div>
 
+      {/* Instruktion */}
+      <div className="absolute top-12 left-0 right-0 flex justify-center">
+        <div className="bg-black/50 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
+          <p className="text-white font-medium text-sm">
+            {isScanning
+              ? "AI analyserer..."
+              : "Hold kameraet mod ingredienserne"}
+          </p>
+        </div>
+      </div>
+
+      {/* Scan knap */}
       <div className="absolute bottom-28">
         <Button
           onClick={handleScan}
           disabled={isScanning}
-          className="w-20 h-20 bg-blue-500 rounded-full shadow-2xl flex items-center justify-center border-4 border-white/20"
+          className="w-20 h-20 bg-blue-500 rounded-full shadow-2xl active:scale-90 transition-transform flex items-center justify-center border-4 border-white/20"
         >
           {isScanning ? (
             <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin" />
@@ -452,12 +487,11 @@ export function Scanner() {
         </Button>
       </div>
 
+      {/* Loading overlay */}
       {isScanning && (
         <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center z-50">
           <Sparkles className="w-12 h-12 text-blue-400 animate-pulse mb-4" />
-          <p className="text-white font-black text-xl">
-            Tjekker ingredienser...
-          </p>
+          <p className="text-white font-bold text-xl">Læser ingredienser...</p>
         </div>
       )}
     </div>
