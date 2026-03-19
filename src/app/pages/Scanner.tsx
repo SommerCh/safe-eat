@@ -365,9 +365,25 @@ export function Scanner() {
 
       const promptText = `Analyser ingredienserne. Allergier: ${profile.allergies.join(", ") || "Ingen"}. Svar i JSON: { "isSafe": boolean, "foundAllergens": [], "message": "" }`;
 
-      // Vi bruger v1beta og den stabile 1.5-flash model
       const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
+      const checkModels = async () => {
+        try {
+          const response = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models?key=${GEMINI_API_KEY}`,
+          );
+          const data = await response.json();
+          console.log("DINE TILGÆNGELIGE MODELLER:", data);
+
+          if (data.models) {
+            const names = data.models.map((m: any) => m.name);
+            toast.info("Tjek konsollen for modelliste!");
+            console.log("Liste over navne:", names);
+          }
+        } catch (err) {
+          console.error("Kunne ikke hente modeller:", err);
+        }
+      };
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
