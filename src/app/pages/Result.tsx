@@ -175,7 +175,6 @@
 //     </div>
 //   );
 // }
-
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router";
 import { useProfile } from "../context/ProfileContext";
@@ -202,24 +201,32 @@ export function Result() {
       return;
     }
 
-    const generatedName = aiResult.extractedIngredients && aiResult.extractedIngredients.length > 0 
-      ? aiResult.extractedIngredients.slice(0, 3).join(", ") + "..." 
-      : "Scannet produkt";
+    const generatedName =
+      aiResult.extractedIngredients && aiResult.extractedIngredients.length > 0
+        ? aiResult.extractedIngredients.slice(0, 3).join(", ") + "..."
+        : "Scannet produkt";
 
     addToScanHistory({
       date: new Date().toISOString(),
       productName: generatedName,
       safe: aiResult.isSafe,
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!aiResult) return null;
 
-  const generatedName = aiResult.extractedIngredients && aiResult.extractedIngredients.length > 0 
-    ? aiResult.extractedIngredients.slice(0, 3).join(", ") + "..." 
-    : "Scannet produkt";
-    
+  const generatedName =
+    aiResult.extractedIngredients && aiResult.extractedIngredients.length > 0
+      ? aiResult.extractedIngredients.slice(0, 3).join(", ") + "..."
+      : "Scannet produkt";
+
   const isFavorite = favorites.includes(generatedName);
+
+  // HER LÅSER VI TEKSTEN FAST (Ignorerer AI'ens egen besked)
+  const finalMessage = aiResult.isSafe
+    ? "Ingen forbudte ingredienser fundet."
+    : `Produktet indeholder: ${aiResult.foundAllergens?.join(", ")}`;
 
   return (
     <div className="min-h-screen bg-white pb-12">
@@ -264,7 +271,7 @@ export function Result() {
           </h2>
         </div>
 
-        {/* Info Boks */}
+        {/* Info Boks (Nu med din faste tekst) */}
         <div
           className={`w-full rounded-3xl p-6 mb-8 flex items-start gap-4 border ${
             aiResult.isSafe
@@ -273,29 +280,29 @@ export function Result() {
           }`}
         >
           <Info className="w-5 h-5 mt-0.5 shrink-0 opacity-60" />
-          <p className="text-sm font-medium leading-relaxed">
-            {aiResult.message || "Ingen yderligere information fundet."}
-          </p>
+          <p className="text-sm font-medium leading-relaxed">{finalMessage}</p>
         </div>
 
-        {/* Udtrukne ord - Nu med renere data */}
+        {/* Udtrukne ord */}
         <div className="w-full space-y-4 text-center">
           <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest">
             Fundne Ingredienser:
           </h3>
-          
+
           <div className="flex flex-wrap gap-2 justify-center">
-            {aiResult.extractedIngredients && aiResult.extractedIngredients.length > 0 ? (
+            {aiResult.extractedIngredients &&
+            aiResult.extractedIngredients.length > 0 ? (
               aiResult.extractedIngredients.map((ing: string, i: number) => {
-                const isAllergen = aiResult.foundAllergens?.some((allergen: string) => 
-                  ing.toLowerCase().includes(allergen.toLowerCase())
+                const isAllergen = aiResult.foundAllergens?.some(
+                  (allergen: string) =>
+                    ing.toLowerCase().includes(allergen.toLowerCase()),
                 );
                 return (
                   <span
                     key={i}
                     className={`px-4 py-2 rounded-2xl text-[11px] font-bold border shadow-sm ${
                       isAllergen
-                        ? "bg-rose-100 text-rose-700 border-rose-200" 
+                        ? "bg-rose-100 text-rose-700 border-rose-200"
                         : "bg-slate-50 text-slate-600 border-slate-100"
                     }`}
                   >

@@ -458,7 +458,7 @@ export function Scanner() {
               Analyserer ingredienser...
               <br />
               <span className="font-bold text-white">
-                Du kan nu lægge varen væk.
+                Færdig med varen. 
               </span>
             </p>
             <div className="pt-6">
