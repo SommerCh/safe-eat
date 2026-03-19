@@ -357,20 +357,25 @@ export function Scanner() {
     try {
       const canvas = canvasRef.current;
       const video = videoRef.current;
+
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
-      canvas.getContext("2d")?.drawImage(video, 0, 0);
+      const ctx = canvas.getContext("2d");
+      if (!ctx) throw new Error("Could not get context");
 
-      const base64Image = canvas.toDataURL("image/jpeg", 0.7).split(",")[1];
+      ctx.drawImage(video, 0, 0);
+
+      const imageData = canvas.toDataURL("image/jpeg", 0.6);
+      const base64Image = imageData.split(",")[1];
 
       const promptText = `
-        Du er en assistent, der analyserer ingredienslister. 
-        Brugerens allergier er: ${profile.allergies.join(", ") || "Ingen"}.
-        Læs teksten på billedet, og returner KUN et JSON-objekt. Brug præcis denne struktur:
+        Analyser ingredienserne på dette billede. 
+        Brugeren er allergisk over for: ${profile.allergies.join(", ") || "Ingen"}.
+        Returner KUN et JSON objekt i dette format:
         {
           "isSafe": boolean,
           "foundAllergens": ["allergen1", "allergen2"],
-          "message": "En kort, brugervenlig besked om produktet er sikkert eller ej"
+          "message": "Besked på dansk"
         }
       `;
 
@@ -390,7 +395,10 @@ export function Scanner() {
                 ],
               },
             ],
-            generationConfig: { response_mime_type: "application/json" },
+            generationConfig: {
+              response_mime_type: "application/json",
+              temperature: 0.1,
+            },
           }),
         },
       );
@@ -398,21 +406,18 @@ export function Scanner() {
       const data = await response.json();
 
       if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
-        let rawText = data.candidates[0].content.parts[0].text;
-
-        rawText = rawText
-          .replace(/```json\n?/g, "")
+        let resultText = data.candidates[0].content.parts[0].text;
+        const cleanJson = resultText
+          .replace(/```json/g, "")
           .replace(/```/g, "")
           .trim();
-
-        const aiResult = JSON.parse(rawText);
+        const aiResult = JSON.parse(cleanJson);
         navigate("/result", { state: { aiResult } });
       } else {
         throw new Error("AI kunne ikke læse billedet");
       }
     } catch (error: any) {
       toast.error(error.message || "Fejl ved scanning");
-      console.error(error);
     } finally {
       setIsScanning(false);
     }
