@@ -344,6 +344,7 @@ export function Scanner() {
     }
     startCamera();
 
+    
     return () => {
       const currentStream = videoRef.current?.srcObject as MediaStream;
       currentStream?.getTracks().forEach((track) => track.stop());
