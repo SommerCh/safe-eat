@@ -194,29 +194,24 @@ export function Result() {
   const location = useLocation();
   const { addToScanHistory, favorites, toggleFavorite } = useProfile();
 
-  // Her fanger vi det rigtige svar fra AI-scanneren!
   const aiResult = location.state?.aiResult;
 
   useEffect(() => {
-    // Hvis siden åbnes uden en scanning (f.eks. ved genindlæsning), sendes man tilbage
     if (!aiResult) {
       navigate("/scanner");
       return;
     }
 
-    // Vi genererer et midlertidigt navn ud fra de første ord den læste
     const generatedName =
       aiResult.extractedIngredients && aiResult.extractedIngredients.length > 0
         ? aiResult.extractedIngredients.slice(0, 3).join(", ") + "..."
         : "Scannet produkt";
 
-    // Gemmer scanningen i din historik
     addToScanHistory({
       date: new Date().toISOString(),
       productName: generatedName,
       safe: aiResult.isSafe,
     });
-    // Vi bruger en tom dependency array herunder, så den kun gemmer én gang per visning
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -230,7 +225,7 @@ export function Result() {
   const isFavorite = favorites.includes(generatedName);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white pb-12">
       <div className="px-6 pt-12 pb-6 flex justify-between items-center bg-white border-b border-slate-50">
         <button
           onClick={() => navigate("/scanner")}
@@ -272,7 +267,7 @@ export function Result() {
           </h2>
         </div>
 
-        {/* Info Boks fra AI'en */}
+        {/* Info Boks */}
         <div
           className={`w-full rounded-3xl p-6 mb-8 flex items-start gap-4 border ${
             aiResult.isSafe
@@ -282,11 +277,11 @@ export function Result() {
         >
           <Info className="w-5 h-5 mt-0.5 shrink-0 opacity-60" />
           <p className="text-sm font-medium leading-relaxed">
-            {aiResult.message || "AI'en gav ingen yderligere forklaring."}
+            {aiResult.message || "Ingen yderligere information fundet."}
           </p>
         </div>
 
-        {/* De ord AI'en VISTE den kunne læse (Vigtig for din test) */}
+        {/* Udtrukne ord */}
         <div className="w-full space-y-4 text-center">
           <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest">
             AI'en læste disse ord:
@@ -295,21 +290,24 @@ export function Result() {
           <div className="flex flex-wrap gap-2 justify-center">
             {aiResult.extractedIngredients &&
             aiResult.extractedIngredients.length > 0 ? (
-              aiResult.extractedIngredients.map((ing: string, i: number) => (
-                <span
-                  key={i}
-                  className={`px-4 py-2 rounded-2xl text-[11px] font-bold border shadow-sm ${
-                    aiResult.foundAllergens?.includes(ing) ||
-                    aiResult.foundAllergens?.some((allergen: string) =>
-                      ing.toLowerCase().includes(allergen.toLowerCase()),
-                    )
-                      ? "bg-rose-100 text-rose-700 border-rose-200"
-                      : "bg-slate-50 text-slate-600 border-slate-100"
-                  }`}
-                >
-                  {ing}
-                </span>
-              ))
+              aiResult.extractedIngredients.map((ing: string, i: number) => {
+                const isAllergen = aiResult.foundAllergens?.some(
+                  (allergen: string) =>
+                    ing.toLowerCase().includes(allergen.toLowerCase()),
+                );
+                return (
+                  <span
+                    key={i}
+                    className={`px-4 py-2 rounded-2xl text-[11px] font-bold border shadow-sm ${
+                      isAllergen
+                        ? "bg-rose-100 text-rose-700 border-rose-200"
+                        : "bg-slate-50 text-slate-600 border-slate-100"
+                    }`}
+                  >
+                    {ing}
+                  </span>
+                );
+              })
             ) : (
               <span className="text-slate-400 text-sm italic">
                 Kunne ikke tyde nogen ord på billedet.
@@ -318,7 +316,8 @@ export function Result() {
           </div>
         </div>
 
-        <div className="w-full mt-16 space-y-3">
+        {/* Knapper */}
+        <div className="w-full mt-10 space-y-3">
           <Button
             onClick={() => navigate("/scanner")}
             className="w-full h-16 bg-slate-950 text-white rounded-2xl text-lg font-bold shadow-sm hover:bg-black active:scale-[0.98] transition-all flex items-center justify-center gap-2"
@@ -333,6 +332,38 @@ export function Result() {
           >
             Rediger min madprofil
           </button>
+        </div>
+
+        {/* DIAGNOSE BOKS - AI'ens tanker udstilles her */}
+        <div className="w-full mt-8 p-4 bg-slate-900 rounded-2xl text-left border border-slate-700">
+          <h3 className="text-xs font-bold text-slate-400 uppercase mb-3">
+            AI Diagnose Data
+          </h3>
+
+          <div className="space-y-3 text-[11px] font-mono text-emerald-400">
+            <div>
+              <span className="text-slate-500 block mb-1">
+                AI modtog denne nej-liste:
+              </span>
+              {JSON.stringify(aiResult.debug_allergiesReceived)}
+            </div>
+
+            <div>
+              <span className="text-slate-500 block mb-1">
+                AI'ens tankeproces:
+              </span>
+              <p className="whitespace-pre-wrap">
+                {aiResult.debug_thoughtProcess}
+              </p>
+            </div>
+
+            <div>
+              <span className="text-slate-500 block mb-1">
+                isSafe resultat:
+              </span>
+              {String(aiResult.isSafe)}
+            </div>
+          </div>
         </div>
       </div>
     </div>

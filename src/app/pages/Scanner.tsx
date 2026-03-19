@@ -318,7 +318,7 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useProfile } from "../context/ProfileContext";
 import { Button } from "../components/ui/button";
-import { Camera, Sparkles } from "lucide-react";
+import { Camera } from "lucide-react";
 import { toast } from "sonner";
 
 export function Scanner() {
@@ -361,31 +361,27 @@ export function Scanner() {
       ctx.drawImage(video, 0, 0);
       const base64Image = canvas.toDataURL("image/jpeg", 0.5).split(",")[1];
 
-      // DEN NYE, EKSTREMT STRENGE OG SKUDSIKRE PROMPT
+      // DEN NYE DIAGNOSE PROMPT
       const promptText = `
-        System: Du er en ikke-tænkende maskine designet til at matche tekststrenge. Du skal IKKE foretage vurderinger af sundhed, kontekst eller "hygge".
-
+        Du er et strengt diagnose-værktøj for madallergier.
+        
         Data:
-        - Brugerens liste over forbudte ord: [${profile.allergies.join(", ") || "Ingen angivet"}].
+        1. Brugerens nej-liste: [${profile.allergies.join(", ") || "Ingen angivet"}].
 
-        Dine opgaver:
-        1. Udtræk AL tekst fra billedet. Dette er 'ekstraheret_tekst'.
-        2. Sammenlign hvert ord fra 'Brugerens liste over forbudte ord' med 'ekstraheret_tekst' (ignorer store/små bogstaver).
-        3. Hvis et forbudt ord optræder i 'ekstraheret_tekst' (selv som en del af et ord, f.eks. "peanut" matcher "peanuts"), så skal produktet markeres som usikkert.
-
-        Regler:
-        - Hvis det forbudte ord "mango" er på listen, og teksten på billedet indeholder "mango", "MANGO", eller "Tørret mango", så er 'isSafe' = false.
-
-        Output Format (KUN JSON, ingen ekstra tekst):
+        Opgave:
+        Læs alle ord fra billedet. Sammenlign hvert ord fra nej-listen med ordene fra billedet (ignorer store/små bogstaver).
+        
+        Returnér KUN et JSON-objekt med præcis disse felter (ingen formatering udenom):
         {
-          "isSafe": boolean, // false hvis en match er fundet, true ellers
-          "foundAllergens": ["liste over forbudte ord der blev fundet"], // Tom hvis ingen match
-          "extractedIngredients": ["liste", "over", "alle", "ekstraherede", "ord"], // Vigtig: alle ord læst fra billedet
-          "message": "En meget simpel dansk besked (maks 15 ord)." // F.eks. "Indeholder mango."
+          "debug_allergiesReceived": ["Skriv præcis hvilke ord du fik i brugerens nej-liste"],
+          "extractedIngredients": ["Udtræk alle ord fra billedet her"],
+          "debug_thoughtProcess": "Forklar trin-for-trin hvordan du tjekkede ordene mod hinanden. F.eks: 'Jeg kiggede efter mango. Jeg fandt ordet Mangoens. Derfor er isSafe false.'",
+          "foundAllergens": ["Eventuelle matchende ord fra nej-listen"],
+          "isSafe": boolean,
+          "message": "Kort konklusion til brugeren"
         }
       `;
 
-      // Sender til din egen Vercel-backend proxy (api/scan.ts)
       const response = await fetch("/api/scan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -401,13 +397,13 @@ export function Scanner() {
       const resultText = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
       if (resultText) {
+        // Fjerner eventuel markdown formatering fra AI'ens svar
         const cleanJson = resultText
           .replace(/```json/g, "")
           .replace(/```/g, "")
           .trim();
         const aiResult = JSON.parse(cleanJson);
 
-        // Sender dataen videre til Resultatsiden
         navigate("/result", { state: { aiResult } });
       } else {
         throw new Error("Modtog intet svar fra AI");
@@ -443,6 +439,9 @@ export function Scanner() {
           )}
         </Button>
       </div>
+      <p className="absolute top-10 text-white text-[10px]">
+        DIAGNOSE-VERSION-AKTIV
+      </p>
     </div>
   );
 }
