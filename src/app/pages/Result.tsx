@@ -202,26 +202,23 @@ export function Result() {
       return;
     }
 
-    const generatedName =
-      aiResult.extractedIngredients && aiResult.extractedIngredients.length > 0
-        ? aiResult.extractedIngredients.slice(0, 3).join(", ") + "..."
-        : "Scannet produkt";
+    const generatedName = aiResult.extractedIngredients && aiResult.extractedIngredients.length > 0 
+      ? aiResult.extractedIngredients.slice(0, 3).join(", ") + "..." 
+      : "Scannet produkt";
 
     addToScanHistory({
       date: new Date().toISOString(),
       productName: generatedName,
       safe: aiResult.isSafe,
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!aiResult) return null;
 
-  const generatedName =
-    aiResult.extractedIngredients && aiResult.extractedIngredients.length > 0
-      ? aiResult.extractedIngredients.slice(0, 3).join(", ") + "..."
-      : "Scannet produkt";
-
+  const generatedName = aiResult.extractedIngredients && aiResult.extractedIngredients.length > 0 
+    ? aiResult.extractedIngredients.slice(0, 3).join(", ") + "..." 
+    : "Scannet produkt";
+    
   const isFavorite = favorites.includes(generatedName);
 
   return (
@@ -281,26 +278,24 @@ export function Result() {
           </p>
         </div>
 
-        {/* Udtrukne ord */}
+        {/* Udtrukne ord - Nu med renere data */}
         <div className="w-full space-y-4 text-center">
           <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest">
-            AI'en læste disse ord:
+            Fundne Ingredienser:
           </h3>
-
+          
           <div className="flex flex-wrap gap-2 justify-center">
-            {aiResult.extractedIngredients &&
-            aiResult.extractedIngredients.length > 0 ? (
+            {aiResult.extractedIngredients && aiResult.extractedIngredients.length > 0 ? (
               aiResult.extractedIngredients.map((ing: string, i: number) => {
-                const isAllergen = aiResult.foundAllergens?.some(
-                  (allergen: string) =>
-                    ing.toLowerCase().includes(allergen.toLowerCase()),
+                const isAllergen = aiResult.foundAllergens?.some((allergen: string) => 
+                  ing.toLowerCase().includes(allergen.toLowerCase())
                 );
                 return (
                   <span
                     key={i}
                     className={`px-4 py-2 rounded-2xl text-[11px] font-bold border shadow-sm ${
                       isAllergen
-                        ? "bg-rose-100 text-rose-700 border-rose-200"
+                        ? "bg-rose-100 text-rose-700 border-rose-200" 
                         : "bg-slate-50 text-slate-600 border-slate-100"
                     }`}
                   >
@@ -310,7 +305,7 @@ export function Result() {
               })
             ) : (
               <span className="text-slate-400 text-sm italic">
-                Kunne ikke tyde nogen ord på billedet.
+                Kunne ikke tyde nogen ingredienser på billedet.
               </span>
             )}
           </div>
@@ -332,38 +327,6 @@ export function Result() {
           >
             Rediger min madprofil
           </button>
-        </div>
-
-        {/* DIAGNOSE BOKS - AI'ens tanker udstilles her */}
-        <div className="w-full mt-8 p-4 bg-slate-900 rounded-2xl text-left border border-slate-700">
-          <h3 className="text-xs font-bold text-slate-400 uppercase mb-3">
-            AI Diagnose Data
-          </h3>
-
-          <div className="space-y-3 text-[11px] font-mono text-emerald-400">
-            <div>
-              <span className="text-slate-500 block mb-1">
-                AI modtog denne nej-liste:
-              </span>
-              {JSON.stringify(aiResult.debug_allergiesReceived)}
-            </div>
-
-            <div>
-              <span className="text-slate-500 block mb-1">
-                AI'ens tankeproces:
-              </span>
-              <p className="whitespace-pre-wrap">
-                {aiResult.debug_thoughtProcess}
-              </p>
-            </div>
-
-            <div>
-              <span className="text-slate-500 block mb-1">
-                isSafe resultat:
-              </span>
-              {String(aiResult.isSafe)}
-            </div>
-          </div>
         </div>
       </div>
     </div>

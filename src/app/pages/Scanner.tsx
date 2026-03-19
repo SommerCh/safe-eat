@@ -313,7 +313,6 @@
 //     </div>
 //   );
 // }
-
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useProfile } from "../context/ProfileContext";
@@ -332,7 +331,9 @@ export function Scanner() {
   useEffect(() => {
     async function startCamera() {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "environment" },
+        });
         if (videoRef.current) videoRef.current.srcObject = stream;
       } catch (err) {
         toast.error("Kunne ikke få adgang til kameraet");
@@ -359,29 +360,30 @@ export function Scanner() {
 
       ctx.drawImage(video, 0, 0);
       const base64Image = canvas.toDataURL("image/jpeg", 0.5).split(",")[1];
-      
-      // Vi gemmer billedet lokalt for at vise venteskrærmen
+
       setCapturedImage(canvas.toDataURL("image/jpeg"));
 
       const combinedList = [...profile.allergies, ...profile.blacklist];
-      const userAllergies = combinedList.length > 0 ? combinedList.join(", ") : "Ingen angivet";
+      const userAllergies =
+        combinedList.length > 0 ? combinedList.join(", ") : "Ingen angivet";
 
       const promptText = `
-        Du er en ikke-tænkende maskine designet til at matche tekststrenge. Du skal IKKE foretage vurderinger.
+        Du er en præcis assistent for madallergikere.
 
         Data:
-        - Brugerens liste over forbudte ord: [${userAllergies}].
+        1. Brugerens nej-liste: [${userAllergies}].
 
         Dine opgaver:
-        1. Udtræk AL tekst fra billedet.
-        2. Tjek om NOGEN af de forbudte ord optræder i teksten (ignorer store/små bogstaver). Selv som en del af et ord.
+        1. Læs teksten på billedet. Udtræk KUN faktiske mad-ingredienser (f.eks. "mango", "sukker", "mælk").
+        2. Ignorer fuldstændigt mærker (som 'coop'), vægt ('100g'), overskrifter ('ingredienser') og fyldord ('SNACK', 'Opbevaring'). Flet gerne ord sammen, hvis det giver mening (f.eks. "Tørret mango" i stedet for to ord).
+        3. Sammenlign dine fundne ingredienser med brugerens nej-liste (ignorer store/små bogstaver).
 
         SVAR KUN MED ET JSON-OBJEKT:
         {
-          "isSafe": boolean, // false hvis en match er fundet, true ellers
-          "foundAllergens": ["liste over forbudte ord der blev fundet"], // Tom hvis ingen match
-          "extractedIngredients": ["liste", "over", "alle", "ekstraherede", "ord"], // Vigtig: alle ord læst fra billedet
-          "message": "Kort dansk besked." // F.eks. "Produktet indeholder mango."
+          "isSafe": boolean, // false hvis et ord fra nej-listen findes i ingredienserne
+          "foundAllergens": ["liste over ord fra nej-listen der blev fundet"], // Tom hvis ingen match
+          "extractedIngredients": ["Kun de faktiske ingredienser du udtrak, vasket for støj"], 
+          "message": "En kort dansk konklusion." 
         }
       `;
 
@@ -397,65 +399,74 @@ export function Scanner() {
 
       const resultText = data.candidates?.[0]?.content?.parts?.[0]?.text;
       if (resultText) {
-        const cleanJson = resultText.replace(/```json/g, "").replace(/```/g, "").trim();
+        const cleanJson = resultText
+          .replace(/```json/g, "")
+          .replace(/```/g, "")
+          .trim();
         navigate("/result", { state: { aiResult: JSON.parse(cleanJson) } });
       }
     } catch (error: any) {
       toast.error("Fejl: " + error.message);
       setIsScanning(false);
-      setCapturedImage(null); // Ryd venteskrærmen ved fejl
+      setCapturedImage(null);
     }
   };
 
   return (
     <div className="min-h-screen bg-black relative flex flex-col items-center justify-center">
       <canvas ref={canvasRef} className="hidden" />
-      
-      {/* Live Kamera Feed - Skjules når billedet er taget */}
-      <video ref={videoRef} autoPlay playsInline muted className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${capturedImage ? 'opacity-0' : 'opacity-100'}`} />
-      
-      {/* Den blå ramme */}
+
+      <video
+        ref={videoRef}
+        autoPlay
+        playsInline
+        muted
+        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${capturedImage ? "opacity-0" : "opacity-100"}`}
+      />
+
       {!capturedImage && (
         <div className="relative w-72 h-80 border-4 border-blue-500 rounded-3xl pointer-events-none" />
       )}
 
-      {/* Kamera Knap */}
       {!capturedImage && (
         <div className="absolute bottom-28">
-          <Button onClick={handleScan} disabled={isScanning} className="w-20 h-20 bg-blue-600 rounded-full border-4 border-white active:scale-95 transition-all">
+          <Button
+            onClick={handleScan}
+            disabled={isScanning}
+            className="w-20 h-20 bg-blue-600 rounded-full border-4 border-white active:scale-95 transition-all"
+          >
             <Camera className="w-8 h-8 text-white" />
           </Button>
         </div>
       )}
 
-      {/* --- NYT: MØRK VENTESKRÆRM MED FOTO-FEEDBACK --- */}
       {capturedImage && (
         <div className="absolute inset-0 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center animate-in fade-in duration-300">
-          
-          {/* Det fastfrosne, mørke billede */}
-          <img src={capturedImage} alt="Captured" className="absolute inset-0 w-full h-full object-cover opacity-30" />
-          
-          {/* Besked til brugeren */}
+          <img
+            src={capturedImage}
+            alt="Captured"
+            className="absolute inset-0 w-full h-full object-cover opacity-30"
+          />
           <div className="relative text-center px-8 space-y-4">
             <div className="mx-auto w-20 h-20 bg-white/10 rounded-full flex items-center justify-center border border-white/20">
               <Sparkles className="w-10 h-10 text-blue-400 animate-pulse" />
             </div>
-            
-            <h2 className="text-3xl font-black text-white tracking-tight">Billede taget!</h2>
-            
+            <h2 className="text-3xl font-black text-white tracking-tight">
+              Billede taget!
+            </h2>
             <p className="text-white/70 text-base leading-relaxed">
-              Analyserer ingredienser...<br />
-              <span className="font-bold text-white">Du kan nu lægge varen væk.</span>
+              Analyserer ingredienser...
+              <br />
+              <span className="font-bold text-white">
+                Du kan nu lægge varen væk.
+              </span>
             </p>
-            
             <div className="pt-6">
               <div className="animate-spin border-4 border-blue-500 border-t-transparent rounded-full w-10 h-10 mx-auto" />
             </div>
           </div>
         </div>
       )}
-
-      <p className="absolute top-10 text-white/30 text-[10px]">v9.0-photo-feedback</p>
     </div>
   );
 }
