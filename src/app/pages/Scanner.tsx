@@ -350,7 +350,7 @@ export function Scanner() {
     };
   }, []);
 
-  const handleScan = async () => {
+const handleScan = async () => {
     if (!videoRef.current || !canvasRef.current) return;
     setIsScanning(true);
 
@@ -361,43 +361,48 @@ export function Scanner() {
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
       const ctx = canvas.getContext("2d");
-      if (!ctx) throw new Error("Could not get context");
+      if (!ctx) throw new Error("Kunne ikke klargøre billedet");
 
       ctx.drawImage(video, 0, 0);
 
+      // Vi bruger en kvalitet på 0.5 for at sikre, at filen ikke bliver for tung
       const imageData = canvas.toDataURL("image/jpeg", 0.5);
       const base64Image = imageData.split(",")[1];
 
       const promptText = `
-        Læs alle ingredienser på billedet.
-        Tjek om de er sikre for en person med disse allergier: ${profile.allergies.join(", ") || "Ingen"}.
-        Svar udelukkende med dette JSON format:
+        Analyser ingredienslisten på dette billede.
+        Tjek om produkterne er sikre i forhold til disse allergier: ${profile.allergies.join(", ") || "Ingen"}.
+        
+        Svar udelukkende med et JSON-objekt i dette format:
         {
           "isSafe": boolean,
-          "foundAllergens": ["navn på allergen"],
-          "message": "Besked på dansk"
+          "foundAllergens": ["liste over fundne allergier"],
+          "message": "En kort forklaring på dansk"
         }
       `;
 
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [
-              {
-                parts: [
-                  { text: promptText },
-                  {
-                    inline_data: { mime_type: "image/jpeg", data: base64Image },
+      // Vi bruger v1beta og modelnavnet gemini-1.5-flash
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                { text: promptText },
+                {
+                  inline_data: {
+                    mime_type: "image/jpeg",
+                    data: base64Image,
                   },
-                ],
-              },
-            ],
-          }),
-        },
-      );
+                },
+              ],
+            },
+          ],
+        }),
+      });
 
       const data = await response.json();
 
@@ -408,17 +413,17 @@ export function Scanner() {
       const resultText = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
       if (resultText) {
-        const cleanJson = resultText
-          .replace(/```json/g, "")
-          .replace(/```/g, "")
-          .trim();
+        // Vi fjerner eventuel kode-formatering fra AI'ens svar
+        const cleanJson = resultText.replace(/```json/g, "").replace(/```/g, "").trim();
         const aiResult = JSON.parse(cleanJson);
+        
         navigate("/result", { state: { aiResult } });
       } else {
-        throw new Error("AI kunne ikke finde tekst på billedet");
+        throw new Error("AI kunne ikke læse teksten. Prøv at holde kameraet mere stille.");
       }
     } catch (error: any) {
-      toast.error(error.message || "Fejl ved scanning");
+      console.error("Scanner fejl:", error);
+      toast.error(error.message || "Der skete en fejl ved scanningen");
     } finally {
       setIsScanning(false);
     }
