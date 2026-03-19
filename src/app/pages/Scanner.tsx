@@ -350,7 +350,7 @@ export function Scanner() {
     };
   }, []);
 
-const handleScan = async () => {
+  const handleScan = async () => {
     if (!videoRef.current || !canvasRef.current) return;
     setIsScanning(true);
 
@@ -365,7 +365,7 @@ const handleScan = async () => {
 
       ctx.drawImage(video, 0, 0);
 
-      const imageData = canvas.toDataURL("image/jpeg", 0.9);
+      const imageData = canvas.toDataURL("image/jpeg", 0.5);
       const base64Image = imageData.split(",")[1];
 
       const promptText = `
@@ -390,7 +390,7 @@ const handleScan = async () => {
                 parts: [
                   { text: promptText },
                   {
-                    inline_data: { mime_type: "image/jpeg", data: base64Image },
+                    inlineData: { mimeType: "image/jpeg", data: base64Image },
                   },
                 ],
               },
@@ -412,7 +412,11 @@ const handleScan = async () => {
       const resultText = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
       if (resultText) {
-        const aiResult = JSON.parse(resultText);
+        const cleanJson = resultText
+          .replace(/```json/g, "")
+          .replace(/```/g, "")
+          .trim();
+        const aiResult = JSON.parse(cleanJson);
         navigate("/result", { state: { aiResult } });
       } else {
         throw new Error("AI kunne ikke finde tekst på billedet");
