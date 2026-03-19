@@ -17,7 +17,7 @@ export function ProfileSettings() {
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [initialEmail, setInitialEmail] = useState(""); // Til at tjekke om mail er ændret
+  const [initialEmail, setInitialEmail] = useState(""); 
   const [password, setPassword] = useState("");
 
   const [loading, setLoading] = useState(false);
@@ -43,17 +43,14 @@ export function ProfileSettings() {
     setLoading(true);
     setMessage({ text: "", type: "" });
 
-    // Vi bygger opdaterings-objektet
     const updates: any = {
-      data: { full_name: name }, // Metadata opdateres altid
+      data: { full_name: name }, 
     };
 
-    // Send kun email hvis den er ændret (Supabase kræver ofte bekræftelse på ny mail)
     if (email !== initialEmail) {
       updates.email = email;
     }
 
-    // Send kun password hvis der er skrevet et nyt
     if (password.length >= 6) {
       updates.password = password;
     }
@@ -64,10 +61,9 @@ export function ProfileSettings() {
       setMessage({ text: "Fejl: " + error.message, type: "error" });
     } else {
       setMessage({ text: "Din profil er blevet opdateret!", type: "success" });
-      setInitialEmail(email); // Opdater vores tjek-mail
-      setPassword(""); // Ryd password feltet
+      setInitialEmail(email); 
+      setPassword(""); 
 
-      // Vi henter lige brugeren igen for at være 100% sikre på at UI er frisk
       const {
         data: { user },
       } = await supabase.auth.getUser();
@@ -90,8 +86,7 @@ export function ProfileSettings() {
     );
 
     if (confirmDelete) {
-      // Bemærk: Supabase kræver normalt en Edge Function for at slette en bruger helt fra AUTH.
-      // Her logger vi dem bare ud og sender dem væk.
+     
       await supabase.auth.signOut();
       navigate("/");
     }
