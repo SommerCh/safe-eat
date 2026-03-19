@@ -49,7 +49,6 @@ export function ArticleSection({ searchQuery }: ArticleSectionProps) {
         ))}
       </div>
 
-      {/* Én samlet liste til alle artikler */}
       <section>
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold text-gray-900">
@@ -64,7 +63,6 @@ export function ArticleSection({ searchQuery }: ArticleSectionProps) {
               onClick={() => openArticle(article)}
               className="bg-white rounded-2xl p-3 shadow-sm border border-gray-100 flex gap-4 cursor-pointer hover:bg-gray-50 transition-colors group"
             >
-              {/* Billedet er nu altid det lille format til venstre */}
               <div className="w-24 h-24 rounded-xl overflow-hidden flex-shrink-0 relative">
                 <ImageWithFallback
                   src={article.image}
@@ -89,7 +87,6 @@ export function ArticleSection({ searchQuery }: ArticleSectionProps) {
             </div>
           ))}
 
-          {/* Hvis listen er tom under søgning */}
           {filteredArticles.length === 0 && (
             <div className="text-center py-10 bg-white rounded-3xl border border-gray-100">
               <p className="text-gray-500">Ingen artikler fundet.</p>

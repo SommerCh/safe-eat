@@ -7,7 +7,7 @@ import { Scanner } from "./pages/Scanner";
 import { Result } from "./pages/Result";
 import { ProfileSettings } from "./components/profile/ProfileSettings";
 import { ArticleDetail } from "./pages/ArticleDetail";
-import { Favorites } from "./pages/Favorites"; // Husk at importere den her!
+import { Favorites } from "./pages/Favorites"; 
 
 export const router = createBrowserRouter([
   {

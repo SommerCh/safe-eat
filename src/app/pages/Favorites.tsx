@@ -7,7 +7,6 @@ export function Favorites() {
   const navigate = useNavigate();
   const { favorites } = useProfile();
 
-  // Find de artikler der matcher de gemte ID'er
   const favoritedArticles = ARTICLES.filter((article) =>
     favorites.includes(article.id),
   );

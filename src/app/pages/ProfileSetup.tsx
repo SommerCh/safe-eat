@@ -1,93 +1,3 @@
-// import { useState } from "react";
-// import { useNavigate } from "react-router";
-// import { useProfile } from "../context/ProfileContext";
-// import { Button } from "../components/ui/button";
-// import { Settings } from "lucide-react";
-// import { AllergySelector } from "../components/profile/AllergySelector";
-// import { DietSelector } from "../components/profile/DietSelector";
-// import { BlacklistInput } from "../components/profile/BlacklistInput";
-
-// export function ProfileSetup() {
-//   const navigate = useNavigate();
-//   const { profile, setProfile } = useProfile();
-
-//   const [selectedAllergies, setSelectedAllergies] = useState<string[]>(
-//     profile.allergies,
-//   );
-//   const [selectedDiet, setSelectedDiet] = useState(profile.diet);
-//   const [blacklistText, setBlacklistText] = useState(
-//     profile.blacklist.join(", "),
-//   );
-
-//   const handleToggleAllergy = (allergy: string) => {
-//     setSelectedAllergies((prev) =>
-//       prev.includes(allergy)
-//         ? prev.filter((a) => a !== allergy)
-//         : [...prev, allergy],
-//     );
-//   };
-
-//   const handleComplete = () => {
-//     const blacklistArray = blacklistText
-//       .split(",")
-//       .map((item) => item.trim())
-//       .filter((item) => item.length > 0);
-
-//     setProfile({
-//       allergies: selectedAllergies,
-//       diet: selectedDiet,
-//       blacklist: blacklistArray,
-//     });
-
-//     navigate("/scanner");
-//   };
-
-//   return (
-//     <div className="min-h-screen bg-white pb-32">
-//       <div className="bg-white px-6 pt-12 pb-6 sticky top-0 z-10 border-b border-slate-100 flex justify-between items-start">
-//         <div>
-//           <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-//             Din madprofil
-//           </h1>
-//           <p className="text-slate-500 mt-2">
-//             Vi hjælper med at tjekke indholdet for dig
-//           </p>
-//         </div>
-
-//         <button
-//           onClick={() => navigate("/settings")}
-//           className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center hover:bg-slate-100 active:scale-95 transition-all border border-slate-100 mt-1"
-//         >
-//           <Settings className="w-6 h-6 text-slate-700" />
-//         </button>
-//       </div>
-
-//       <div className="px-6 py-8 space-y-12 max-w-md mx-auto">
-//         <AllergySelector
-//           selected={selectedAllergies}
-//           onToggle={handleToggleAllergy}
-//         />
-
-//         <DietSelector selected={selectedDiet} onSelect={setSelectedDiet} />
-
-//         <BlacklistInput text={blacklistText} onChange={setBlacklistText} />
-
-//         <Button
-//           onClick={handleComplete}
-//           disabled={
-//             selectedAllergies.length === 0 &&
-//             !selectedDiet &&
-//             blacklistText.length === 0
-//           }
-//           className="w-full h-14 bg-blue-600 text-white hover:bg-blue-700 rounded-2xl text-lg font-medium shadow-lg disabled:opacity-50"
-//         >
-//           Fortsæt til scanner
-//         </Button>
-//       </div>
-//     </div>
-//   );
-// }
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useProfile } from "../context/ProfileContext";
@@ -258,7 +168,6 @@ export function ProfileSetup() {
             <ArrowRight className="w-5 h-5" />
           </Button>
 
-          {/* Favoritter knap placeret under scanner-knappen */}
           <button
             onClick={() => navigate("/favorites")}
             className="w-full flex items-center gap-4 p-4 bg-white border border-slate-100 rounded-2xl hover:bg-slate-50 active:scale-[0.98] transition-all"

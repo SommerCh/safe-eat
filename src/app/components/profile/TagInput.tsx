@@ -61,7 +61,6 @@ export function TagInput({ tags, onTagsChange }: TagInputProps) {
           )}
         </div>
 
-        {/* Input feltet i bunden af boksen */}
         <div className="relative pt-2 border-t border-slate-200">
           <input
             type="text"
