@@ -313,7 +313,6 @@
 //     </div>
 //   );
 // }
-
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useProfile } from "../context/ProfileContext";
@@ -330,13 +329,16 @@ export function Scanner() {
 
   useEffect(() => {
     async function startCamera() {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" },
-      });
-      if (videoRef.current) videoRef.current.srcObject = stream;
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "environment" },
+        });
+        if (videoRef.current) videoRef.current.srcObject = stream;
+      } catch (err) {
+        toast.error("Kunne ikke få adgang til kameraet");
+      }
     }
     startCamera();
-
     return () => {
       const currentStream = videoRef.current?.srcObject as MediaStream;
       currentStream?.getTracks().forEach((track) => track.stop());
@@ -350,24 +352,17 @@ export function Scanner() {
     try {
       const canvas = canvasRef.current;
       const video = videoRef.current;
-
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
-
       const ctx = canvas.getContext("2d");
-      if (!ctx) throw new Error("canvas fejl");
+      if (!ctx) throw new Error("Kunne ikke oprette billede");
 
       ctx.drawImage(video, 0, 0);
+      const base64Image = canvas.toDataURL("image/jpeg", 0.5).split(",")[1];
+      const promptText = `Analyser ingredienslisten. Allergier: ${profile.allergies.join(", ") || "Ingen"}. Svar udelukkende i JSON: { "isSafe": boolean, "foundAllergens": [], "message": "" }`;
 
-      const base64Image = canvas
-        .toDataURL("image/jpeg", 0.5)
-        .split(",")[1];
-
-      const promptText = `Analyser ingredienslisten. Allergier: ${
-        profile.allergies.join(", ") || "Ingen"
-      }. Svar KUN JSON: { "isSafe": boolean, "foundAllergens": [], "message": "" }`;
-
-      const response = await fetch("http://localhost:3001/scan", {
+      // Anmodningen sendes til din egen Vercel-backend
+      const response = await fetch("/api/scan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ base64Image, promptText }),
@@ -375,21 +370,24 @@ export function Scanner() {
 
       const data = await response.json();
 
-      if (data.error) throw new Error(data.error.message);
+      if (!response.ok) {
+        throw new Error(data.error || "Der opstod en fejl på serveren");
+      }
 
-      const resultText =
-        data.candidates?.[0]?.content?.parts?.[0]?.text;
+      const resultText = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
-      const cleanJson = resultText
-        .replace(/```json/g, "")
-        .replace(/```/g, "")
-        .trim();
-
-      const aiResult = JSON.parse(cleanJson);
-
-      navigate("/result", { state: { aiResult } });
-    } catch (err: any) {
-      toast.error(err.message);
+      if (resultText) {
+        const cleanJson = resultText
+          .replace(/```json/g, "")
+          .replace(/```/g, "")
+          .trim();
+        const aiResult = JSON.parse(cleanJson);
+        navigate("/result", { state: { aiResult } });
+      } else {
+        throw new Error("Modtog intet svar fra AI");
+      }
+    } catch (error: any) {
+      toast.error("Fejl: " + error.message);
     } finally {
       setIsScanning(false);
     }
@@ -398,7 +396,6 @@ export function Scanner() {
   return (
     <div className="min-h-screen bg-black relative flex flex-col items-center justify-center">
       <canvas ref={canvasRef} className="hidden" />
-
       <video
         ref={videoRef}
         autoPlay
@@ -406,9 +403,7 @@ export function Scanner() {
         muted
         className="absolute inset-0 w-full h-full object-cover"
       />
-
-      <div className="relative w-72 h-80 border-4 border-blue-500 rounded-3xl" />
-
+      <div className="relative w-72 h-80 border-4 border-blue-500 rounded-3xl pointer-events-none" />
       <div className="absolute bottom-28">
         <Button
           onClick={handleScan}
@@ -422,13 +417,6 @@ export function Scanner() {
           )}
         </Button>
       </div>
-
-      {isScanning && (
-        <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center">
-          <Sparkles className="w-12 h-12 animate-pulse text-blue-400 mb-4" />
-          <p className="text-white">Analyserer...</p>
-        </div>
-      )}
     </div>
   );
 }
