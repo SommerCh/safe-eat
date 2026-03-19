@@ -321,8 +321,6 @@ import { Button } from "../components/ui/button";
 import { Camera, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
-const GEMINI_API_KEY = "AIzaSyBFWf-2zoiWNkvNYljY-Hql85Vh8oGZKQY";
-
 export function Scanner() {
   const navigate = useNavigate();
   const { profile } = useProfile();
@@ -330,33 +328,15 @@ export function Scanner() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isScanning, setIsScanning] = useState(false);
 
-  // DIAGNOSE: Denne kører hver gang siden indlæses og viser os sandheden i konsollen
   useEffect(() => {
-    const checkModels = async () => {
-      try {
-        const res = await fetch(
-          `https://generativelanguage.googleapis.com/v1/models?key=${GEMINI_API_KEY}`,
-        );
-        const data = await res.json();
-        console.log("--- DIN KONTOS TILGÆNGELIGE MODELLER ---");
-        console.log(data.models?.map((m: any) => m.name));
-      } catch (e) {
-        console.error("Kunne ikke hente modelliste", e);
-      }
-    };
-    checkModels();
-
     async function startCamera() {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: "environment" },
-        });
-        if (videoRef.current) videoRef.current.srcObject = stream;
-      } catch (err) {
-        toast.error("Kamerafejl");
-      }
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment" },
+      });
+      if (videoRef.current) videoRef.current.srcObject = stream;
     }
     startCamera();
+
     return () => {
       const currentStream = videoRef.current?.srcObject as MediaStream;
       currentStream?.getTracks().forEach((track) => track.stop());
@@ -370,52 +350,46 @@ export function Scanner() {
     try {
       const canvas = canvasRef.current;
       const video = videoRef.current;
+
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
+
       const ctx = canvas.getContext("2d");
-      if (!ctx) return;
+      if (!ctx) throw new Error("canvas fejl");
+
       ctx.drawImage(video, 0, 0);
 
-      const base64Image = canvas.toDataURL("image/jpeg", 0.5).split(",")[1];
-      const promptText = `Analyser ingredienslisten. Allergier: ${profile.allergies.join(", ") || "Ingen"}. Svar KUN i JSON format: { "isSafe": boolean, "foundAllergens": [], "message": "" }`;
+      const base64Image = canvas
+        .toDataURL("image/jpeg", 0.5)
+        .split(",")[1];
 
-      // FORSØG 1: Vi bruger den STABILE v1 (ikke beta) og gemini-1.5-flash
-      const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+      const promptText = `Analyser ingredienslisten. Allergier: ${
+        profile.allergies.join(", ") || "Ingen"
+      }. Svar KUN JSON: { "isSafe": boolean, "foundAllergens": [], "message": "" }`;
 
-      const response = await fetch(url, {
+      const response = await fetch("http://localhost:3001/scan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [
-                { text: promptText },
-                { inline_data: { mime_type: "image/jpeg", data: base64Image } },
-              ],
-            },
-          ],
-        }),
+        body: JSON.stringify({ base64Image, promptText }),
       });
 
       const data = await response.json();
 
-      if (data.error) {
-        // Hvis den fejler igen, logger vi det meget tydeligt
-        console.error("API FEJL:", data.error);
-        throw new Error(data.error.message);
-      }
+      if (data.error) throw new Error(data.error.message);
 
-      const resultText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (resultText) {
-        const cleanJson = resultText
-          .replace(/```json/g, "")
-          .replace(/```/g, "")
-          .trim();
-        const aiResult = JSON.parse(cleanJson);
-        navigate("/result", { state: { aiResult } });
-      }
-    } catch (error: any) {
-      toast.error("Fejl: " + error.message);
+      const resultText =
+        data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+      const cleanJson = resultText
+        .replace(/```json/g, "")
+        .replace(/```/g, "")
+        .trim();
+
+      const aiResult = JSON.parse(cleanJson);
+
+      navigate("/result", { state: { aiResult } });
+    } catch (err: any) {
+      toast.error(err.message);
     } finally {
       setIsScanning(false);
     }
@@ -424,6 +398,7 @@ export function Scanner() {
   return (
     <div className="min-h-screen bg-black relative flex flex-col items-center justify-center">
       <canvas ref={canvasRef} className="hidden" />
+
       <video
         ref={videoRef}
         autoPlay
@@ -431,7 +406,9 @@ export function Scanner() {
         muted
         className="absolute inset-0 w-full h-full object-cover"
       />
-      <div className="relative w-72 h-80 border-4 border-blue-500 rounded-3xl pointer-events-none" />
+
+      <div className="relative w-72 h-80 border-4 border-blue-500 rounded-3xl" />
+
       <div className="absolute bottom-28">
         <Button
           onClick={handleScan}
@@ -445,9 +422,13 @@ export function Scanner() {
           )}
         </Button>
       </div>
-      <p className="absolute top-10 text-white/50 text-xs font-mono">
-        Build: 2026-03-19-FINAL
-      </p>
+
+      {isScanning && (
+        <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center">
+          <Sparkles className="w-12 h-12 animate-pulse text-blue-400 mb-4" />
+          <p className="text-white">Analyserer...</p>
+        </div>
+      )}
     </div>
   );
 }
