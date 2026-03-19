@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useProfile } from "../context/ProfileContext";
 import { HomeHeader } from "../components/Header";
-import { StatsOverview } from "../components/home/StatsOverview";
 import { QuickTips } from "../components/home/QuickTips";
 import { ArticleSection } from "../components/home/ArticleSetion";
 import { supabase } from "../lib/supabase";
@@ -31,9 +30,7 @@ export function Home() {
 
   const totalScans = scanHistory.length;
   const safeProducts = scanHistory.filter((s) => s.safe).length;
-  const unsafeProducts = totalScans - safeProducts;
-  const safePercentage =
-    totalScans > 0 ? Math.round((safeProducts / totalScans) * 100) : 0;
+  totalScans > 0 ? Math.round((safeProducts / totalScans) * 100) : 0;
 
   return (
     <div className="min-h-screen bg-gray-50 pb-24">
@@ -45,13 +42,6 @@ export function Home() {
       />
 
       <div className="px-6 py-6 space-y-8">
-        <StatsOverview
-          totalScans={totalScans}
-          safeProducts={safeProducts}
-          unsafeProducts={unsafeProducts}
-          safePercentage={safePercentage}
-        />
-
         <QuickTips />
 
         <ArticleSection searchQuery={searchQuery} />
