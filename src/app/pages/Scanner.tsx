@@ -321,7 +321,7 @@ import { Button } from "../components/ui/button";
 import { Camera, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
-const GEMINI_API_KEY = "AIzaSyArEypqvrgN92oD3oQWlfrNMpahheOyYG4";
+const GEMINI_API_KEY = "AIzaSyBFWf-2zoiWNkvNYljY-Hql85Vh8oGZKQY";
 
 export function Scanner() {
   const navigate = useNavigate();
@@ -330,7 +330,22 @@ export function Scanner() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isScanning, setIsScanning] = useState(false);
 
+  // DIAGNOSE: Denne kører hver gang siden indlæses og viser os sandheden i konsollen
   useEffect(() => {
+    const checkModels = async () => {
+      try {
+        const res = await fetch(
+          `https://generativelanguage.googleapis.com/v1/models?key=${GEMINI_API_KEY}`,
+        );
+        const data = await res.json();
+        console.log("--- DIN KONTOS TILGÆNGELIGE MODELLER ---");
+        console.log(data.models?.map((m: any) => m.name));
+      } catch (e) {
+        console.error("Kunne ikke hente modelliste", e);
+      }
+    };
+    checkModels();
+
     async function startCamera() {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
@@ -338,7 +353,7 @@ export function Scanner() {
         });
         if (videoRef.current) videoRef.current.srcObject = stream;
       } catch (err) {
-        toast.error("Kunne ikke starte kameraet");
+        toast.error("Kamerafejl");
       }
     }
     startCamera();
@@ -358,32 +373,15 @@ export function Scanner() {
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
       const ctx = canvas.getContext("2d");
-      if (!ctx) throw new Error("Billedfejl");
-
+      if (!ctx) return;
       ctx.drawImage(video, 0, 0);
+
       const base64Image = canvas.toDataURL("image/jpeg", 0.5).split(",")[1];
+      const promptText = `Analyser ingredienslisten. Allergier: ${profile.allergies.join(", ") || "Ingen"}. Svar KUN i JSON format: { "isSafe": boolean, "foundAllergens": [], "message": "" }`;
 
-      const promptText = `Analyser ingredienserne. Allergier: ${profile.allergies.join(", ") || "Ingen"}. Svar i JSON: { "isSafe": boolean, "foundAllergens": [], "message": "" }`;
+      // FORSØG 1: Vi bruger den STABILE v1 (ikke beta) og gemini-1.5-flash
+      const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
-
-      const checkModels = async () => {
-        try {
-          const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models?key=${GEMINI_API_KEY}`,
-          );
-          const data = await response.json();
-          console.log("DINE TILGÆNGELIGE MODELLER:", data);
-
-          if (data.models) {
-            const names = data.models.map((m: any) => m.name);
-            toast.info("Tjek konsollen for modelliste!");
-            console.log("Liste over navne:", names);
-          }
-        } catch (err) {
-          console.error("Kunne ikke hente modeller:", err);
-        }
-      };
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -401,7 +399,11 @@ export function Scanner() {
 
       const data = await response.json();
 
-      if (data.error) throw new Error(data.error.message);
+      if (data.error) {
+        // Hvis den fejler igen, logger vi det meget tydeligt
+        console.error("API FEJL:", data.error);
+        throw new Error(data.error.message);
+      }
 
       const resultText = data.candidates?.[0]?.content?.parts?.[0]?.text;
       if (resultText) {
@@ -429,14 +431,12 @@ export function Scanner() {
         muted
         className="absolute inset-0 w-full h-full object-cover"
       />
-
-      <div className="relative w-72 h-80 border-4 border-blue-400 rounded-2xl pointer-events-none" />
-
+      <div className="relative w-72 h-80 border-4 border-blue-500 rounded-3xl pointer-events-none" />
       <div className="absolute bottom-28">
         <Button
           onClick={handleScan}
           disabled={isScanning}
-          className="w-20 h-20 bg-blue-500 rounded-full"
+          className="w-20 h-20 bg-blue-600 rounded-full border-4 border-white"
         >
           {isScanning ? (
             <div className="animate-spin border-4 border-white border-t-transparent rounded-full w-8 h-8" />
@@ -445,15 +445,9 @@ export function Scanner() {
           )}
         </Button>
       </div>
-
-      {isScanning && (
-        <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center z-50">
-          <Sparkles className="w-12 h-12 text-blue-400 animate-pulse mb-4" />
-          <p className="text-white font-bold text-xl">
-            Scanner ingredienser...
-          </p>
-        </div>
-      )}
+      <p className="absolute top-10 text-white/50 text-xs font-mono">
+        Build: 2026-03-19-FINAL
+      </p>
     </div>
   );
 }
