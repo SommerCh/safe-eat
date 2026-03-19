@@ -365,22 +365,22 @@ export function Scanner() {
 
       ctx.drawImage(video, 0, 0);
 
-      const imageData = canvas.toDataURL("image/jpeg", 0.6);
+      const imageData = canvas.toDataURL("image/jpeg", 0.9);
       const base64Image = imageData.split(",")[1];
 
       const promptText = `
-        Analyser ingredienserne på dette billede. 
-        Brugeren er allergisk over for: ${profile.allergies.join(", ") || "Ingen"}.
-        Returner KUN et JSON objekt i dette format:
+        Læs alle ingredienser på billedet.
+        Tjek om de er sikre for en person med disse allergier: ${profile.allergies.join(", ") || "Ingen"}.
+        Svar udelukkende med dette JSON format:
         {
           "isSafe": boolean,
-          "foundAllergens": ["allergen1", "allergen2"],
+          "foundAllergens": ["navn på allergen"],
           "message": "Besked på dansk"
         }
       `;
 
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${import.meta.env.VITE_GEMINI_API_KEY}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -405,16 +405,17 @@ export function Scanner() {
 
       const data = await response.json();
 
-      if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
-        let resultText = data.candidates[0].content.parts[0].text;
-        const cleanJson = resultText
-          .replace(/```json/g, "")
-          .replace(/```/g, "")
-          .trim();
-        const aiResult = JSON.parse(cleanJson);
+      if (data.error) {
+        throw new Error(data.error.message);
+      }
+
+      const resultText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+      if (resultText) {
+        const aiResult = JSON.parse(resultText);
         navigate("/result", { state: { aiResult } });
       } else {
-        throw new Error("AI kunne ikke læse billedet");
+        throw new Error("AI kunne ikke finde tekst på billedet");
       }
     } catch (error: any) {
       toast.error(error.message || "Fejl ved scanning");
