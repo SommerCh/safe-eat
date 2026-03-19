@@ -361,25 +361,31 @@ export function Scanner() {
       ctx.drawImage(video, 0, 0);
       const base64Image = canvas.toDataURL("image/jpeg", 0.5).split(",")[1];
 
-      // DEN NYE OG STRENGE PROMPT
+      // DEN NYE, EKSTREMT STRENGE OG SKUDSIKRE PROMPT
       const promptText = `
-        Du er en streng assistent, der analyserer ingredienser for madallergikere.
-        Brugerens nej-liste (allergier): [${profile.allergies.join(", ") || "Ingen angivet"}].
-        
-        Gør præcis dette:
-        1. Læs ALLE ord fra billedet. Selv hvis der kun står ét enkelt ord (f.eks. en håndskrevet seddel), er det en ingrediens.
-        2. Tjek om NOGEN af ordene matcher brugerens nej-liste.
-        
-        Svar KUN med dette JSON-objekt (og intet andet):
+        System: Du er en ikke-tænkende maskine designet til at matche tekststrenge. Du skal IKKE foretage vurderinger af sundhed, kontekst eller "hygge".
+
+        Data:
+        - Brugerens liste over forbudte ord: [${profile.allergies.join(", ") || "Ingen angivet"}].
+
+        Dine opgaver:
+        1. Udtræk AL tekst fra billedet. Dette er 'ekstraheret_tekst'.
+        2. Sammenlign hvert ord fra 'Brugerens liste over forbudte ord' med 'ekstraheret_tekst' (ignorer store/små bogstaver).
+        3. Hvis et forbudt ord optræder i 'ekstraheret_tekst' (selv som en del af et ord, f.eks. "peanut" matcher "peanuts"), så skal produktet markeres som usikkert.
+
+        Regler:
+        - Hvis det forbudte ord "mango" er på listen, og teksten på billedet indeholder "mango", "MANGO", eller "Tørret mango", så er 'isSafe' = false.
+
+        Output Format (KUN JSON, ingen ekstra tekst):
         {
-          "isSafe": boolean,
-          "foundAllergens": ["navn på fundet allergen fra nej-listen"],
-          "extractedIngredients": ["skriv", "alle", "ord", "du", "læste", "på", "billedet", "her"],
-          "message": "Kort dansk forklaring"
+          "isSafe": boolean, // false hvis en match er fundet, true ellers
+          "foundAllergens": ["liste over forbudte ord der blev fundet"], // Tom hvis ingen match
+          "extractedIngredients": ["liste", "over", "alle", "ekstraherede", "ord"], // Vigtig: alle ord læst fra billedet
+          "message": "En meget simpel dansk besked (maks 15 ord)." // F.eks. "Indeholder mango."
         }
       `;
 
-      // Sender til din egen Vercel-backend
+      // Sender til din egen Vercel-backend proxy (api/scan.ts)
       const response = await fetch("/api/scan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
