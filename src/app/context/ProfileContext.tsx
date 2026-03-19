@@ -32,7 +32,6 @@ interface ProfileContextType {
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
 
 export function ProfileProvider({ children }: { children: ReactNode }) {
-  // Profil
   const [profile, setProfile] = useState<UserProfile>(() => {
     const saved = localStorage.getItem("userProfile");
     return saved
@@ -40,13 +39,11 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
       : { allergies: [], diet: [], blacklist: [] };
   });
 
-  // Favoritter
   const [favorites, setFavorites] = useState<(string | number)[]>(() => {
     const saved = localStorage.getItem("userFavorites");
     return saved ? JSON.parse(saved) : [];
   });
 
-  // Historik 
   const [scanHistory, setScanHistory] = useState<ScanHistory[]>(() => {
     const saved = localStorage.getItem("scanHistory");
     return saved ? JSON.parse(saved) : [];
@@ -54,7 +51,6 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
 
   const [scannedIngredients, setScannedIngredients] = useState<string[]>([]);
 
- 
   useEffect(() => {
     localStorage.setItem("userProfile", JSON.stringify(profile));
   }, [profile]);

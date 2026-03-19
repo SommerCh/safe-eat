@@ -361,12 +361,16 @@ export function Scanner() {
       ctx.drawImage(video, 0, 0);
       const base64Image = canvas.toDataURL("image/jpeg", 0.5).split(",")[1];
 
-      // DEN NYE DIAGNOSE PROMPT
+      // Her samler vi BÅDE de faste allergier og din personlige blacklist
+      const combinedList = [...profile.allergies, ...profile.blacklist];
+      const userAllergies =
+        combinedList.length > 0 ? combinedList.join(", ") : "Ingen angivet";
+
       const promptText = `
         Du er et strengt diagnose-værktøj for madallergier.
         
         Data:
-        1. Brugerens nej-liste: [${profile.allergies.join(", ") || "Ingen angivet"}].
+        1. Brugerens nej-liste: [${userAllergies}].
 
         Opgave:
         Læs alle ord fra billedet. Sammenlign hvert ord fra nej-listen med ordene fra billedet (ignorer store/små bogstaver).
@@ -397,7 +401,6 @@ export function Scanner() {
       const resultText = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
       if (resultText) {
-        // Fjerner eventuel markdown formatering fra AI'ens svar
         const cleanJson = resultText
           .replace(/```json/g, "")
           .replace(/```/g, "")
@@ -440,7 +443,7 @@ export function Scanner() {
         </Button>
       </div>
       <p className="absolute top-10 text-white text-[10px]">
-        DIAGNOSE-VERSION-AKTIV
+        COMBINED-LIST-FIX
       </p>
     </div>
   );
