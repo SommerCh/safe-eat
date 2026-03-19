@@ -4,12 +4,22 @@ import { useNavigate } from "react-router";
 import { ImageWithFallback } from "../ImageWithFallback";
 import { ARTICLES, CATEGORIES } from "../articles/articleData";
 
-export function ArticleSection() {
+interface ArticleSectionProps {
+  searchQuery: string;
+}
+
+export function ArticleSection({ searchQuery }: ArticleSectionProps) {
   const [activeCategory, setActiveCategory] = useState("Alle");
   const navigate = useNavigate();
 
   const filteredArticles = ARTICLES.filter((article) => {
-    return activeCategory === "Alle" || article.category === activeCategory;
+    const categoryMatch =
+      activeCategory === "Alle" || article.category === activeCategory;
+    const searchMatch =
+      !searchQuery ||
+      article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      article.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
+    return categoryMatch && searchMatch;
   });
 
   return (
