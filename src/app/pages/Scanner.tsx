@@ -313,6 +313,7 @@
 //     </div>
 //   );
 // }
+
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useProfile } from "../context/ProfileContext";
@@ -359,9 +360,26 @@ export function Scanner() {
 
       ctx.drawImage(video, 0, 0);
       const base64Image = canvas.toDataURL("image/jpeg", 0.5).split(",")[1];
-      const promptText = `Analyser ingredienslisten. Allergier: ${profile.allergies.join(", ") || "Ingen"}. Svar udelukkende i JSON: { "isSafe": boolean, "foundAllergens": [], "message": "" }`;
 
-      // Anmodningen sendes til din egen Vercel-backend
+      // DEN NYE OG STRENGE PROMPT
+      const promptText = `
+        Du er en streng assistent, der analyserer ingredienser for madallergikere.
+        Brugerens nej-liste (allergier): [${profile.allergies.join(", ") || "Ingen angivet"}].
+        
+        Gør præcis dette:
+        1. Læs ALLE ord fra billedet. Selv hvis der kun står ét enkelt ord (f.eks. en håndskrevet seddel), er det en ingrediens.
+        2. Tjek om NOGEN af ordene matcher brugerens nej-liste.
+        
+        Svar KUN med dette JSON-objekt (og intet andet):
+        {
+          "isSafe": boolean,
+          "foundAllergens": ["navn på fundet allergen fra nej-listen"],
+          "extractedIngredients": ["skriv", "alle", "ord", "du", "læste", "på", "billedet", "her"],
+          "message": "Kort dansk forklaring"
+        }
+      `;
+
+      // Sender til din egen Vercel-backend
       const response = await fetch("/api/scan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -382,6 +400,8 @@ export function Scanner() {
           .replace(/```/g, "")
           .trim();
         const aiResult = JSON.parse(cleanJson);
+
+        // Sender dataen videre til Resultatsiden
         navigate("/result", { state: { aiResult } });
       } else {
         throw new Error("Modtog intet svar fra AI");
