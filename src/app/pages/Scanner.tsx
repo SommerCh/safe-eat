@@ -318,7 +318,7 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useProfile } from "../context/ProfileContext";
 import { Button } from "../components/ui/button";
-import { Camera } from "lucide-react";
+import { Camera, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 export function Scanner() {
@@ -327,13 +327,12 @@ export function Scanner() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isScanning, setIsScanning] = useState(false);
+  const [capturedImage, setCapturedImage] = useState<string | null>(null);
 
   useEffect(() => {
     async function startCamera() {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: "environment" },
-        });
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
         if (videoRef.current) videoRef.current.srcObject = stream;
       } catch (err) {
         toast.error("Kunne ikke få adgang til kameraet");
@@ -347,7 +346,7 @@ export function Scanner() {
   }, []);
 
   const handleScan = async () => {
-    if (!videoRef.current || !canvasRef.current) return;
+    if (!videoRef.current || !canvasRef.current || isScanning) return;
     setIsScanning(true);
 
     try {
@@ -360,29 +359,29 @@ export function Scanner() {
 
       ctx.drawImage(video, 0, 0);
       const base64Image = canvas.toDataURL("image/jpeg", 0.5).split(",")[1];
+      
+      // Vi gemmer billedet lokalt for at vise venteskrærmen
+      setCapturedImage(canvas.toDataURL("image/jpeg"));
 
-      // Her samler vi BÅDE de faste allergier og din personlige blacklist
       const combinedList = [...profile.allergies, ...profile.blacklist];
-      const userAllergies =
-        combinedList.length > 0 ? combinedList.join(", ") : "Ingen angivet";
+      const userAllergies = combinedList.length > 0 ? combinedList.join(", ") : "Ingen angivet";
 
       const promptText = `
-        Du er et strengt diagnose-værktøj for madallergier.
-        
-        Data:
-        1. Brugerens nej-liste: [${userAllergies}].
+        Du er en ikke-tænkende maskine designet til at matche tekststrenge. Du skal IKKE foretage vurderinger.
 
-        Opgave:
-        Læs alle ord fra billedet. Sammenlign hvert ord fra nej-listen med ordene fra billedet (ignorer store/små bogstaver).
-        
-        Returnér KUN et JSON-objekt med præcis disse felter (ingen formatering udenom):
+        Data:
+        - Brugerens liste over forbudte ord: [${userAllergies}].
+
+        Dine opgaver:
+        1. Udtræk AL tekst fra billedet.
+        2. Tjek om NOGEN af de forbudte ord optræder i teksten (ignorer store/små bogstaver). Selv som en del af et ord.
+
+        SVAR KUN MED ET JSON-OBJEKT:
         {
-          "debug_allergiesReceived": ["Skriv præcis hvilke ord du fik i brugerens nej-liste"],
-          "extractedIngredients": ["Udtræk alle ord fra billedet her"],
-          "debug_thoughtProcess": "Forklar trin-for-trin hvordan du tjekkede ordene mod hinanden. F.eks: 'Jeg kiggede efter mango. Jeg fandt ordet Mangoens. Derfor er isSafe false.'",
-          "foundAllergens": ["Eventuelle matchende ord fra nej-listen"],
-          "isSafe": boolean,
-          "message": "Kort konklusion til brugeren"
+          "isSafe": boolean, // false hvis en match er fundet, true ellers
+          "foundAllergens": ["liste over forbudte ord der blev fundet"], // Tom hvis ingen match
+          "extractedIngredients": ["liste", "over", "alle", "ekstraherede", "ord"], // Vigtig: alle ord læst fra billedet
+          "message": "Kort dansk besked." // F.eks. "Produktet indeholder mango."
         }
       `;
 
@@ -394,57 +393,69 @@ export function Scanner() {
 
       const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data.error || "Der opstod en fejl på serveren");
-      }
+      if (!response.ok) throw new Error(data.error || "Serverfejl");
 
       const resultText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-
       if (resultText) {
-        const cleanJson = resultText
-          .replace(/```json/g, "")
-          .replace(/```/g, "")
-          .trim();
-        const aiResult = JSON.parse(cleanJson);
-
-        navigate("/result", { state: { aiResult } });
-      } else {
-        throw new Error("Modtog intet svar fra AI");
+        const cleanJson = resultText.replace(/```json/g, "").replace(/```/g, "").trim();
+        navigate("/result", { state: { aiResult: JSON.parse(cleanJson) } });
       }
     } catch (error: any) {
       toast.error("Fejl: " + error.message);
-    } finally {
       setIsScanning(false);
+      setCapturedImage(null); // Ryd venteskrærmen ved fejl
     }
   };
 
   return (
     <div className="min-h-screen bg-black relative flex flex-col items-center justify-center">
       <canvas ref={canvasRef} className="hidden" />
-      <video
-        ref={videoRef}
-        autoPlay
-        playsInline
-        muted
-        className="absolute inset-0 w-full h-full object-cover"
-      />
-      <div className="relative w-72 h-80 border-4 border-blue-500 rounded-3xl pointer-events-none" />
-      <div className="absolute bottom-28">
-        <Button
-          onClick={handleScan}
-          disabled={isScanning}
-          className="w-20 h-20 bg-blue-600 rounded-full border-4 border-white"
-        >
-          {isScanning ? (
-            <div className="animate-spin border-4 border-white border-t-transparent rounded-full w-8 h-8" />
-          ) : (
+      
+      {/* Live Kamera Feed - Skjules når billedet er taget */}
+      <video ref={videoRef} autoPlay playsInline muted className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${capturedImage ? 'opacity-0' : 'opacity-100'}`} />
+      
+      {/* Den blå ramme */}
+      {!capturedImage && (
+        <div className="relative w-72 h-80 border-4 border-blue-500 rounded-3xl pointer-events-none" />
+      )}
+
+      {/* Kamera Knap */}
+      {!capturedImage && (
+        <div className="absolute bottom-28">
+          <Button onClick={handleScan} disabled={isScanning} className="w-20 h-20 bg-blue-600 rounded-full border-4 border-white active:scale-95 transition-all">
             <Camera className="w-8 h-8 text-white" />
-          )}
-        </Button>
-      </div>
-      <p className="absolute top-10 text-white text-[10px]">
-        COMBINED-LIST-FIX
-      </p>
+          </Button>
+        </div>
+      )}
+
+      {/* --- NYT: MØRK VENTESKRÆRM MED FOTO-FEEDBACK --- */}
+      {capturedImage && (
+        <div className="absolute inset-0 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center animate-in fade-in duration-300">
+          
+          {/* Det fastfrosne, mørke billede */}
+          <img src={capturedImage} alt="Captured" className="absolute inset-0 w-full h-full object-cover opacity-30" />
+          
+          {/* Besked til brugeren */}
+          <div className="relative text-center px-8 space-y-4">
+            <div className="mx-auto w-20 h-20 bg-white/10 rounded-full flex items-center justify-center border border-white/20">
+              <Sparkles className="w-10 h-10 text-blue-400 animate-pulse" />
+            </div>
+            
+            <h2 className="text-3xl font-black text-white tracking-tight">Billede taget!</h2>
+            
+            <p className="text-white/70 text-base leading-relaxed">
+              Analyserer ingredienser...<br />
+              <span className="font-bold text-white">Du kan nu lægge varen væk.</span>
+            </p>
+            
+            <div className="pt-6">
+              <div className="animate-spin border-4 border-blue-500 border-t-transparent rounded-full w-10 h-10 mx-auto" />
+            </div>
+          </div>
+        </div>
+      )}
+
+      <p className="absolute top-10 text-white/30 text-[10px]">v9.0-photo-feedback</p>
     </div>
   );
 }
