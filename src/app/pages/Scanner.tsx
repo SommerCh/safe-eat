@@ -321,7 +321,7 @@ import { Button } from "../components/ui/button";
 import { Camera, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+const GEMINI_API_KEY = "AIzaSyBFWf-2zoiWNkvNYljY-Hql85Vh8oGZKQY";
 
 export function Scanner() {
   const navigate = useNavigate();
@@ -380,7 +380,7 @@ export function Scanner() {
       `;
 
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${import.meta.env.VITE_GEMINI_API_KEY}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -428,7 +428,6 @@ export function Scanner() {
     <div className="min-h-screen bg-black relative flex flex-col items-center justify-center">
       <canvas ref={canvasRef} className="hidden" />
 
-      {/* Video Viewport */}
       <video
         ref={videoRef}
         autoPlay
@@ -437,7 +436,6 @@ export function Scanner() {
         className="absolute inset-0 w-full h-full object-cover"
       />
 
-      {/* Den blå ramme */}
       <div className="relative w-72 h-80 pointer-events-none">
         <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-blue-400 rounded-tl-xl" />
         <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-blue-400 rounded-tr-xl" />
@@ -445,7 +443,6 @@ export function Scanner() {
         <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-blue-400 rounded-br-xl" />
       </div>
 
-      {/* Instruktion i toppen */}
       <div className="absolute top-12 left-0 right-0 flex justify-center">
         <div className="bg-black/50 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
           <p className="text-white font-medium text-sm">
@@ -470,7 +467,6 @@ export function Scanner() {
         </Button>
       </div>
 
-      {/* AI Loading status */}
       {isScanning && (
         <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center z-50">
           <Sparkles className="w-12 h-12 text-blue-400 animate-pulse mb-4" />
