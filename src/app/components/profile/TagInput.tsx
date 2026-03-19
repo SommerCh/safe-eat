@@ -34,7 +34,7 @@ export function TagInput({ tags, onTagsChange }: TagInputProps) {
       <Label className="text-lg font-semibold text-gray-900 ml-1">
         Personlig sortliste
       </Label>
-      
+
       <div className="min-h-[120px] p-4 bg-slate-50 border-2 border-slate-200 rounded-3xl space-y-4 focus-within:bg-white focus-within:border-blue-500 transition-all">
         {/* Her vises dine Tags */}
         <div className="flex flex-wrap gap-2">
@@ -53,7 +53,7 @@ export function TagInput({ tags, onTagsChange }: TagInputProps) {
               </button>
             </span>
           ))}
-          
+
           {tags.length === 0 && (
             <p className="text-slate-400 text-sm italic py-1">
               Ingen ingredienser tilføjet endnu...

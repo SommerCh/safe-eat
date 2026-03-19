@@ -1,7 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useProfile } from "../context/ProfileContext";
-import { Settings, ArrowRight, Heart, ChevronRight } from "lucide-react"; // Tilføjet Heart og ChevronRight
+import {
+  Settings,
+  ArrowRight,
+  Heart,
+  ChevronRight,
+  TrendingUp,
+} from "lucide-react";
 import { Button } from "../components/ui/button";
 import { AllergySelector } from "../components/profile/AllergySelector";
 import { DietSelector } from "../components/profile/DietSelector";
@@ -59,8 +65,9 @@ const ALLERGY_MAP: Record<string, string[]> = {
 
 export function ProfileSetup() {
   const navigate = useNavigate();
-  const { profile, setProfile } = useProfile();
+  const { profile, setProfile, scanHistory } = useProfile();
 
+  // Profil tilstand
   const [selectedAllergies, setSelectedAllergies] = useState<string[]>(
     profile.allergies || [],
   );
@@ -73,6 +80,13 @@ export function ProfileSetup() {
   );
   const [nolist, setNolist] = useState<string[]>(profile.blacklist || []);
 
+  // Statistik beregning
+  const totalScans = scanHistory.length;
+  const safeProducts = scanHistory.filter((scan) => scan.safe).length;
+  const unsafeProducts = totalScans - safeProducts;
+  const safePercentage =
+    totalScans > 0 ? Math.round((safeProducts / totalScans) * 100) : 0;
+
   useEffect(() => {
     setProfile({
       allergies: selectedAllergies,
@@ -83,11 +97,9 @@ export function ProfileSetup() {
 
   const handleToggleAllergy = (allergy: string) => {
     const isAdding = !selectedAllergies.includes(allergy);
-
     setSelectedAllergies((prev) =>
       isAdding ? [...prev, allergy] : prev.filter((a) => a !== allergy),
     );
-
     if (isAdding) {
       const allergyIngredients = ALLERGY_MAP[allergy] || [
         allergy.toLowerCase(),
@@ -100,12 +112,11 @@ export function ProfileSetup() {
 
   const handleToggleDiet = (diet: string) => {
     const isAdding = !selectedDiets.includes(diet);
-    const newDiets = isAdding
-      ? [...selectedDiets, diet]
-      : selectedDiets.filter((d) => d !== diet);
-
-    setSelectedDiets(newDiets);
-
+    setSelectedDiets(
+      isAdding
+        ? [...selectedDiets, diet]
+        : selectedDiets.filter((d) => d !== diet),
+    );
     if (isAdding) {
       const dietIngredients = DIET_MAP[diet] || [];
       setNolist((prev) => Array.from(new Set([...prev, ...dietIngredients])));
@@ -123,12 +134,11 @@ export function ProfileSetup() {
     setNolist((prev) => prev.filter((item) => item !== itemToRemove));
   };
 
-  const handleClearAll = () => {
-    setNolist([]);
-  };
+  const handleClearAll = () => setNolist([]);
 
   return (
     <div className="min-h-screen bg-white pb-32">
+      {/* Header */}
       <div className="bg-white px-6 pt-12 pb-6 sticky top-0 z-10 border-b border-slate-100 flex justify-between items-start">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-slate-950">
@@ -138,7 +148,7 @@ export function ProfileSetup() {
         </div>
         <button
           onClick={() => navigate("/settings")}
-          className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center hover:bg-slate-100 border border-slate-100 mt-1 transition-colors"
+          className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center border border-slate-100 mt-1 transition-colors"
         >
           <Settings className="w-6 h-6 text-slate-700" />
         </button>
@@ -149,9 +159,7 @@ export function ProfileSetup() {
           selected={selectedAllergies}
           onToggle={handleToggleAllergy}
         />
-
         <DietSelector selected={selectedDiets} onToggle={handleToggleDiet} />
-
         <NolistInput
           items={nolist}
           onRemove={handleRemoveItem}
@@ -162,17 +170,16 @@ export function ProfileSetup() {
         <div className="pt-4 space-y-4">
           <Button
             onClick={() => navigate("/scanner")}
-            className="w-full h-16 bg-slate-950 text-white hover:bg-black rounded-2xl text-lg font-bold shadow-sm flex items-center justify-center gap-3 transition-all active:scale-[0.98]"
+            className="w-full h-16 bg-slate-950 text-white rounded-2xl text-lg font-bold shadow-sm flex items-center justify-center gap-3 transition-all active:scale-[0.98]"
           >
-            Åbn scanner
-            <ArrowRight className="w-5 h-5" />
+            Åbn scanner <ArrowRight className="w-5 h-5" />
           </Button>
 
           <button
             onClick={() => navigate("/favorites")}
             className="w-full flex items-center gap-4 p-4 bg-white border border-slate-100 rounded-2xl hover:bg-slate-50 active:scale-[0.98] transition-all"
           >
-            <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center flex-shrink-0">
+            <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center">
               <Heart className="w-5 h-5 text-red-500 fill-red-500" />
             </div>
             <div className="flex-1 text-left">
@@ -180,12 +187,67 @@ export function ProfileSetup() {
                 Mine favoritter
               </span>
               <span className="text-slate-500 text-xs mt-1">
-                Se dine gemte artikler og produkter
+                Se dine gemte produkter
               </span>
             </div>
             <ChevronRight className="w-5 h-5 text-slate-300" />
           </button>
         </div>
+
+        {/* --- DIT OVERBLIK (STATS) --- */}
+        {totalScans > 0 && (
+          <section className="pt-8 border-t border-slate-100">
+            <h2 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-blue-900" /> Dit overblik
+            </h2>
+
+            <div className="grid grid-cols-3 gap-3">
+              <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 text-center">
+                <div className="text-2xl font-bold text-slate-900">
+                  {totalScans}
+                </div>
+                <div className="text-[10px] uppercase font-bold text-slate-400 mt-1 tracking-wider">
+                  Scannede
+                </div>
+              </div>
+              <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 text-center">
+                <div className="text-2xl font-bold text-emerald-600">
+                  {safeProducts}
+                </div>
+                <div className="text-[10px] uppercase font-bold text-emerald-600/60 mt-1 tracking-wider">
+                  Sikre
+                </div>
+              </div>
+              <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 text-center">
+                <div className="text-2xl font-bold text-rose-600">
+                  {unsafeProducts}
+                </div>
+                <div className="text-[10px] uppercase font-bold text-rose-600/60 mt-1 tracking-wider">
+                  Usikre
+                </div>
+              </div>
+            </div>
+
+            {safePercentage > 0 && (
+              <div className="mt-3 bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                    Sikkerhedsrate
+                  </span>
+                  <span className="text-sm font-black text-blue-900">
+                    {safePercentage}%
+                  </span>
+                </div>
+                <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-blue-500 rounded-full transition-all duration-1000"
+                    style={{ width: `${safePercentage}%` }}
+                  />
+                </div>
+              </div>
+            )}
+          </section>
+        )}
       </div>
     </div>
   );

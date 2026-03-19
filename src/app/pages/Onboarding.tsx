@@ -40,7 +40,6 @@ export function Onboarding() {
     setLoading(true);
     setErrorMsg("");
 
-    // Vi gemmer valget om 'Husk mig', så Supabase-klienten kan læse det
     if (!rememberMe) {
       window.sessionStorage.setItem("useSessionStorage", "true");
     } else {
@@ -64,7 +63,6 @@ export function Onboarding() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex flex-col items-center justify-center px-6 py-12">
       <div className="w-full max-w-md space-y-8">
-        {/* Logo/Icon */}
         <div className="flex flex-col items-center space-y-4">
           <div className="w-24 h-24 bg-blue-500 rounded-3xl flex items-center justify-center shadow-lg">
             <svg
@@ -89,37 +87,44 @@ export function Onboarding() {
           </p>
         </div>
 
-        {/* Social Buttons */}
-        <div className="space-y-4 pt-8">
-          <Button className="w-full h-14 bg-black text-white hover:bg-gray-800 rounded-2xl text-base shadow-md">
+        <div className="space-y-4 pt-8 text-center">
+          {/* Låst Apple Knap */}
+          <Button
+            disabled
+            className="w-full h-14 bg-black/40 text-white/70 rounded-2xl text-base shadow-md cursor-not-allowed"
+          >
             <AppleIcon className="w-5 h-5 mr-2" />
             Log ind med Apple
           </Button>
 
+          {/* Låst Google Knap */}
           <Button
             variant="outline"
-            className="w-full h-14 border-2 border-gray-200 hover:bg-gray-50 rounded-2xl text-base shadow-md"
+            disabled
+            className="w-full h-14 border-2 border-gray-100 text-gray-400 rounded-2xl text-base shadow-sm cursor-not-allowed"
           >
             <Chrome className="w-5 h-5 mr-2" />
             Log ind med Google
           </Button>
+
+          <p className="text-[10px] font-bold text-blue-500 uppercase tracking-widest animate-pulse">
+            Socialt login kommer snart
+          </p>
 
           <div className="relative py-4">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-200"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-white text-gray-500">
-                {isLogin
-                  ? "eller log ind med e-mail"
-                  : "eller opret med e-mail"}
+              <span className="px-4 bg-white text-gray-500 italic">
+                {isLogin ? "Brug e-mail indtil da" : "Brug e-mail indtil da"}
               </span>
             </div>
           </div>
 
           <form
             onSubmit={isLogin ? handleLogin : handleSignUp}
-            className="space-y-4"
+            className="space-y-4 text-left"
           >
             <div className="relative">
               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -160,7 +165,6 @@ export function Onboarding() {
               </button>
             </div>
 
-            {/* Husk mig */}
             {isLogin && (
               <div className="flex items-center pt-1 px-1">
                 <input
@@ -179,7 +183,6 @@ export function Onboarding() {
               </div>
             )}
 
-            {/* Fejlbesked */}
             {errorMsg && (
               <p className="text-red-500 text-sm text-center">{errorMsg}</p>
             )}

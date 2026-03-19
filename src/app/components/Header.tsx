@@ -26,10 +26,10 @@ export function HomeHeader({
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-slate-900">
             {getGreeting()}
-            {userName ? `, ${userName}` : ""}
+            {userName ? ` ${userName}` : ""}
           </h1>
-          <p className="text-slate-500 mt-2">
-            Find inspiration til en tryg hverdag
+          <p className="text-slate-500 mt-2 font-medium">
+            Find inspiration til din hverdag
           </p>
         </div>
       </div>
@@ -41,7 +41,7 @@ export function HomeHeader({
           placeholder="Søg i artikler, tips og opskrifter..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full h-12 bg-slate-50 border-2 border-slate-200 rounded-2xl pl-12 pr-4 text-gray-900 placeholder-gray-400 shadow-sm focus:outline-none focus:border-slate-400 focus:bg-white transition-all"
+          className="w-full h-12 bg-slate-50 border-2 border-slate-100 rounded-2xl pl-12 pr-4 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-slate-300 focus:bg-white transition-all font-medium"
         />
       </div>
     </div>
