@@ -390,15 +390,11 @@ export function Scanner() {
                 parts: [
                   { text: promptText },
                   {
-                    inlineData: { mimeType: "image/jpeg", data: base64Image },
+                    inline_data: { mime_type: "image/jpeg", data: base64Image },
                   },
                 ],
               },
             ],
-            generationConfig: {
-              responseMimeType: "application/json",
-              temperature: 0.1,
-            },
           }),
         },
       );
