@@ -24,7 +24,6 @@ export function ArticleSection({ searchQuery }: ArticleSectionProps) {
 
   return (
     <div className="space-y-6">
-      {/* Kategorier - Enkel og hurtig sortering */}
       <div className="flex overflow-x-auto gap-3 pb-2 -mx-6 px-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {CATEGORIES.map((cat) => (
           <button

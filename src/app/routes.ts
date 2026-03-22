@@ -8,6 +8,7 @@ import { Result } from "./pages/Result";
 import { ProfileSettings } from "./components/profile/ProfileSettings";
 import { ArticleDetail } from "./pages/ArticleDetail";
 import { Favorites } from "./pages/Favorites"; 
+import {Dictionary} from "./pages/IngredientDictionary";
 
 export const router = createBrowserRouter([
   {
@@ -45,6 +46,10 @@ export const router = createBrowserRouter([
       {
         path: "favorites",
         Component: Favorites,
+      },
+        {
+        path: "test",
+        Component: Dictionary,
       },
     ],
   },
