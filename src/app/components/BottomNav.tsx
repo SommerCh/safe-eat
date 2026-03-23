@@ -1,4 +1,4 @@
-import { Home, ScanLine, User, BookOpen } from "lucide-react";
+import { Home, ScanLine, User } from "lucide-react";
 import { Link, useLocation } from "react-router";
 
 export function BottomNav() {
@@ -8,7 +8,7 @@ export function BottomNav() {
     { path: "/home", icon: Home, label: "Hjem" },
     { path: "/setup", icon: User, label: "Profil" },
     { path: "/scanner", icon: ScanLine, label: "Scan" },
-    { path: "/dictionary", icon: BookOpen, label: "Ordbog" },
+    // { path: "/dictionary", icon: BookOpen, label: "Ordbog" },
   ];
 
   return (

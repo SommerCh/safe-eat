@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useLocation, useNavigate, useParams } from "react-router";
-import { ChevronLeft, Clock, Share, ChevronUp, Heart } from "lucide-react";
+import { ChevronLeft, Share, ChevronUp, Heart } from "lucide-react";
 import { ImageWithFallback } from "../components/ImageWithFallback";
 import { ARTICLES } from "../components/articles/articleData";
 import { useProfile } from "../context/ProfileContext";
@@ -86,11 +86,6 @@ export function ArticleDetail() {
       </div>
 
       <div className="px-6 py-8 max-w-2xl mx-auto">
-        <div className="flex items-center gap-2 text-sm text-blue-600 font-medium mb-4">
-          <Clock className="w-4 h-4" />
-          <span>{article.readTime} læsetid</span>
-        </div>
-
         <h1 className="text-3xl font-bold text-slate-900 leading-tight mb-6 tracking-tight">
           {article.title}
         </h1>
@@ -142,10 +137,6 @@ export function ArticleDetail() {
                 <h3 className="text-sm font-semibold text-slate-900 leading-snug mb-2 line-clamp-2">
                   {related.title}
                 </h3>
-                <div className="flex items-center text-slate-400 text-xs gap-1 mt-auto">
-                  <Clock className="w-3 h-3" />
-                  <span>{related.readTime}</span>
-                </div>
               </div>
             ))}
           </div>

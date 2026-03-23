@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Clock, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router";
 import { ImageWithFallback } from "../ImageWithFallback";
 import { ARTICLES, CATEGORIES } from "../articles/articleData";
@@ -75,13 +74,6 @@ export function ArticleSection({ searchQuery }: ArticleSectionProps) {
                 <h3 className="text-sm font-bold text-slate-900 leading-snug mb-2 line-clamp-2">
                   {article.title}
                 </h3>
-                <div className="flex items-center justify-between mt-auto">
-                  <div className="flex items-center text-slate-400 text-[10px] gap-1 font-bold">
-                    <Clock className="w-3 h-3" />
-                    <span>{article.readTime}</span>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-slate-200 group-hover:text-blue-900 transition-colors" />
-                </div>
               </div>
             </div>
           ))}

@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useProfile } from "../context/ProfileContext";
-import { Button } from "../components/ui/button";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 export function Scanner() {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const { profile } = useProfile();
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -20,7 +21,7 @@ export function Scanner() {
         });
         if (videoRef.current) videoRef.current.srcObject = stream;
       } catch (err) {
-        toast.error("Kunne ikke få adgang til kameraet");
+        toast.error(t("scanner_camera_error"));
       }
     }
     startCamera();
@@ -28,7 +29,7 @@ export function Scanner() {
       const currentStream = videoRef.current?.srcObject as MediaStream;
       currentStream?.getTracks().forEach((track) => track.stop());
     };
-  }, []);
+  }, [t]);
 
   const handleScan = async () => {
     if (!videoRef.current || !canvasRef.current || isScanning) return;
@@ -58,7 +59,7 @@ export function Scanner() {
       canvas.width = width;
       canvas.height = height;
       const ctx = canvas.getContext("2d");
-      if (!ctx) throw new Error("Kunne ikke oprette billede");
+      if (!ctx) throw new Error(t("scanner_image_error"));
 
       ctx.drawImage(video, 0, 0, width, height);
       const base64Image = canvas.toDataURL("image/jpeg", 0.5).split(",")[1];
@@ -67,37 +68,40 @@ export function Scanner() {
 
       const combinedList = [...profile.allergies, ...profile.nolist];
       const userAllergies =
-        combinedList.length > 0 ? combinedList.join(", ") : "Ingen angivet";
+        combinedList.length > 0
+          ? combinedList.join(", ")
+          : t("scanner_no_allergies");
 
       const promptText = `
-        Du er en præcis assistent for madallergikere.
+        You are a precise assistant for people with food allergies. The user's current language is '${i18n.language}'.
 
         Data:
-        1. Brugerens nej-liste: [${userAllergies}].
+        1. User's "no-list" (allergies and things to avoid): [${userAllergies}].
 
-        Dine opgaver:
-        1. Læs teksten på billedet. Udtræk KUN faktiske mad-ingredienser (f.eks. "mango", "sukker", "mælk").
-        2. Ignorer fuldstændigt mærker (som 'coop'), vægt ('100g'), overskrifter ('ingredienser') og fyldord ('SNACK', 'Opbevaring'). Flet gerne ord sammen, hvis det giver mening (f.eks. "Tørret mango" i stedet for to ord).
-        3. Sammenlign dine fundne ingredienser med brugerens nej-liste (ignorer store/små bogstaver).
+        Your tasks:
+        1. Read the text in the image. Extract ONLY actual food ingredients (e.g., "mango", "sugar", "milk").
+        2. Completely ignore brands (like 'coop'), weights ('100g'), headers ('ingredients'), and filler words ('SNACK', 'Storage'). Merge words if it makes sense (e.g., "Dried mango" instead of two words).
+        3. Compare the ingredients you find with the user's "no-list" (case-insensitive).
 
-        SVAR KUN MED ET JSON-OBJEKT:
+        ONLY RESPOND WITH A JSON OBJECT in the following format:
         {
           "isSafe": boolean,
-          "foundAllergens": ["liste over ord fra nej-listen der blev fundet"],
-          "extractedIngredients": ["Kun de faktiske ingredienser du udtrak, vasket for støj"], 
-          "message": "En kort dansk konklusion." 
+          "foundAllergens": ["list of words from the no-list that were found"],
+          "extractedIngredients": ["Only the actual ingredients you extracted, cleaned of noise"],
+          "message": "A short conclusion in the user's language ('${i18n.language}')."
         }
       `;
 
       const response = await fetch("/api/scan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ base64Image, promptText }),
+        body: JSON.stringify({ base64Image, promptText, lang: i18n.language }),
       });
 
       const data = await response.json();
 
-      if (!response.ok) throw new Error(data.error || "Serverfejl");
+      if (!response.ok)
+        throw new Error(data.error || t("scanner_server_error"));
 
       const resultText = data.candidates?.[0]?.content?.parts?.[0]?.text;
       if (resultText) {
@@ -108,7 +112,7 @@ export function Scanner() {
         navigate("/result", { state: { aiResult: JSON.parse(cleanJson) } });
       }
     } catch (error: any) {
-      toast.error("Fejl: " + error.message);
+      toast.error(t("error", { message: error.message }));
       setIsScanning(false);
       setCapturedImage(null);
     }
@@ -130,11 +134,11 @@ export function Scanner() {
 
       {!capturedImage && (
         <div className="absolute bottom-28 z-10">
-          <Button
+          <button
             onClick={handleScan}
             disabled={isScanning}
-            className="w-20 h-20 bg-white rounded-full border-4 border-blue active:scale-95 transition-all"
-          ></Button>
+            className="w-[72px] h-[72px] rounded-full bg-white shadow-lg ring-4 ring-white/30 active:scale-95 transition-all disabled:opacity-50"
+          />
         </div>
       )}
 
@@ -152,12 +156,12 @@ export function Scanner() {
               className="w-32 h-32 object-contain animate-pulse mb-2"
             />
             <h2 className="text-3xl font-black text-white tracking-tight">
-              Billede taget!
+              {t("scanner_image_captured")}
             </h2>
             <p className="text-white/70 text-base leading-relaxed">
-              Analyserer ingredienser...
+              {t("scanner_analyzing")}
               <br />
-              <span className="font-bold text-white">Færdig med varen.</span>
+              <span className="font-bold text-white">{t("scanner_done")}</span>
             </p>
             <div className="pt-6">
               <div className="animate-spin border-4 border-slate-500 border-t-transparent rounded-full w-10 h-10 mx-auto" />
