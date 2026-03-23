@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useProfile } from "../context/ProfileContext";
 import { Button } from "../components/ui/button";
-import { Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 export function Scanner() {
@@ -146,11 +145,11 @@ export function Scanner() {
             alt="Captured"
             className="absolute inset-0 w-full h-full object-cover opacity-30"
           />
-          <div className="relative text-center px-8 space-y-4">
+          <div className="relative text-center px-8 space-y-4 flex flex-col items-center">
             <img
               src="/logoet.svg"
               alt="Logo"
-              className="w-12 h-12 object-contain animate-pulse"
+              className="w-32 h-32 object-contain animate-pulse mb-2"
             />
             <h2 className="text-3xl font-black text-white tracking-tight">
               Billede taget!
