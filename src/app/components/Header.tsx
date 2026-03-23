@@ -1,4 +1,4 @@
-import { Search } from "lucide-react";
+import { SearchBar } from "./ui/SearchBar"; 
 
 interface HomeHeaderProps {
   hasProfile: boolean;
@@ -34,16 +34,11 @@ export function HomeHeader({
         </div>
       </div>
 
-      <div className="relative">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-        <input
-          type="text"
-          placeholder="Søg i artikler, tips og opskrifter..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full h-12 bg-slate-50 border-2 border-slate-100 rounded-2xl pl-12 pr-4 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-slate-300 focus:bg-white transition-all font-medium"
-        />
-      </div>
+      <SearchBar
+        value={searchQuery}
+        onChange={setSearchQuery}
+        placeholder="Søg i artikler, tips og opskrifter..."
+      />
     </div>
   );
 }

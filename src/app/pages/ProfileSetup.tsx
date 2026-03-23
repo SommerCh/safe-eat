@@ -318,6 +318,7 @@ const ALLERGY_MAP: Record<string, string[]> = {
   ],
   Soja: ["soja", "sojabønner", "sojalecitin", "tofu", "edamame"],
   Fisk: ["fisk", "tun", "laks", "torsk", "sild", "fiskeolie"],
+  Sukker: ["sukker", "glukose", "fruktose", "dextrose", "sirup", "honning"],
 };
 
 export function ProfileSetup() {
@@ -334,7 +335,7 @@ export function ProfileSetup() {
         ? [profile.diet]
         : [],
   );
-  const [nolist, setNolist] = useState<string[]>(profile.blacklist || []);
+  const [nolist, setNolist] = useState<string[]>(profile.nolist || []);
 
   const totalScans = scanHistory.length;
   const safeProducts = scanHistory.filter((scan) => scan.safe).length;
@@ -346,7 +347,7 @@ export function ProfileSetup() {
     setProfile({
       allergies: selectedAllergies,
       diet: selectedDiets,
-      blacklist: nolist,
+      nolist: nolist,
     });
   }, [selectedAllergies, selectedDiets, nolist, setProfile]);
 

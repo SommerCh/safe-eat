@@ -1,4 +1,4 @@
-import React, {
+import {
   createContext,
   useContext,
   useEffect,
@@ -15,7 +15,7 @@ interface ScanHistory {
 interface UserProfile {
   allergies: string[];
   diet: string[];
-  blacklist: string[];
+  nolist: string[];
 }
 
 interface ProfileContextType {
@@ -27,6 +27,7 @@ interface ProfileContextType {
   addToScanHistory: (scan: ScanHistory) => void;
   favorites: (string | number)[];
   toggleFavorite: (id: string | number) => void;
+  toggleNoListItem: (ingredient: string) => void; // Tilføjet!
 }
 
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
@@ -34,9 +35,7 @@ const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
 export function ProfileProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<UserProfile>(() => {
     const saved = localStorage.getItem("userProfile");
-    return saved
-      ? JSON.parse(saved)
-      : { allergies: [], diet: [], blacklist: [] };
+    return saved ? JSON.parse(saved) : { allergies: [], diet: [], nolist: [] };
   });
 
   const [favorites, setFavorites] = useState<(string | number)[]>(() => {
@@ -73,6 +72,18 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
     );
   };
 
+  // NY FUNKTION: Tænder og slukker for ingredienser i nolist
+  const toggleNoListItem = (ingredient: string) => {
+    const cleanItem = ingredient.toLowerCase().trim();
+    setProfile((prev) => {
+      const currentList = prev.nolist || [];
+      const newList = currentList.includes(cleanItem)
+        ? currentList.filter((item) => item !== cleanItem)
+        : [...currentList, cleanItem];
+      return { ...prev, nolist: newList };
+    });
+  };
+
   return (
     <ProfileContext.Provider
       value={{
@@ -84,6 +95,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
         addToScanHistory,
         favorites,
         toggleFavorite,
+        toggleNoListItem, // Eksporteret!
       }}
     >
       {children}

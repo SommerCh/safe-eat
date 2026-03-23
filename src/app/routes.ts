@@ -7,8 +7,8 @@ import { Scanner } from "./pages/Scanner";
 import { Result } from "./pages/Result";
 import { ProfileSettings } from "./components/profile/ProfileSettings";
 import { ArticleDetail } from "./pages/ArticleDetail";
-import { Favorites } from "./pages/Favorites"; 
-import {Dictionary} from "./pages/IngredientDictionary";
+import { Favorites } from "./pages/Favorites";
+import { Dictionary } from "./pages/Dictionary";
 
 export const router = createBrowserRouter([
   {
@@ -47,8 +47,8 @@ export const router = createBrowserRouter([
         path: "favorites",
         Component: Favorites,
       },
-        {
-        path: "test",
+      {
+        path: "dictionary",
         Component: Dictionary,
       },
     ],

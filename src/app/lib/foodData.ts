@@ -34,7 +34,7 @@ const foodData: FoodCategory[] = [
         ],
       },
       {
-        titel: "Sirup & Flydende former",
+        titel: "Flydende",
         synonymer: [
           "Agavesirup",
           "Ahornsirup",
@@ -57,7 +57,7 @@ const foodData: FoodCategory[] = [
         ],
       },
       {
-        titel: "Faste sukkerformer & Handelsnavne",
+        titel: "Faste former",
         synonymer: [
           "Brun farin",
           "Brunt sukker",
@@ -94,7 +94,7 @@ const foodData: FoodCategory[] = [
     isCommon: false,
     undertyper: [
       {
-        titel: "Sukkeralkoholer (Polyoler)",
+        titel: "Sukkeralkoholer",
         synonymer: [
           "Erythritol (E968)",
           "Isomalt (E953)",
@@ -106,7 +106,7 @@ const foodData: FoodCategory[] = [
         ],
       },
       {
-        titel: "Sødestoffer (E-numre)",
+        titel: "Sødestoffer",
         synonymer: [
           "Acesulfam-K (E950)",
           "Advantam (E969)",
@@ -125,11 +125,11 @@ const foodData: FoodCategory[] = [
   },
   {
     id: "animal",
-    kategori: "Animalske ingredienser",
+    kategori: "Animalsk",
     isCommon: true,
     undertyper: [
       {
-        titel: "Kød & Fjerkræ",
+        titel: "Kød og fjerkræ",
         synonymer: [
           "Bouillon",
           "Fjerkræ",
@@ -141,7 +141,7 @@ const foodData: FoodCategory[] = [
         ],
       },
       {
-        titel: "Fisk & Skaldyr",
+        titel: "Fisk og skaldyr",
         synonymer: [
           "Ansjoser",
           "Fiskelim",
@@ -151,7 +151,7 @@ const foodData: FoodCategory[] = [
         ],
       },
       {
-        titel: "Tilsætningsstoffer & Skjulte kilder",
+        titel: "Skjulte kilder",
         synonymer: [
           "Adeps",
           "Albumin",
@@ -176,7 +176,7 @@ const foodData: FoodCategory[] = [
   },
   {
     id: "gluten",
-    kategori: "Gluten & Hvede",
+    kategori: "Gluten og Hvede",
     isCommon: true,
     undertyper: [
       {
@@ -196,7 +196,7 @@ const foodData: FoodCategory[] = [
         ],
       },
       {
-        titel: "Mel & Forarbejdede produkter",
+        titel: "Mel og produkter",
         synonymer: [
           "Atta",
           "Bulgur",
@@ -215,7 +215,7 @@ const foodData: FoodCategory[] = [
         ],
       },
       {
-        titel: "Malt & Skjult gluten",
+        titel: "Skjult gluten",
         synonymer: [
           "Bygmalt",
           "Malt",
@@ -228,7 +228,7 @@ const foodData: FoodCategory[] = [
   },
   {
     id: "dairy",
-    kategori: "Mejeri & Laktose",
+    kategori: "Mejeri og Laktose",
     isCommon: true,
     undertyper: [
       {
@@ -244,7 +244,7 @@ const foodData: FoodCategory[] = [
         ],
       },
       {
-        titel: "Mælkebestanddele & Forarbejdede kilder",
+        titel: "Bestanddele",
         synonymer: [
           "Ghee",
           "Isolat",
@@ -270,7 +270,7 @@ const foodData: FoodCategory[] = [
   },
   {
     id: "nuts",
-    kategori: "Nødder & Jordnødder",
+    kategori: "Nødder og Peanuts",
     isCommon: false,
     undertyper: [
       {
@@ -289,7 +289,7 @@ const foodData: FoodCategory[] = [
         ],
       },
       {
-        titel: "Jordnødder & Forarbejdede produkter",
+        titel: "Jordnødder",
         synonymer: [
           "Jordnøddeolie",
           "Jordnødder",
@@ -307,7 +307,7 @@ const foodData: FoodCategory[] = [
     isCommon: false,
     undertyper: [
       {
-        titel: "Sojaprodukter",
+        titel: "Produkter",
         synonymer: [
           "Edamame",
           "Miso",
@@ -323,7 +323,7 @@ const foodData: FoodCategory[] = [
         ],
       },
       {
-        titel: "Tilsætningsstoffer & Skjult soja",
+        titel: "Skjult soja",
         synonymer: [
           "E322",
           "Glycine max",
@@ -340,11 +340,11 @@ const foodData: FoodCategory[] = [
     isCommon: false,
     undertyper: [
       {
-        titel: "Æggebestanddele",
+        titel: "Bestanddele",
         synonymer: ["Æggeblomme", "Æggehvide", "Æggehvidepulver", "Æggepulver"],
       },
       {
-        titel: "Tilsætningsstoffer & Proteiner",
+        titel: "Skjulte kilder",
         synonymer: [
           "Albumin",
           "Avidin",

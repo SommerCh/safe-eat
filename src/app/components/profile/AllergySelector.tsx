@@ -1,7 +1,7 @@
-// 
+//
 
 import { useState } from "react";
-import { Search, X } from "lucide-react";
+import {  X } from "lucide-react";
 import { Label } from "../ui/label";
 
 const allergyOptions = [
@@ -12,6 +12,7 @@ const allergyOptions = [
   "Skalddyr",
   "Soja",
   "Fisk",
+  "Sukker",
 ];
 
 interface AllergySelectorProps {
@@ -32,7 +33,6 @@ export function AllergySelector({ selected, onToggle }: AllergySelectorProps) {
         Vælg dine allergier
       </Label>
 
-      {/* Allergi-knapper */}
       <div className="flex flex-wrap gap-2">
         {filteredAllergies.map((allergy) => (
           <button

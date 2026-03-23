@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useProfile } from "../context/ProfileContext";
 import { Button } from "../components/ui/button";
-import { Camera, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 export function Scanner() {
@@ -48,7 +48,7 @@ export function Scanner() {
 
       setCapturedImage(canvas.toDataURL("image/jpeg"));
 
-      const combinedList = [...profile.allergies, ...profile.blacklist];
+      const combinedList = [...profile.allergies, ...profile.nolist];
       const userAllergies =
         combinedList.length > 0 ? combinedList.join(", ") : "Ingen angivet";
 
@@ -110,7 +110,7 @@ export function Scanner() {
       />
 
       {!capturedImage && (
-        <div className="relative w-72 h-80 border-4 border-blue-500 rounded-3xl pointer-events-none" />
+        <div  />
       )}
 
       {!capturedImage && (
@@ -118,9 +118,8 @@ export function Scanner() {
           <Button
             onClick={handleScan}
             disabled={isScanning}
-            className="w-20 h-20 bg-blue-600 rounded-full border-4 border-white active:scale-95 transition-all"
+            className="w-20 h-20 bg-white rounded-full border-4 border-blue active:scale-95 transition-all"
           >
-            <Camera className="w-8 h-8 text-white" />
           </Button>
         </div>
       )}
@@ -134,7 +133,7 @@ export function Scanner() {
           />
           <div className="relative text-center px-8 space-y-4">
             <div className="mx-auto w-20 h-20 bg-white/10 rounded-full flex items-center justify-center border border-white/20">
-              <Sparkles className="w-10 h-10 text-blue-400 animate-pulse" />
+              <Sparkles className="w-10 h-10 text-slate-400 animate-pulse" />
             </div>
             <h2 className="text-3xl font-black text-white tracking-tight">
               Billede taget!
@@ -142,12 +141,10 @@ export function Scanner() {
             <p className="text-white/70 text-base leading-relaxed">
               Analyserer ingredienser...
               <br />
-              <span className="font-bold text-white">
-                Færdig med varen. 
-              </span>
+              <span className="font-bold text-white">Færdig med varen.</span>
             </p>
             <div className="pt-6">
-              <div className="animate-spin border-4 border-blue-500 border-t-transparent rounded-full w-10 h-10 mx-auto" />
+              <div className="animate-spin border-4 border-slate-500 border-t-transparent rounded-full w-10 h-10 mx-auto" />
             </div>
           </div>
         </div>

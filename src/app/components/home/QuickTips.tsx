@@ -53,7 +53,6 @@ export function QuickTips() {
         Hurtige tips
       </h2>
 
-      {/* Ændret fra flex-row til grid med 2 kolonner */}
       <div className="grid grid-cols-2 gap-3 pb-4">
         {QUICK_TIPS.map((tip) => {
           const Icon = tip.icon;

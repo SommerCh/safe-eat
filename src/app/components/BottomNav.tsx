@@ -1,4 +1,4 @@
-import { Home, ScanLine, User } from "lucide-react";
+import { Home, ScanLine, User, BookOpen } from "lucide-react";
 import { Link, useLocation } from "react-router";
 
 export function BottomNav() {
@@ -6,12 +6,13 @@ export function BottomNav() {
 
   const navItems = [
     { path: "/home", icon: Home, label: "Hjem" },
-    { path: "/scanner", icon: ScanLine, label: "Scan" },
     { path: "/setup", icon: User, label: "Profil" },
+    { path: "/scanner", icon: ScanLine, label: "Scan" },
+    { path: "/dictionary", icon: BookOpen, label: "Ordbog" },
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 safe-area-bottom">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 safe-area-bottom z-50">
       <div className="max-w-md mx-auto flex justify-around items-center h-16 px-4">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
