@@ -17,7 +17,7 @@ export function ProfileSettings() {
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [initialEmail, setInitialEmail] = useState(""); 
+  const [initialEmail, setInitialEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const [loading, setLoading] = useState(false);
@@ -44,7 +44,7 @@ export function ProfileSettings() {
     setMessage({ text: "", type: "" });
 
     const updates: any = {
-      data: { full_name: name }, 
+      data: { full_name: name },
     };
 
     if (email !== initialEmail) {
@@ -61,8 +61,8 @@ export function ProfileSettings() {
       setMessage({ text: "Fejl: " + error.message, type: "error" });
     } else {
       setMessage({ text: "Din profil er blevet opdateret!", type: "success" });
-      setInitialEmail(email); 
-      setPassword(""); 
+      setInitialEmail(email);
+      setPassword("");
 
       const {
         data: { user },
@@ -86,7 +86,12 @@ export function ProfileSettings() {
     );
 
     if (confirmDelete) {
-     
+      const { error } = await supabase.rpc("delete_user");
+
+      if (error) {
+        alert("Der opstod en fejl under sletning af profilen.");
+        return;
+      }
       await supabase.auth.signOut();
       navigate("/");
     }
@@ -114,10 +119,9 @@ export function ProfileSettings() {
 
       <div className="px-6 py-8 space-y-12 max-w-md mx-auto">
         <form onSubmit={handleUpdateProfile} className="space-y-8">
-          {/* Fulde navn */}
           <div className="space-y-2">
             <label className="text-sm font-semibold text-slate-700 ml-1">
-              Fulde navn
+              Navn
             </label>
             <div className="relative">
               <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />

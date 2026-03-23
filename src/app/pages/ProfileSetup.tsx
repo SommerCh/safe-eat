@@ -258,13 +258,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useProfile } from "../context/ProfileContext";
-import {
-  Settings,
-  ArrowRight,
-  Heart,
-  ChevronRight,
-  TrendingUp,
-} from "lucide-react";
+import { Settings, ArrowRight, Heart, ChevronRight } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { AllergySelector } from "../components/profile/AllergySelector";
 import { DietSelector } from "../components/profile/DietSelector";

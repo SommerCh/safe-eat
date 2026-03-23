@@ -8,7 +8,6 @@ import {
   ChevronLeft,
   Info,
   Heart,
-  RotateCcw,
   ArrowRight,
 } from "lucide-react";
 

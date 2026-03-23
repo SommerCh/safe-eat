@@ -21,7 +21,7 @@ export function Onboarding() {
     setLoading(true);
     setErrorMsg("");
 
-    const { data, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signUp({
       email: email,
       password: password,
       options: {
@@ -34,7 +34,6 @@ export function Onboarding() {
     if (error) {
       setErrorMsg("Fejl: " + error.message);
     } else {
-      console.log("Bruger oprettet!", data);
       navigate("/setup");
     }
 
@@ -118,7 +117,6 @@ export function Onboarding() {
             onSubmit={isLogin ? handleLogin : handleSignUp}
             className="space-y-4 text-left"
           >
-            {/* Navnefelt vises KUN når man opretter en ny profil */}
             {!isLogin && (
               <div className="relative animate-in slide-in-from-top-2 fade-in duration-300">
                 <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -140,7 +138,7 @@ export function Onboarding() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="E-mail"
+                placeholder="E-mailadresse"
                 className="w-full h-14 pl-12 pr-4 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:bg-white focus:border-slate-400 outline-none transition-all"
               />
             </div>

@@ -147,9 +147,11 @@ export function Scanner() {
             className="absolute inset-0 w-full h-full object-cover opacity-30"
           />
           <div className="relative text-center px-8 space-y-4">
-            <div className="mx-auto w-20 h-20 bg-white/10 rounded-full flex items-center justify-center border border-white/20">
-              <Sparkles className="w-10 h-10 text-slate-400 animate-pulse" />
-            </div>
+            <img
+              src="/logoet.svg"
+              alt="Logo"
+              className="w-12 h-12 object-contain animate-pulse"
+            />
             <h2 className="text-3xl font-black text-white tracking-tight">
               Billede taget!
             </h2>

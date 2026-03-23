@@ -1,17 +1,40 @@
-import { SearchBar } from "./ui/SearchBar"; 
+import { useState, useEffect } from "react";
+import { SearchBar } from "./ui/SearchBar";
+import { supabase } from "../lib/supabase";
 
 interface HomeHeaderProps {
-  hasProfile: boolean;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
-  userName?: string;
 }
 
-export function HomeHeader({
-  searchQuery,
-  setSearchQuery,
-  userName,
-}: HomeHeaderProps) {
+export function HomeHeader({ searchQuery, setSearchQuery }: HomeHeaderProps) {
+  const [firstName, setFirstName] = useState("");
+
+  useEffect(() => {
+    const getProfile = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (user?.user_metadata?.full_name) {
+        const name = user.user_metadata.full_name.split(" ")[0];
+        setFirstName(name);
+      }
+    };
+
+    getProfile();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user?.user_metadata?.full_name) {
+        setFirstName(session.user.user_metadata.full_name.split(" ")[0]);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   const getGreeting = () => {
     const hour = new Date().getHours();
     if (hour >= 5 && hour < 10) return "Godmorgen";
@@ -22,16 +45,14 @@ export function HomeHeader({
 
   return (
     <div className="bg-white px-6 pt-12 pb-6 sticky top-0 z-10 border-b border-slate-100">
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-            {getGreeting()}
-            {userName ? ` ${userName}` : ""}
-          </h1>
-          <p className="text-slate-500 mt-2 font-medium">
-            Find inspiration til din hverdag
-          </p>
-        </div>
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+          {getGreeting()}
+          {firstName ? ` ${firstName}` : ""}
+        </h1>
+        <p className="text-slate-500 mt-2 font-medium">
+          Find inspiration til din hverdag
+        </p>
       </div>
 
       <SearchBar

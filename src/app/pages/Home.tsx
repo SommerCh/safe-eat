@@ -38,7 +38,6 @@ export function Home() {
         hasProfile={hasProfile}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
-        userName={userName}
       />
 
       <div className="px-6 py-6 space-y-8">
