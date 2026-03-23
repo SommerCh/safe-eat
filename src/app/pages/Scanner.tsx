@@ -38,12 +38,30 @@ export function Scanner() {
     try {
       const canvas = canvasRef.current;
       const video = videoRef.current;
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
+
+      // Nedskalering
+      const MAX_DIMENSION = 1024;
+      let width = video.videoWidth;
+      let height = video.videoHeight;
+
+      if (width > height) {
+        if (width > MAX_DIMENSION) {
+          height = Math.round((height * MAX_DIMENSION) / width);
+          width = MAX_DIMENSION;
+        }
+      } else {
+        if (height > MAX_DIMENSION) {
+          width = Math.round((width * MAX_DIMENSION) / height);
+          height = MAX_DIMENSION;
+        }
+      }
+
+      canvas.width = width;
+      canvas.height = height;
       const ctx = canvas.getContext("2d");
       if (!ctx) throw new Error("Kunne ikke oprette billede");
 
-      ctx.drawImage(video, 0, 0);
+      ctx.drawImage(video, 0, 0, width, height);
       const base64Image = canvas.toDataURL("image/jpeg", 0.5).split(",")[1];
 
       setCapturedImage(canvas.toDataURL("image/jpeg"));
@@ -65,8 +83,8 @@ export function Scanner() {
 
         SVAR KUN MED ET JSON-OBJEKT:
         {
-          "isSafe": boolean, // false hvis et ord fra nej-listen findes i ingredienserne
-          "foundAllergens": ["liste over ord fra nej-listen der blev fundet"], // Tom hvis ingen match
+          "isSafe": boolean,
+          "foundAllergens": ["liste over ord fra nej-listen der blev fundet"],
           "extractedIngredients": ["Kun de faktiske ingredienser du udtrak, vasket for støj"], 
           "message": "En kort dansk konklusion." 
         }
@@ -98,7 +116,7 @@ export function Scanner() {
   };
 
   return (
-    <div className="min-h-screen bg-black relative flex flex-col items-center justify-center">
+    <div className="fixed inset-0 bg-black overflow-hidden flex flex-col items-center justify-center">
       <canvas ref={canvasRef} className="hidden" />
 
       <video
@@ -109,23 +127,20 @@ export function Scanner() {
         className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${capturedImage ? "opacity-0" : "opacity-100"}`}
       />
 
-      {!capturedImage && (
-        <div  />
-      )}
+      {!capturedImage && <div />}
 
       {!capturedImage && (
-        <div className="absolute bottom-28">
+        <div className="absolute bottom-28 z-10">
           <Button
             onClick={handleScan}
             disabled={isScanning}
             className="w-20 h-20 bg-white rounded-full border-4 border-blue active:scale-95 transition-all"
-          >
-          </Button>
+          ></Button>
         </div>
       )}
 
       {capturedImage && (
-        <div className="absolute inset-0 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center animate-in fade-in duration-300">
+        <div className="absolute inset-0 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center animate-in fade-in duration-300 z-20">
           <img
             src={capturedImage}
             alt="Captured"
