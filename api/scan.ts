@@ -1,6 +1,6 @@
 export default async function handler(req: any, res: any) {
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Only POST requests are allowed" });
+    return res.status(405).json({ error: "Kun POST anmodninger er tilladt" });
   }
 
   try {
@@ -8,7 +8,9 @@ export default async function handler(req: any, res: any) {
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
-      return res.status(500).json({ error: "API key is missing in Vercel" });
+      return res
+        .status(500)
+        .json({ error: "API-nøgle mangler i serverens miljøvariabler" });
     }
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
@@ -33,13 +35,13 @@ export default async function handler(req: any, res: any) {
     if (!googleResponse.ok) {
       return res
         .status(googleResponse.status)
-        .json({ error: data.error?.message || "Error from Google API" });
+        .json({ error: data.error?.message || "Fejl fra Google API" });
     }
 
     return res.status(200).json(data);
   } catch (error) {
     const errorMessage =
-      error instanceof Error ? error.message : "Unknown server error";
+      error instanceof Error ? error.message : "Ukendt serverfejl";
     return res.status(500).json({ error: errorMessage });
   }
 }
