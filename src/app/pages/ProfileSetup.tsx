@@ -5,62 +5,13 @@ import { Settings, ArrowRight, Heart, ChevronRight } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { AllergySelector } from "../components/profile/AllergySelector";
 import { DietSelector } from "../components/profile/DietSelector";
+import { HealthSelector } from "../components/profile/HealthSelector";
 import { NolistInput } from "../components/profile/NolistInput";
-
-const DIET_MAP: Record<string, string[]> = {
-  keto: ["sukker", "hvede", "kartofler", "ris", "pasta", "majs"],
-  vegan: ["kød", "mælk", "æg", "honning", "gelatine", "valle", "smør"],
-  paleo: [
-    "sukker",
-    "mejeriprodukter",
-    "korn",
-    "bælgfrugter",
-    "kunstige sødestoffer",
-  ],
-  vegetarian: ["kød", "fisk", "skaldyr", "fjerkræ"],
-};
-
-const ALLERGY_MAP: Record<string, string[]> = {
-  Nødder: [
-    "nødder",
-    "mandler",
-    "hasselnødder",
-    "valnødder",
-    "cashewnødder",
-    "pekannødder",
-    "paranødder",
-    "pistacienødder",
-    "macadamianødder",
-  ],
-  Laktose: [
-    "mælk",
-    "laktose",
-    "valle",
-    "fløde",
-    "smør",
-    "ost",
-    "kasein",
-    "skummetmælkspulver",
-  ],
-  Gluten: ["gluten", "hvede", "rug", "byg", "havre", "spelt", "durum"],
-  Æg: ["æg", "æggehvide", "æggeblomme", "æggepulver", "albumin"],
-  Skalddyr: [
-    "skaldyr",
-    "rejer",
-    "krabbe",
-    "hummer",
-    "krebs",
-    "muslinger",
-    "østers",
-  ],
-  Soja: ["soja", "sojabønner", "sojalecitin", "tofu", "edamame"],
-  Fisk: ["fisk", "tun", "laks", "torsk", "sild", "fiskeolie"],
-  Sukker: ["sukker", "glukose", "fruktose", "dextrose", "sirup", "honning"],
-};
+import { DIET_MAP, HEALTH_MAP, ALLERGY_MAP } from "../lib/foodData";
 
 export function ProfileSetup() {
   const navigate = useNavigate();
-  const { profile, setProfile, scanHistory } = useProfile();
+  const { profile, setProfile } = useProfile();
 
   const [selectedAllergies, setSelectedAllergies] = useState<string[]>(
     profile.allergies || [],
@@ -72,58 +23,57 @@ export function ProfileSetup() {
         ? [profile.diet]
         : [],
   );
+  const [selectedHealth, setSelectedHealth] = useState<string[]>(
+    profile.health || [],
+  );
   const [nolist, setNolist] = useState<string[]>(profile.nolist || []);
-
-  const totalScans = scanHistory.length;
-  const safeProducts = scanHistory.filter((scan) => scan.safe).length;
-  const unsafeProducts = totalScans - safeProducts;
-  const safePercentage =
-    totalScans > 0 ? Math.round((safeProducts / totalScans) * 100) : 0;
 
   useEffect(() => {
     setProfile({
       allergies: selectedAllergies,
       diet: selectedDiets,
+      health: selectedHealth,
       nolist: nolist,
     });
-  }, [selectedAllergies, selectedDiets, nolist, setProfile]);
+  }, [selectedAllergies, selectedDiets, selectedHealth, nolist, setProfile]);
 
   const handleToggleAllergy = (allergy: string) => {
     const isAdding = !selectedAllergies.includes(allergy);
-    const allergyIngredients = (ALLERGY_MAP[allergy] || [allergy]).map((i) =>
+    const ingredients = (ALLERGY_MAP[allergy] || [allergy]).map((i) =>
       i.toLowerCase(),
     );
-
     setSelectedAllergies((prev) =>
       isAdding ? [...prev, allergy] : prev.filter((a) => a !== allergy),
     );
-
-    if (isAdding) {
-      setNolist((prev) =>
-        Array.from(new Set([...prev, ...allergyIngredients])),
-      );
-    } else {
-      setNolist((prev) =>
-        prev.filter((item) => !allergyIngredients.includes(item.toLowerCase())),
-      );
-    }
+    updateNolist(ingredients, isAdding);
   };
 
   const handleToggleDiet = (diet: string) => {
     const isAdding = !selectedDiets.includes(diet);
-    const dietIngredients = (DIET_MAP[diet] || []).map((i) => i.toLowerCase());
-
-    setSelectedDiets(
-      isAdding
-        ? [...selectedDiets, diet]
-        : selectedDiets.filter((d) => d !== diet),
+    const ingredients = (DIET_MAP[diet] || []).map((i) => i.toLowerCase());
+    setSelectedDiets((prev) =>
+      isAdding ? [...prev, diet] : prev.filter((d) => d !== diet),
     );
+    updateNolist(ingredients, isAdding);
+  };
 
+  const handleToggleHealth = (condition: string) => {
+    const isAdding = !selectedHealth.includes(condition);
+    const ingredients = (HEALTH_MAP[condition] || []).map((i) =>
+      i.toLowerCase(),
+    );
+    setSelectedHealth((prev) =>
+      isAdding ? [...prev, condition] : prev.filter((h) => h !== condition),
+    );
+    updateNolist(ingredients, isAdding);
+  };
+
+  const updateNolist = (ingredients: string[], isAdding: boolean) => {
     if (isAdding) {
-      setNolist((prev) => Array.from(new Set([...prev, ...dietIngredients])));
+      setNolist((prev) => Array.from(new Set([...prev, ...ingredients])));
     } else {
       setNolist((prev) =>
-        prev.filter((item) => !dietIngredients.includes(item.toLowerCase())),
+        prev.filter((item) => !ingredients.includes(item.toLowerCase())),
       );
     }
   };
@@ -139,7 +89,21 @@ export function ProfileSetup() {
     setNolist((prev) => prev.filter((item) => item !== itemToRemove));
   };
 
-  const handleClearAll = () => setNolist([]);
+  const handleClearAll = () => {
+    setNolist([]);
+
+    setSelectedAllergies([]);
+    setSelectedDiets([]);
+    setSelectedHealth([]);
+
+    setProfile({
+      ...profile,
+      allergies: [],
+      diet: [],
+      health: [],
+      nolist: [],
+    });
+  };
 
   return (
     <div className="min-h-screen bg-white pb-32">
@@ -152,18 +116,22 @@ export function ProfileSetup() {
         </div>
         <button
           onClick={() => navigate("/settings")}
-          className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center border border-slate-100 mt-1 transition-colors"
+          className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center border border-slate-100 mt-1"
         >
           <Settings className="w-6 h-6 text-slate-700" />
         </button>
       </div>
 
-      <div className="px-6 py-8 space-y-12 max-w-md mx-auto">
+      <div className="px-6 py-8 space-y-10 max-w-md mx-auto">
         <AllergySelector
           selected={selectedAllergies}
           onToggle={handleToggleAllergy}
         />
         <DietSelector selected={selectedDiets} onToggle={handleToggleDiet} />
+        <HealthSelector
+          selected={selectedHealth}
+          onToggle={handleToggleHealth}
+        />
         <NolistInput
           items={nolist}
           onRemove={handleRemoveItem}
@@ -174,83 +142,29 @@ export function ProfileSetup() {
         <div className="pt-4 space-y-4">
           <Button
             onClick={() => navigate("/scanner")}
-            className="w-full h-16 bg-slate-950 text-white rounded-2xl text-lg font-bold shadow-sm flex items-center justify-center gap-3 transition-all active:scale-[0.98]"
+            className="w-full h-16 bg-slate-950 text-white rounded-2xl text-lg font-bold shadow-sm flex items-center justify-center gap-3"
           >
             Åbn scanner <ArrowRight className="w-5 h-5" />
           </Button>
 
           <button
             onClick={() => navigate("/favorites")}
-            className="w-full flex items-center gap-4 p-4 bg-white border border-slate-100 rounded-2xl hover:bg-slate-50 active:scale-[0.98] transition-all"
+            className="w-full flex items-center gap-4 p-4 bg-white border border-slate-100 rounded-2xl transition-all active:scale-[0.98]"
           >
             <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center">
               <Heart className="w-5 h-5 text-red-500 fill-red-500" />
             </div>
             <div className="flex-1 text-left">
-              <span className="block text-slate-900 font-bold text-base leading-none">
+              <span className="block text-slate-900 font-bold text-base">
                 Mine favoritter
               </span>
-              <span className="text-slate-500 text-xs mt-1">
+              <span className="text-slate-500 text-xs">
                 Se dine gemte produkter
               </span>
             </div>
             <ChevronRight className="w-5 h-5 text-slate-300" />
           </button>
         </div>
-
-        {/* {totalScans > 0 && (
-          <section className="pt-8 border-t border-slate-100">
-            <h2 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-blue-900" /> Dit overblik
-            </h2>
-
-            <div className="grid grid-cols-3 gap-3">
-              <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 text-center">
-                <div className="text-2xl font-bold text-slate-900">
-                  {totalScans}
-                </div>
-                <div className="text-[10px] uppercase font-bold text-slate-400 mt-1 tracking-wider">
-                  Scannede
-                </div>
-              </div>
-              <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 text-center">
-                <div className="text-2xl font-bold text-emerald-600">
-                  {safeProducts}
-                </div>
-                <div className="text-[10px] uppercase font-bold text-emerald-600/60 mt-1 tracking-wider">
-                  Sikre
-                </div>
-              </div>
-              <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 text-center">
-                <div className="text-2xl font-bold text-rose-600">
-                  {unsafeProducts}
-                </div>
-                <div className="text-[10px] uppercase font-bold text-rose-600/60 mt-1 tracking-wider">
-                  Usikre
-                </div>
-              </div>
-            </div>
-
-            {safePercentage > 0 && (
-              <div className="mt-3 bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                    Sikkerhedsrate
-                  </span>
-                  <span className="text-sm font-black text-blue-900">
-                    {safePercentage}%
-                  </span>
-                </div>
-                <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-blue-500 rounded-full transition-all duration-1000"
-                    style={{ width: `${safePercentage}%` }}
-                  />
-                </div>
-              </div>
-            )}
-          </section>
-        )} */}
       </div>
     </div>
   );

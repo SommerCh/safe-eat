@@ -71,7 +71,7 @@ import { useNavigate } from "react-router";
 import { ChevronLeft, Heart, BookOpen, Search } from "lucide-react";
 import { useProfile } from "../context/ProfileContext";
 import { ARTICLES } from "../components/articles/articleData";
-import foodData from "../lib/foodData";
+import foodData from "../lib/dicData";
 
 export function Favorites() {
   const navigate = useNavigate();

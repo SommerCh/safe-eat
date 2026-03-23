@@ -1,97 +1,9 @@
-// import { useState } from "react";
-// import { Label } from "../ui/label";
-// import { Check, ChevronDown } from "lucide-react";
-
-// const dietOptions = [
-//   { value: "keto", label: "Keto" },
-//   { value: "vegan", label: "Vegansk" },
-//   { value: "paleo", label: "Palæo" },
-//   { value: "vegetarian", label: "Vegetar" },
-// ];
-
-// interface DietSelectorProps {
-//   selected: string[];
-//   onToggle: (diet: string) => void;
-// }
-
-// export function DietSelector({ selected, onToggle }: DietSelectorProps) {
-//   const [isOpen, setIsOpen] = useState(false);
-
-//   const getLabel = () => {
-//     if (selected.length === 0) return "Vælg diæter...";
-//     return dietOptions
-//       .filter((d) => selected.includes(d.value))
-//       .map((d) => d.label)
-//       .join(", ");
-//   };
-
-//   return (
-//     <div className="space-y-4">
-//       <Label className="text-lg font-semibold text-slate-900 ml-1">
-//         Vælg dine diæter
-//       </Label>
-
-//       <div className="relative">
-//         <button
-//           type="button"
-//           onClick={() => setIsOpen(!isOpen)}
-//           className="w-full h-14 px-5 rounded-2xl border-2 border-slate-200 bg-slate-50 flex items-center justify-between transition-all active:scale-[0.99] focus:outline-none focus:border-slate-400"
-//         >
-//           <span
-//             className={`truncate text-base ${selected.length > 0 ? "text-slate-900 font-medium" : "text-slate-400"}`}
-//           >
-//             {getLabel()}
-//           </span>
-//           <ChevronDown
-//             className={`w-5 h-5 text-slate-400 transition-transform ${isOpen ? "rotate-180" : ""}`}
-//           />
-//         </button>
-
-//         {isOpen && (
-//           <div className="absolute z-50 w-full mt-2 bg-white border border-slate-100 rounded-2xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-//             <div className="p-2 space-y-1">
-//               {dietOptions.map((diet) => {
-//                 const isSelected = selected.includes(diet.value);
-//                 return (
-//                   <button
-//                     key={diet.value}
-//                     type="button"
-//                     onClick={() => onToggle(diet.value)}
-//                     className="w-full h-12 px-4 rounded-xl flex items-center justify-between hover:bg-slate-50 transition-colors"
-//                   >
-//                     <span
-//                       className={`text-base ${isSelected ? "text-slate-900 font-semibold" : "text-slate-600"}`}
-//                     >
-//                       {diet.label}
-//                     </span>
-//                     {isSelected && (
-//                       <Check className="w-5 h-5 text-black stroke-[3px]" />
-//                     )}
-//                   </button>
-//                 );
-//               })}
-//             </div>
-//           </div>
-//         )}
-//       </div>
-
-//       {isOpen && (
-//         <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-//       )}
-//     </div>
-//   );
-// }
-
-import { useState } from "react";
+import { X } from "lucide-react";
 import { Label } from "../ui/label";
-import { Check, ChevronDown } from "lucide-react";
+import { DIET_MAP } from "../../lib/foodData";
 
-const dietOptions = [
-  { value: "keto", label: "Keto" },
-  { value: "vegan", label: "Vegansk" },
-  { value: "paleo", label: "Palæo" },
-  { value: "vegetarian", label: "Vegetar" },
-];
+// Vi henter navnene direkte fra dit map
+const dietOptions = Object.keys(DIET_MAP);
 
 interface DietSelectorProps {
   selected: string[];
@@ -99,15 +11,7 @@ interface DietSelectorProps {
 }
 
 export function DietSelector({ selected, onToggle }: DietSelectorProps) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const getLabel = () => {
-    if (selected.length === 0) return "Vælg diæter...";
-    return dietOptions
-      .filter((d) => selected.includes(d.value))
-      .map((d) => d.label)
-      .join(", ");
-  };
+  const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
   return (
     <div className="space-y-4">
@@ -115,53 +19,27 @@ export function DietSelector({ selected, onToggle }: DietSelectorProps) {
         Vælg dine diæter
       </Label>
 
-      <div className="relative">
-        <button
-          type="button"
-          onClick={() => setIsOpen(!isOpen)}
-          className="w-full h-14 px-5 rounded-2xl border-2 border-slate-200 bg-slate-50 flex items-center justify-between transition-all active:scale-[0.99] focus:outline-none focus:border-slate-400"
-        >
-          <span
-            className={`truncate text-base ${selected.length > 0 ? "text-slate-900 font-medium" : "text-slate-400"}`}
-          >
-            {getLabel()}
-          </span>
-          <ChevronDown
-            className={`w-5 h-5 text-slate-400 transition-transform ${isOpen ? "rotate-180" : ""}`}
-          />
-        </button>
+      <div className="flex flex-wrap gap-2">
+        {dietOptions.map((diet) => {
+          const isSelected = selected.includes(diet);
 
-        {isOpen && (
-          <div className="absolute z-50 w-full mt-2 bg-white border border-slate-100 rounded-2xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            <div className="p-2 space-y-1">
-              {dietOptions.map((diet) => {
-                const isSelected = selected.includes(diet.value);
-                return (
-                  <button
-                    key={diet.value}
-                    type="button"
-                    onClick={() => onToggle(diet.value)}
-                    className="w-full h-12 px-4 rounded-xl flex items-center justify-between hover:bg-slate-50 transition-colors"
-                  >
-                    <span
-                      className={`text-base ${isSelected ? "text-slate-900 font-semibold" : "text-slate-600"}`}
-                    >
-                      {diet.label}
-                    </span>
-                    {isSelected && (
-                      <Check className="w-5 h-5 text-black stroke-[3px]" />
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        )}
+          return (
+            <button
+              key={diet}
+              type="button"
+              onClick={() => onToggle(diet)}
+              className={`px-4 py-2 rounded-full border-2 transition-all text-sm font-medium flex items-center gap-1 ${
+                isSelected
+                  ? "bg-slate-900 border-slate-900 text-white shadow-sm"
+                  : "bg-white border-slate-200 text-slate-700 hover:border-slate-300"
+              }`}
+            >
+              {capitalize(diet === "vegan" ? "vegansk" : diet)}
+              {isSelected && <X className="w-4 h-4" />}
+            </button>
+          );
+        })}
       </div>
-
-      {isOpen && (
-        <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-      )}
     </div>
   );
 }

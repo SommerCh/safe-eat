@@ -15,6 +15,7 @@ interface ScanHistory {
 interface UserProfile {
   allergies: string[];
   diet: string[];
+  health: string[];
   nolist: string[];
 }
 

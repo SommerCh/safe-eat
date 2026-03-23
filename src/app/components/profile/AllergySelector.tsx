@@ -1,5 +1,3 @@
-//
-
 import { useState } from "react";
 import {  X } from "lucide-react";
 import { Label } from "../ui/label";
