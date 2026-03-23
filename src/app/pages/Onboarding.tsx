@@ -64,24 +64,12 @@ export function Onboarding() {
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex flex-col items-center justify-center px-6 py-12">
       <div className="w-full max-w-md space-y-8">
         <div className="flex flex-col items-center space-y-4">
-          <div className="w-24 h-24 bg-blue-500 rounded-3xl flex items-center justify-center shadow-lg">
-            <svg
-              className="w-14 h-14 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-          </div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-            SafeEat
-          </h1>
+          <img
+            src="/logotext.svg"
+            alt="SafeEat logo"
+            className="w-full h-auto p-4"
+          />
+
           <p className="text-center text-slate-500 max-w-xs">
             Scan ingredienser og lav din personlige madprofil
           </p>
@@ -172,7 +160,7 @@ export function Onboarding() {
                   id="remember"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="w-4 h-4 rounded border-gray-300 text-blue-500 focus:ring-blue-500 cursor-pointer"
+                  className="w-4 h-4 rounded border-gray-300 text-black focus:ring-black cursor-pointer"
                 />
                 <label
                   htmlFor="remember"
@@ -190,7 +178,7 @@ export function Onboarding() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full h-14 bg-blue-500 text-white hover:bg-blue-600 rounded-2xl text-base shadow-md disabled:opacity-50"
+              className="w-full h-14 bg-black text-white hover:bg-blue-600 rounded-2xl text-base shadow-md disabled:opacity-50"
             >
               {loading
                 ? isLogin
@@ -208,7 +196,7 @@ export function Onboarding() {
               : "Har du allerede en bruger? "}
             <button
               onClick={() => setIsLogin(!isLogin)}
-              className="font-semibold text-blue-600 hover:text-blue-700"
+              className="font-semibold text-blue-900 hover:text-blue-700"
             >
               {isLogin ? "Opret profil" : "Log ind"}
             </button>
