@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { useProfile } from "../context/ProfileContext";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { ImageIcon } from "lucide-react";
 
 export function Scanner() {
   const navigate = useNavigate();
@@ -10,6 +11,7 @@ export function Scanner() {
   const { profile } = useProfile();
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isScanning, setIsScanning] = useState(false);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
 
@@ -31,6 +33,110 @@ export function Scanner() {
     };
   }, [t]);
 
+  const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !canvasRef.current || isScanning) return;
+    setIsScanning(true);
+
+    try {
+      const reader = new FileReader();
+      reader.onload = async (readerEvent) => {
+        const imageDataUrl = readerEvent.target?.result as string;
+        setCapturedImage(imageDataUrl);
+
+        const img = new Image();
+        img.onload = async () => {
+          const canvas = canvasRef.current;
+
+          if (!canvas) return;
+
+          const ctx = canvas.getContext("2d");
+          if (!ctx) throw new Error(t("scanner_image_error"));
+
+          const MAX_DIMENSION = 1024;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > MAX_DIMENSION) {
+              height = Math.round((height * MAX_DIMENSION) / width);
+              width = MAX_DIMENSION;
+            }
+          } else {
+            if (height > MAX_DIMENSION) {
+              width = Math.round((width * MAX_DIMENSION) / height);
+              height = MAX_DIMENSION;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          ctx.drawImage(img, 0, 0, width, height);
+
+          const base64Image = canvas.toDataURL("image/jpeg", 0.5).split(",")[1];
+
+          const combinedList = [...profile.allergies, ...profile.nolist];
+          const userAllergies =
+            combinedList.length > 0
+              ? combinedList.join(", ")
+              : t("scanner_no_allergies");
+
+          const promptText = `
+            You are a precise assistant for people with food allergies. The user's current language is '${i18n.language}'.
+
+            Data:
+            1. User's "no-list" (allergies and things to avoid): [${userAllergies}].
+
+            Your tasks:
+            1. Read the text in the image. Extract ONLY actual food ingredients (e.g., "mango", "sugar", "milk").
+            2. Completely ignore brands (like 'coop'), weights ('100g'), headers ('ingredients'), and filler words ('SNACK', 'Storage'). Merge words if it makes sense (e.g., "Dried mango" instead of two words).
+            3. Compare the ingredients you find with the user's "no-list" (case-insensitive).
+
+            ONLY RESPOND WITH A JSON OBJECT in the following format:
+            {
+              "isSafe": boolean,
+              "foundAllergens": ["list of words from the no-list that were found"],
+              "extractedIngredients": ["Only the actual ingredients you extracted, cleaned of noise"],
+              "message": "A short conclusion in the user's language ('${i18n.language}')."
+            }
+          `;
+
+          const response = await fetch("/api/scan", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              base64Image,
+              promptText,
+              lang: i18n.language,
+            }),
+          });
+
+          const data = await response.json();
+
+          if (!response.ok)
+            throw new Error(data.error || t("scanner_server_error"));
+
+          const resultText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (resultText) {
+            const cleanJson = resultText
+              .replace(/```json/g, "")
+              .replace(/```/g, "")
+              .trim();
+            navigate("/result", { state: { aiResult: JSON.parse(cleanJson) } });
+          }
+          if (fileInputRef.current) fileInputRef.current.value = "";
+        };
+        img.src = imageDataUrl;
+      };
+      reader.readAsDataURL(file);
+    } catch (error: any) {
+      toast.error(t("error", { message: error.message }));
+      setIsScanning(false);
+      setCapturedImage(null);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
   const handleScan = async () => {
     if (!videoRef.current || !canvasRef.current || isScanning) return;
     setIsScanning(true);
@@ -39,7 +145,6 @@ export function Scanner() {
       const canvas = canvasRef.current;
       const video = videoRef.current;
 
-      // Nedskalering
       const MAX_DIMENSION = 1024;
       let width = video.videoWidth;
       let height = video.videoHeight;
@@ -122,6 +227,14 @@ export function Scanner() {
     <div className="fixed inset-0 bg-black overflow-hidden flex flex-col items-center justify-center">
       <canvas ref={canvasRef} className="hidden" />
 
+      <input
+        type="file"
+        accept="image/*"
+        ref={fileInputRef}
+        onChange={handleUpload}
+        className="hidden"
+      />
+
       <video
         ref={videoRef}
         autoPlay
@@ -130,15 +243,47 @@ export function Scanner() {
         className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${capturedImage ? "opacity-0" : "opacity-100"}`}
       />
 
-      {!capturedImage && <div />}
+      {!capturedImage && (
+        <>
+          <div className="absolute top-10 left-0 right-0 z-10 flex justify-center px-4 pointer-events-none">
+            <div className="bg-black/60 backdrop-blur-md text-white px-5 py-3 rounded-full text-sm font-medium border border-white/10 shadow-lg text-center tracking-wide">
+              Tag et billede af{" "}
+              <span className="font-bold text-[#F4642B]">ingredienslisten</span>
+            </div>
+          </div>
+
+          <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none px-8 pb-16">
+            <div className="w-full max-w-sm h-[60vh] border border-white/20 rounded-2xl relative">
+              <div className="absolute -top-1 -left-1 w-10 h-10 border-t-4 border-l-4 border-[#F4642B] rounded-tl-xl" />
+              <div className="absolute -top-1 -right-1 w-10 h-10 border-t-4 border-r-4 border-[#F4642B] rounded-tr-xl" />
+              <div className="absolute -bottom-1 -left-1 w-10 h-10 border-b-4 border-l-4 border-[#F4642B] rounded-bl-xl" />
+              <div className="absolute -bottom-1 -right-1 w-10 h-10 border-b-4 border-r-4 border-[#F4642B] rounded-br-xl" />
+            </div>
+          </div>
+        </>
+      )}
 
       {!capturedImage && (
-        <div className="absolute bottom-28 z-10">
-          <button
-            onClick={handleScan}
-            disabled={isScanning}
-            className="w-[72px] h-[72px] rounded-full bg-white shadow-lg ring-4 ring-white/30 active:scale-95 transition-all disabled:opacity-50"
-          />
+        <div className="absolute bottom-24 z-10 left-0 right-0 grid grid-cols-3 items-center px-8">
+          <div className="flex justify-start">
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isScanning}
+              className="w-[60px] h-[60px] rounded-full bg-black/50 backdrop-blur-sm border border-white/20 flex items-center justify-center shadow-lg active:scale-95 transition-all disabled:opacity-50"
+            >
+              <ImageIcon className="w-6 h-6 text-white" />
+            </button>
+          </div>
+
+          <div className="flex justify-center">
+            <button
+              onClick={handleScan}
+              disabled={isScanning}
+              className="w-[72px] h-[72px] rounded-full bg-white shadow-lg ring-4 ring-white/30 active:scale-95 transition-all disabled:opacity-50"
+            />
+          </div>
+
+          <div></div>
         </div>
       )}
 
