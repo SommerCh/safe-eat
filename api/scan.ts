@@ -1,6 +1,6 @@
 export default async function handler(req: any, res: any) {
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Kun POST anmodninger er tilladt" });
+    return res.status(405).json({ error: "Kun POST" });
   }
 
   try {
@@ -8,14 +8,43 @@ export default async function handler(req: any, res: any) {
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
-      return res
-        .status(500)
-        .json({ error: "API-nøgle mangler i serverens miljøvariabler" });
+      return res.status(500).json({ error: "API-nøgle mangler i Vercel" });
     }
 
-    const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    const listUrl = `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`;
+    const listResponse = await fetch(listUrl);
+    const listData = await listResponse.json();
 
-    const googleResponse = await fetch(url, {
+    if (!listResponse.ok) {
+      return res.status(500).json({
+        error:
+          "Kunne ikke hente modeller: " +
+          (listData.error?.message || "Ukendt fejl"),
+      });
+    }
+
+    const availableModels = listData.models || [];
+
+    const validModels = availableModels.filter(
+      (m: any) =>
+        m.supportedGenerationMethods?.includes("generateContent") &&
+        m.name.includes("gemini"),
+    );
+
+    if (validModels.length === 0) {
+      return res.status(500).json({
+        error: "Din API-nøgle har ikke adgang til nogen billed-modeller.",
+      });
+    }
+
+    const chosenModel =
+      validModels.find((m: any) => m.name.includes("1.5-flash"))?.name ||
+      validModels.find((m: any) => m.name.includes("1.5-pro"))?.name ||
+      validModels[0].name;
+
+    const generateUrl = `https://generativelanguage.googleapis.com/v1beta/${chosenModel}:generateContent?key=${apiKey}`;
+
+    const googleResponse = await fetch(generateUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -35,13 +64,13 @@ export default async function handler(req: any, res: any) {
     if (!googleResponse.ok) {
       return res
         .status(googleResponse.status)
-        .json({ error: data.error?.message || "Fejl fra Google API" });
+        .json({ error: `Fejl fra ${chosenModel}: ${data.error?.message}` });
     }
 
     return res.status(200).json(data);
   } catch (error) {
     const errorMessage =
-      error instanceof Error ? error.message : "Ukendt serverfejl";
+      error instanceof Error ? error.message : "Kritisk serverfejl";
     return res.status(500).json({ error: errorMessage });
   }
 }
