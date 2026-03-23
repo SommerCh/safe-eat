@@ -461,7 +461,7 @@ export function ProfileSetup() {
           </button>
         </div>
 
-        {totalScans > 0 && (
+        {/* {totalScans > 0 && (
           <section className="pt-8 border-t border-slate-100">
             <h2 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
               <TrendingUp className="w-5 h-5 text-blue-900" /> Dit overblik
@@ -513,7 +513,7 @@ export function ProfileSetup() {
               </div>
             )}
           </section>
-        )}
+        )} */}
       </div>
     </div>
   );

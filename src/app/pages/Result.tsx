@@ -9,6 +9,7 @@ import {
   Info,
   Heart,
   RotateCcw,
+  ArrowRight,
 } from "lucide-react";
 
 export function Result() {
@@ -141,10 +142,9 @@ export function Result() {
         <div className="w-full mt-10 space-y-3">
           <Button
             onClick={() => navigate("/scanner")}
-            className="w-full h-16 bg-slate-950 text-white rounded-2xl text-lg font-bold shadow-sm hover:bg-black active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+            className="w-full h-16 bg-slate-950 text-white rounded-2xl text-lg font-bold shadow-sm flex items-center justify-center gap-3 transition-all active:scale-[0.98]"
           >
-            <RotateCcw className="w-5 h-5" />
-            Scan næste vare
+            Åbn scanner <ArrowRight className="w-5 h-5" />
           </Button>
 
           <button
