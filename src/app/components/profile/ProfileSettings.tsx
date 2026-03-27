@@ -100,11 +100,15 @@ export function ProfileSettings() {
       const { error } = await supabase.rpc("delete_user");
 
       if (error) {
+        console.error("Slette-fejl:", error);
         alert(
-          "Der opstod en fejl under sletning af profilen. Har du opsat RPC funktionen i Supabase?",
+          `Kunne ikke slette bruger:\n\nBesked: ${error.message}\nDetaljer: ${
+            error.details || "Ingen"
+          }\nKode: ${error.code}`,
         );
         return;
       }
+
       await supabase.auth.signOut();
       navigate("/");
     }
@@ -124,9 +128,9 @@ export function ProfileSettings() {
 
         <button
           onClick={() => navigate(-1)}
-          className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center hover:bg-slate-100 border border-slate-100 transition-colors shrink-0"
+          className="w-10 h-10 flex items-center justify-center bg-slate-100 rounded-full hover:bg-slate-200 transition-colors"
         >
-          <ChevronLeft className="w-6 h-6 text-slate-700" />
+          <ChevronLeft className="w-6 h-6 text-slate-700 pr-1" />
         </button>
       </div>
 

@@ -79,9 +79,9 @@ export function Paywall({ onSuccess }: PaywallProps) {
       <div className="px-6 pt-20 pb-4 flex items-center justify-between bg-white border-b border-slate-100 shadow-none shrink-0">
         <button
           onClick={() => navigate(-1)}
-          className="w-10 h-10 flex items-center justify-center text-slate-700 active:scale-95 transition-all shadow-none"
+          className="w-10 h-10 flex items-center justify-center bg-slate-100 rounded-full hover:bg-slate-200 transition-colors"
         >
-          <ChevronLeft className="w-6 h-6" />
+          <ChevronLeft className="w-6 h-6 text-slate-700 pr-1" />
         </button>
 
         <img

@@ -131,7 +131,7 @@ export function Favorites() {
           <div className="flex gap-2">
             <button
               onClick={() => navigate(-1)}
-              className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center transition-colors shrink-0"
+              className="w-10 h-10 flex items-center justify-center bg-slate-100 rounded-full hover:bg-slate-200 transition-colors"
             >
               <ChevronLeft className="w-6 h-6 text-slate-700 pr-1" />
             </button>

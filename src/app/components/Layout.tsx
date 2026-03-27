@@ -10,24 +10,38 @@ export function Layout() {
   const [loading, setLoading] = useState(true);  
 
   useEffect(() => {
-    const checkPremiumStatus = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+    const checkPremiumStatus = async (userId: string) => {
+      const { data } = await supabase
+        .from("profiles")
+        .select("is_premium")
+        .eq("id", userId)
+        .single();
 
-      if (user) {
-        const { data } = await supabase
-          .from("profiles")
-          .select("is_premium")
-          .eq("id", user.id)
-          .single();
-
-        if (data?.is_premium) {
-          setIsSubscribed(true);
-        }
-      }
-      setLoading(false); 
+      setIsSubscribed(!!data?.is_premium);
+      setLoading(false);
     };
 
-    checkPremiumStatus();
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        checkPremiumStatus(session.user.id);
+      } else {
+        setIsSubscribed(false);
+        setLoading(false);
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        checkPremiumStatus(session.user.id);
+      } else {
+        setIsSubscribed(false);
+        setLoading(false);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   if (loading) return null;
