@@ -1,209 +1,411 @@
-export const CATEGORIES = [
-  "Alle",
-  "Nyheder",
-  "Tips",
-  "Opskrifter",
-  "Sundhed",
-  "Guides",
-];
+export const CATEGORIES = {
+  da: ["Alle", "Nyheder", "Tips", "Opskrifter", "Sundhed", "Guides"],
+  en: ["All", "News", "Tips", "Recipes", "Health", "Guides"],
+};
 
-export const ARTICLES = [
-  {
-    id: 1,
-    title: "Sådan læser du komplekse ingredienslister",
-    category: "Tips",
-    readTime: "4 min",
-    excerpt:
-      "Lær at afkode de mest forvirrende ingredienslister og identificere potentielle allergener.",
-    image:
-      "https://images.unsplash.com/photo-1516594798947-e65505dbb29d?auto=format&fit=crop&q=80&w=1080",
-    featured: true,
-    content: {
-      paragraphs: [
-        "Når man står i supermarkedet og skal vælge de rigtige varer, kan det ofte føles som en jungle at navigere rundt i de mange forskellige ingredienser. Særligt hvis man har allergier eller specifikke diætkrav, er det afgørende at vide præcis, hvad maden indeholder.",
-        "Producenterne er forpligtet til at fremhæve allergener i ingredienslisten, oftest ved at gøre teksten fed, kursiv eller bruge store bogstaver. Men skjulte stoffer under E-numre eller komplekse tekniske termer kan stadig snyde selv den mest opmærksomme forbruger.",
-        "Det er altid en god idé at læse ingredienslisten fra ende til anden, da rækkefølgen angiver mængden af ingrediensen – det, der står først, er der mest af i produktet.",
-      ],
-      heading: "Hvad skal du kigge efter?",
-      tip: "Med Safe-Eat appen gør vi det heldigvis meget nemmere for dig. Scan stregkoden for at få et lynhurtigt og sikkert overblik over indholdet.",
+export const ARTICLES = {
+  da: [
+    {
+      id: 1,
+      title: "Dekodning af ingredienslister: En ekspertguide",
+      category: "Tips",
+      readTime: "4 min",
+      excerpt:
+        "Lær at navigere i komplekse deklarationer og identificer skjulte allergener med præcision.",
+      image:
+        "https://images.unsplash.com/photo-1516594798947-e65505dbb29d?auto=format&fit=crop&q=80&w=1080",
+      featured: true,
+      content: {
+        paragraphs: [
+          "Ingredienslisten er dit primære værktøj til fødevaresikkerhed. I EU er mærkningsreglerne (Forordning 1169/2011) designet til at beskytte forbrugeren ved at kræve, at de 14 mest kritiske allergener fremhæves tydeligt i teksten.",
+          "Det er dog vigtigt at forstå rækkefølgen af ingredienser. De er altid listet efter faldende vægt på produktionstidspunktet. Hvis en allergen optræder som en del af en sammensat ingrediens, skal dens komponenter deklareres i en efterfølgende parentes.",
+          "Vær særlig opmærksom på tekniske hjælpestoffer og bærere af aromaer, som i visse tilfælde kan undtages for mærkning, medmindre de har en allergifremkaldende effekt.",
+        ],
+        heading: "Systematisk gennemgang",
+        tip: "Læs altid ingredienslisten tre gange: Ved hylden, ved udpakning og før servering. Producenter ændrer ofte opskrifter uden varsel.",
+      },
     },
-  },
-  {
-    id: 2,
-    title: "5 lækre glutenfrie bagerier i byen",
-    category: "Opskrifter",
-    readTime: "3 min",
-    excerpt:
-      "De bedste steder at finde glutenfrie delikatesser uden at gå på kompromis med smagen.",
-    image:
-      "https://images.unsplash.com/photo-1519915051686-9fe6ee13633e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-    featured: false,
-    content: {
-      paragraphs: [
-        "Det har historisk set været svært at finde godt glutenfrit bagværk, der ikke føles tørt eller smuldrende. Men de seneste år er der sket en revolution på området.",
-        "Flere dedikerede bagerier har specialiseret sig i at skabe alt fra luftige surdejsboller til sprøde croissanter, der smager fuldstændig fantastisk – helt uden brug af hvede, rug eller byg.",
-        "Vi har besøgt fem af byens absolut bedste glutenfrie bagerier og testet deres sortiment.",
-      ],
-      heading: "Vores testvindere",
-      tip: "De bedste glutenfrie brød bliver ofte udsolgt hurtigt. Husk at ringe til bageriet om morgenen, hvis du vil være sikker på at få dit yndlingsbrød.",
+    {
+      id: 2,
+      title: "Glutenfri gastronomi: Københavns førende bagerier",
+      category: "Tips",
+      readTime: "3 min",
+      excerpt:
+        "En oversigt over dedikerede bagerier, hvor håndværk og fødevaresikkerhed går hånd i hånd.",
+      image:
+        "https://images.unsplash.com/photo-1519915051686-9fe6ee13633e?auto=format&fit=crop&q=80&w=1080",
+      featured: false,
+      content: {
+        paragraphs: [
+          "København har markeret sig som en pioner inden for glutenfri bagning. Kvaliteten er løftet fra tørre erstatningsprodukter til komplekse surdejsbrød baseret på naturlige meltyper som boghvede og hirse.",
+          "H.U.G Bageri og Landbageriet er institutioner i byen, der har specialiseret sig i at eliminere krydskontaminering ved at drive 100% glutenfrie produktioner. Dette er afgørende for personer med cøliaki.",
+          "Når du besøger bagerier, der ikke er rent glutenfrie, er det essentielt at forespørge om deres procedurer for adskillelse af melstøv og brug af dedikerede bageplader.",
+        ],
+        heading: "Sikkerhed frem for alt",
+        tip: "Ved svær allergi eller cøliaki bør du prioritere bagerier med certificeret glutenfri produktion for at eliminere risikoen for melstøv.",
+      },
     },
-  },
-  {
-    id: 3,
-    title: "Hvad er skjulte allergener?",
-    category: "Sundhed",
-    readTime: "5 min",
-    excerpt:
-      "Opdag de skjulte ingredienser, der kan udløse allergiske reaktioner.",
-    image:
-      "https://images.unsplash.com/photo-1649531794884-b8bb1de72e68?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-    featured: false,
-    content: {
-      paragraphs: [
-        "Nogle af de farligste allergener er dem, du ikke forventer at finde i dit måltid. Skjulte allergener er ingredienser, der ikke står tydeligt frem på forsiden af emballagen, eller som gemmer sig bag fagtermer.",
-        "For eksempel kan komælksprotein gemme sig under betegnelsen 'kasein' eller 'valle', mens æg ofte deklareres som 'albumin' eller 'lysozym'.",
-        "Dette sker ofte i forarbejdede fødevarer, saucer og dressinger, hvor ingredienserne bruges som bindemidler eller smagsforstærkere.",
-      ],
-      heading: "De typiske faldgruber",
-      tip: "Tilføj de tekniske navne for dine allergener til din personlige 'NoList' i appen. Så fanger scanneren dem automatisk for dig.",
+    {
+      id: 3,
+      title: "Skjulte proteiner: Når mælk og æg skifter navn",
+      category: "Sundhed",
+      readTime: "5 min",
+      excerpt:
+        "Identificer de kemiske og tekniske betegnelser for mælke- og æggeproteiner i fødevarer.",
+      image:
+        "https://images.unsplash.com/photo-1649531794884-b8bb1de72e68?auto=format&fit=crop&q=80&w=1080",
+      featured: false,
+      content: {
+        paragraphs: [
+          "Mange fødevarekomponenter afledes af mælk og æg, men deklareres under navne, der ikke umiddelbart afslører deres oprindelse. Kasein og valle (whey) er de to primære mælkeproteiner, som ofte findes i forarbejdede kødprodukter og proteinbarer.",
+          "For æggeallergikere er albumin, lysozym (E1105) og lecithin (hvis ikke specificeret som soja eller solsikke) kritiske at kende. Disse bruges ofte for deres emulgerende egenskaber.",
+          "Lovgivningen kræver mærkning af kilden, men tekniske termer kan stadig skabe forvirring i komplekse produktbeskrivelser.",
+        ],
+        heading: "Videnskaben bag mærkningen",
+        tip: "Brug din personlige 'No-list' i appen til at inkludere specifikke derivater som natriumkaseinat, hvis din følsomhed er høj.",
+      },
     },
-  },
-  {
-    id: 4,
-    title: "Nye supermarkedstendenser for allergikere",
-    category: "Nyheder",
-    readTime: "2 min",
-    excerpt:
-      "Supermarkederne udvider sortimentet med allergivenlige produkter - se hvad der er nyt.",
-    image:
-      "https://images.unsplash.com/photo-1580440282860-8555b1ae102c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-    featured: false,
-    content: {
-      paragraphs: [
-        "Dagligvarekæderne har for alvor fået øjnene op for, at en stor del af befolkningen har specifikke diætbehov. Derfor ser vi nu en markant udvidelse af hyldepladsen dedikeret til 'fri for'-produkter.",
-        "Flere supermarkeder samler nu de glutenfrie, laktosefrie og veganske varer i én stor, tydeligt markeret afdeling, så du slipper for at lede hele butikken rundt.",
-        "Desuden introducerer mange kæder deres egne 'private label'-serier, som gør det væsentligt billigere at leve med en fødevareallergi.",
-      ],
-      heading: "Fremtidens indkøb",
-      tip: "Hold øje med supermarkedernes egne mærker (som f.eks. Rema 1000's glutenfri serie). De er ofte af lige så høj kvalitet som mærkevarerne, men meget billigere.",
+    {
+      id: 4,
+      title: "Værdisætning: Supermarkedernes egne allergen-serier",
+      category: "Nyheder",
+      readTime: "2 min",
+      excerpt:
+        "En analyse af pris versus kvalitet i detailhandlens egne 'Fri for'-serier.",
+      image:
+        "https://images.unsplash.com/photo-1580440282860-8555b1ae102c?auto=format&fit=crop&q=80&w=1080",
+      featured: false,
+      content: {
+        paragraphs: [
+          "Markedet for specialvarer er i vækst, hvilket har ledt til, at kæder som Rema 1000 og Salling Group har udviklet egne mærker. Disse produkter tilbyder ofte samme sikkerhedsstandarder som mærkevarer, men til en lavere enhedspris.",
+          "Salling Groups 'Fri'-serie og Rema 1000's sortiment gennemgår strikse kvalitetskontroller. Det er en udbredt misforståelse, at billigere priser betyder lavere sikkerhed; ofte handler det om optimerede logistikkæder.",
+          "Forbrugeren bør dog altid læse bagsiden, da opskrifterne på disse 'private labels' kan variere mere hyppigt end hos de etablerede specialproducenter.",
+        ],
+        heading: "Økonomisk overblik",
+        tip: "Hold øje med certificeringer som 'Det Blå Kranse-mærke' eller 'Crossed Grain', som ofte findes på supermarkedernes egne mærker.",
+      },
     },
-  },
-  {
-    id: 5,
-    title: "Vegansk madlavning: En komplet guide for begyndere",
-    category: "Guides",
-    readTime: "8 min",
-    excerpt:
-      "Alt du behøver at vide for at komme i gang med plantebaseret madlavning.",
-    image:
-      "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-    featured: false,
-    content: {
-      paragraphs: [
-        "At skifte til en vegansk eller plantebaseret diæt kan virke uoverskueligt i starten. Hvor får man sine proteiner fra? Hvordan erstatter man æg i bagværk? Og hvad med ost?",
-        "Hemmeligheden bag god vegansk madlavning er at lære de basale erstatninger at kende. Tofu kan rørsteges i stedet for æg, hørfrø blandet med vand binder bagværk sammen, og gærflager giver en fantastisk ostesmag.",
-        "Sørg for altid at have dit basislager i orden: Bønner, linser, nødder, frø og fuldkorn er fundamentet i ethvert godt plantebaseret køkken.",
-      ],
-      heading: "Opbygning af smag",
-      tip: "Brug røgessens (liquid smoke), sojasauce og miso til at give dine kødfrie retter den dybe, salte umami-smag, som du måske savner fra kød.",
+    {
+      id: 5,
+      title: "Kulinarisk substitution i det plantebaserede køkken",
+      category: "Guides",
+      readTime: "8 min",
+      excerpt:
+        "Professionelle teknikker til at erstatte animalske allergener uden tab af tekstur og smag.",
+      image:
+        "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&q=80&w=1080",
+      featured: false,
+      content: {
+        paragraphs: [
+          "Substitution i køkkenet kræver forståelse for ingrediensernes funktion. Æg fungerer ofte som bindemiddel eller hævemiddel. Her er aquafaba (kikærtevand) revolutionerende pga. dets protein- og stivelsessammensætning.",
+          "Mælkeprodukter kan erstattes med fedtholdige alternativer som kokosmælk eller nøddebaserede cremer for at bibeholde den ønskede mundfølelse i saucer og desserter.",
+          "Umami-smagen, som ofte findes i lagrede oste, kan genskabes ved brug af inaktiveret gær (gærflager) eller fermenterede produkter som miso.",
+        ],
+        heading: "Funktionel madlavning",
+        tip: "Når du erstatter ingredienser, så fokuser på proteinindholdet i substitutten for at sikre, at bageevnen forbliver intakt.",
+      },
     },
-  },
-  {
-    id: 6,
-    title: "Allergivejledning til børnefamilier",
-    category: "Sundhed",
-    readTime: "6 min",
-    excerpt: "Praktiske råd til forældre med børn, der har fødevareallergi.",
-    image:
-      "https://images.unsplash.com/photo-1476718406336-bb5a9690ee2a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-    featured: false,
-    content: {
-      paragraphs: [
-        "Når et barn diagnosticeres med fødevareallergi, ændrer det hverdagen for hele familien. Det kræver omhyggelig planlægning, især når barnet skal starte i institution eller skole.",
-        "En åben og tydelig kommunikation med pædagoger, lærere og de andre børns forældre er afgørende. Forklar klart, hvad dit barn ikke kan tåle, og hvilke reaktioner I kan forvente.",
-        "Det vigtigste er at inddrage barnet og lære dem om deres egen allergi på et niveau, de kan forstå, så de selv kan sige 'nej tak' til mad, de er i tvivl om.",
-      ],
-      heading: "Tryghed i hverdagen",
-      tip: "Giv dit barn en lille 'sikker' godtekasse med i børnehave eller skole, som personalet kan dele ud af, når der pludselig er fødselsdag og kage i klassen.",
+    {
+      id: 6,
+      title: "Allergi i daginstitutioner: En sikkerhedsguide",
+      category: "Sundhed",
+      readTime: "6 min",
+      excerpt:
+        "Etablering af effektive procedurer og dialog med pædagogisk personale.",
+      image:
+        "https://images.unsplash.com/photo-1476718406336-bb5a9690ee2a?auto=format&fit=crop&q=80&w=1080",
+      featured: false,
+      content: {
+        paragraphs: [
+          "Overgangen til daginstitution kræver en struktureret tilgang til barnets allergier. En formel handlingsplan, udarbejdet i samarbejde med en læge, bør altid foreligge skriftligt hos personalet.",
+          "Visuel identifikation i køkkenet og ved spisebordet er en effektiv barriere mod fejlserveringer. Det er afgørende, at personalet er instrueret i genkendelse af symptomer og korrekt brug af medicin.",
+          "Inddrag barnet i en alderstilpasset dialog om 'sikker' og 'usikker' mad for at opbygge en tidlig bevidsthed og egenomsorg.",
+        ],
+        heading: "Struktur og tillid",
+        tip: "Gør det nemt for personalet ved at levere mærkede beholdere med alternative råvarer, som kan anvendes ved fællesarrangementer.",
+      },
     },
-  },
-  {
-    id: 7,
-    title: "De 10 mest almindelige mærkning-fejl på fødevarer",
-    category: "Tips",
-    readTime: "4 min",
-    excerpt: "Vær opmærksom på disse fejl, når du scanner ingredienslister.",
-    image:
-      "https://images.unsplash.com/photo-1534723328310-e82dad3ee43f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-    featured: false,
-    content: {
-      paragraphs: [
-        "Selvom fødevarelovgivningen i EU er stram, og producenterne gør deres bedste, sker der desværre stadig fejl i mærkningen af madvarer.",
-        "Nogle af de mest almindelige fejl inkluderer manglende oversættelse af udenlandske ingredienser, at krydderiblandinger ikke er specificeret, og at advarslen 'kan indeholde spor af...' bliver udeladt på produkter pakket på tværs af produktionslinjer.",
-        "Det er også vigtigt at være opmærksom på opskriftsændringer. Et produkt, du har spist i årevis, kan pludselig ændre indhold, uden at det står med store bogstaver på forsiden.",
-      ],
-      heading: "Forbliv på vagt",
-      tip: "Brug Safe-Eat scanneren, hver gang du handler – også på produkter, du plejer at købe. Producenterne ændrer ofte opskrifterne uden varsel.",
+    {
+      id: 7,
+      title: "Krydskontaminering og 'Spor af'-mærkning",
+      category: "Tips",
+      readTime: "4 min",
+      excerpt:
+        "Forstå risikoen bag de frivillige advarselsmærkninger på fødevarer.",
+      image:
+        "https://images.unsplash.com/photo-1534723328310-e82dad3ee43f?auto=format&fit=crop&q=80&w=1080",
+      featured: false,
+      content: {
+        paragraphs: [
+          "'Kan indeholde spor af' er en præventiv mærkning, som producenter anvender, når der er en risiko for ubevidst overførsel af allergener under produktion eller transport.",
+          "I modsætning til den obligatoriske ingrediensliste, er spor-mærkning ikke reguleret af specifikke grænseværdier i lovgivningen. Dette skaber en gråzone for både producent og forbruger.",
+          "For personer med ekstremt lav tolerance kan selv mikroskopiske mængder udløse anafylaksi, hvorfor mærkningen bør tages alvorligt.",
+        ],
+        heading: "Risikoanalyse",
+        tip: "Hvis du har en livstruende allergi, bør 'spor af'-mærkning altid betragtes som en reel risiko og produktet undgås.",
+      },
     },
-  },
-  {
-    id: 8,
-    title: "Sådan håndterer du sociale situationer med fødevareallergi",
-    category: "Guides",
-    readTime: "5 min",
-    excerpt:
-      "Tips til at navigere i sociale sammenhænge, når du har diætbegrænsninger.",
-    image:
-      "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-    featured: false,
-    content: {
-      paragraphs: [
-        "Det kan føles akavet at skulle spørge ind til ingredienser, når man er inviteret til middag eller fødselsdag. Mange frygter at være til besvær for værten.",
-        "Den bedste tilgang er at melde ud i god tid. Send en venlig besked i god tid inden arrangementet, hvor du forklarer dine begrænsninger og understreger, at de ikke behøver lave en helt separat menu til dig.",
-        "At tilbyde at medbringe en ret, du selv kan tåle, er ofte en stor lettelse for værten, og det sikrer, at du ikke går sulten hjem.",
-      ],
-      heading: "Åben kommunikation",
-      tip: "Tilbyd altid at medbringe en ret eller en dessert, som du selv kan spise. På den måde er du sikret mad, og de andre gæster kan smage din mad.",
+    {
+      id: 8,
+      title: "Professionel håndtering af restaurantbesøget",
+      category: "Guides",
+      readTime: "5 min",
+      excerpt:
+        "Strategier til at sikre et risikofrit måltid når du spiser ude.",
+      image:
+        "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=1080",
+      featured: false,
+      content: {
+        paragraphs: [
+          "Succesfuld udespisning starter med proaktiv kommunikation. Kontakt restauranten uden for spidsbelastningsperioder for at drøfte køkkenets procedurer for allergenhåndtering.",
+          "Ved ankomst bør du adressere dine allergier direkte til både tjener og køkkenchef. Vær specifik omkring risikoen for krydskontaminering via køkkenredskaber og fritureolie.",
+          "Enkle retter med få komponenter er ofte de sikreste valg, da de minimerer antallet af potentielle fejlkilder i tilberedningen.",
+        ],
+        heading: "Kommunikationsstrategi",
+        tip: "Vis din SafeEat profil eller et printet allergikort til personalet. Skriftlig information minimerer risikoen for misforståelser i et travlt køkken.",
+      },
     },
-  },
-  {
-    id: 9,
-    title: "Nyt dansk lovkrav om allergenmærkning træder i kraft",
-    category: "Nyheder",
-    readTime: "3 min",
-    excerpt:
-      "Find ud af, hvad de med nye regler betyder for dig som allergiker.",
-    image:
-      "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-    featured: false,
-    content: {
-      paragraphs: [
-        "Fødevarestyrelsen har netop indført nye retningslinjer, der skal gøre det endnu tryggere at spise ude, uanset om det er på fin restaurant eller ved den lokale pølsevogn.",
-        "Det nye lovkrav betyder, at alle serveringssteder nu skal kunne fremvise en skriftlig og letforståelig oversigt over de 14 lovpligtige allergener i samtlige af deres retter og menuer.",
-        "Du behøver altså ikke længere nøjes med et 'jeg tror ikke, der er nødder i' fra en travl tjener.",
-      ],
-      heading: "Kend dine rettigheder",
-      tip: "Spørg altid tjeneren direkte efter allergen-oversigten. Det er et lovkrav, at de har den, og din ret at få fuld indsigt i, hvad du spiser.",
+    {
+      id: 9,
+      title: "Forbrugerbeskyttelse: Lovkrav om oplysningspligt",
+      category: "Nyheder",
+      readTime: "3 min",
+      excerpt:
+        "Kend lovgivningen der sikrer din adgang til allergeninformation.",
+      image:
+        "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80&w=1080",
+      featured: false,
+      content: {
+        paragraphs: [
+          "I EU er det lovpligtigt for alle fødevarevirksomheder, herunder restauranter, kantiner og takeaway-steder, at kunne oplyse om de 14 hovedallergener.",
+          "Oplysningerne skal være tilgængelige for forbrugeren uden forudgående forespørgsel, enten skriftligt i menukortet eller via tydelig skiltning om, hvor informationen findes.",
+          "Manglende evne eller vilje til at give korrekte oplysninger er en overtrædelse af fødevarelovgivningen og bør rapporteres til de relevante myndigheder.",
+        ],
+        heading: "Dine rettigheder",
+        tip: "Hvis personalet er usikre, så bed om at se de tekniske datablade for de anvendte halvfabrikata. Du har ret til fuld gennemsigtighed.",
+      },
     },
-  },
-  {
-    id: 10,
-    title: "Opskrift: Laktosefri chokoladekage",
-    category: "Opskrifter",
-    readTime: "15 min",
-    excerpt:
-      "En lækker og cremet chokoladekage, der er helt fri for mælkeprodukter.",
-    image:
-      "https://images.unsplash.com/photo-1578985545062-69928b1d9587?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-    featured: false,
-    content: {
-      paragraphs: [
-        "Hvem siger, at en rigtig chokoladekage skal indeholde rigeligt med smør og mælk for at blive saftig og lækker? Med de rigtige byggeklodser kan du lave en kage, der er mindst lige så god.",
-        "Ved at erstatte smørret med en neutral olie (f.eks. raps- eller solsikkeolie) og komælken med en god havredrik, får du en kage med en fantastisk, svampet tekstur, som holder sig frisk i flere dage.",
-        "Glasuren kan nemt laves på mørk, mælkefri chokolade og en smule kokosolie for at give den det perfekte, blanke look.",
-      ],
-      heading: "Fokus på chokoladen",
-      tip: "Når du bager laktosefrit, træder chokoladesmagen ofte tydeligere frem. Brug derfor altid en kakao af rigtig høj kvalitet – det kan smages!",
+    {
+      id: 10,
+      title: "Teknisk opskrift: Emulgeret chokoladekage (Mælkefri)",
+      category: "Opskrifter",
+      readTime: "15 min",
+      excerpt:
+        "En optimeret opskrift der udnytter kemiske reaktioner til at opnå maksimal saftighed uden brug af mejeri.",
+      image:
+        "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&q=80&w=1080",
+      featured: false,
+      content: {
+        paragraphs: [
+          "Denne opskrift baserer sig på interaktionen mellem syre (eddike) og base (natron), hvilket skaber CO2-bobler, der sikrer en luftig struktur uden behov for æggeproteiner.",
+          "Ingredienser: 250g sigtet hvedemel, 200g rørsukker, 4 spsk kakao (min. 20% fedt), 1 tsk bagepulver, 1 tsk natron, 1 dl neutral rapsolie, 2 dl tempereret vand og 1 spsk æbleeddike.",
+          "Fremgangsmåde: Sigt de tørre ingredienser for at sikre homogenitet. Tilsæt de våde komponenter og rør kun til dejen er samlet for at undgå overudvikling af gluten. Bag ved 180°C i 25-30 minutter.",
+        ],
+        heading: "Fremgangsmåde og videnskab",
+        tip: "Brug en olie med højt indhold af enkeltumættede fedtsyrer for at sikre, at kagen forbliver saftig, selv efter afkøling.",
+      },
     },
-  },
-];
+  ],
+  en: [
+    {
+      id: 1,
+      title: "Decoding Ingredient Lists: An Expert Guide",
+      category: "Tips",
+      readTime: "4 min",
+      excerpt:
+        "Learn to navigate complex declarations and identify hidden allergens with precision.",
+      image:
+        "https://images.unsplash.com/photo-1516594798947-e65505dbb29d?auto=format&fit=crop&q=80&w=1080",
+      featured: true,
+      content: {
+        paragraphs: [
+          "The ingredient list is your primary tool for food safety. In the EU, labeling regulations (Regulation 1169/2011) are designed to protect consumers by requiring the 14 most critical allergens to be clearly highlighted.",
+          "However, it is crucial to understand the order of ingredients. They are always listed in descending order by weight at the time of production. If an allergen is part of a compound ingredient, its components must be declared in following parentheses.",
+          "Pay close attention to technical processing aids and aroma carriers, which in some cases may be exempt from labeling unless they have an allergenic effect.",
+        ],
+        heading: "Systematic Review",
+        tip: "Always read the ingredient list three times: At the shelf, during unpacking, and before serving. Manufacturers frequently change recipes without notice.",
+      },
+    },
+    {
+      id: 2,
+      title: "Gluten-Free Gastronomy: Leading Bakeries in Copenhagen",
+      category: "Tips",
+      readTime: "3 min",
+      excerpt:
+        "An overview of dedicated bakeries where craftsmanship and food safety go hand in hand.",
+      image:
+        "https://images.unsplash.com/photo-1519915051686-9fe6ee13633e?auto=format&fit=crop&q=80&w=1080",
+      featured: false,
+      content: {
+        paragraphs: [
+          "Copenhagen has emerged as a pioneer in gluten-free baking. Quality has evolved from dry substitutes to complex sourdough breads based on natural flours like buckwheat and millet.",
+          "H.U.G Bageri and Landbageriet are city institutions specializing in eliminating cross-contamination by operating 100% gluten-free productions. This is vital for individuals with celiac disease.",
+          "When visiting bakeries that are not strictly gluten-free, it is essential to inquire about their procedures for separating flour dust and the use of dedicated baking sheets.",
+        ],
+        heading: "Safety Above All",
+        tip: "For severe allergies or celiac disease, prioritize bakeries with certified gluten-free production to eliminate the risk of airborne flour dust.",
+      },
+    },
+    {
+      id: 3,
+      title: "Hidden Proteins: When Milk and Egg Change Names",
+      category: "Health",
+      readTime: "5 min",
+      excerpt:
+        "Identify the chemical and technical terms for milk and egg proteins in food products.",
+      image:
+        "https://images.unsplash.com/photo-1649531794884-b8bb1de72e68?auto=format&fit=crop&q=80&w=1080",
+      featured: false,
+      content: {
+        paragraphs: [
+          "Many food components are derived from milk and eggs but are declared under names that do not immediately reveal their origin. Casein and whey are the two primary milk proteins often found in processed meats and protein bars.",
+          "For egg allergy sufferers, albumin, lysozyme (E1105), and lecithin (if not specified as soy or sunflower) are critical to know. These are often used for their emulsifying properties.",
+          "Legislation requires the source to be labeled, but technical terms can still cause confusion in complex product descriptions.",
+        ],
+        heading: "The Science of Labeling",
+        tip: "Use your personal 'No-list' in the app to include specific derivatives like sodium caseinate if your sensitivity is high.",
+      },
+    },
+    {
+      id: 4,
+      title: "Value Assessment: Supermarket Allergen Series",
+      category: "News",
+      readTime: "2 min",
+      excerpt:
+        "An analysis of price versus quality in retail chains' own 'Free From' series.",
+      image:
+        "https://images.unsplash.com/photo-1580440282860-8555b1ae102c?auto=format&fit=crop&q=80&w=1080",
+      featured: false,
+      content: {
+        paragraphs: [
+          "The market for specialty goods is growing, leading chains like Rema 1000 and Salling Group to develop their own brands. These products often offer the same safety standards as name brands but at a lower unit price.",
+          "Salling Group’s 'Fri' series and Rema 1000’s assortment undergo strict quality controls. It is a common misconception that lower prices mean lower safety; it often relates to optimized logistics chains.",
+          "However, consumers should always read the back, as recipes for these private labels may vary more frequently than those of established specialty manufacturers.",
+        ],
+        heading: "Economic Overview",
+        tip: "Look for certifications such as the 'Blue Label' or 'Crossed Grain', which are often found on supermarket house brands.",
+      },
+    },
+    {
+      id: 5,
+      title: "Culinary Substitution in Plant-Based Cooking",
+      category: "Guides",
+      readTime: "8 min",
+      excerpt:
+        "Professional techniques for replacing animal allergens without losing texture or flavor.",
+      image:
+        "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&q=80&w=1080",
+      featured: false,
+      content: {
+        paragraphs: [
+          "Substitution in the kitchen requires an understanding of the function of ingredients. Eggs often act as a binder or leavening agent. Here, aquafaba (chickpea water) is revolutionary due to its protein and starch composition.",
+          "Dairy products can be replaced with high-fat alternatives like coconut milk or nut-based creams to maintain the desired mouthfeel in sauces and desserts.",
+          "The umami flavor often found in aged cheeses can be recreated using inactive yeast (nutritional yeast) or fermented products like miso.",
+        ],
+        heading: "Functional Cooking",
+        tip: "When replacing ingredients, focus on the protein content of the substitute to ensure the structural integrity of your baking remains intact.",
+      },
+    },
+    {
+      id: 6,
+      title: "Allergies in Childcare: A Safety Guide",
+      category: "Health",
+      readTime: "6 min",
+      excerpt:
+        "Establishing effective procedures and dialogue with pedagogical staff.",
+      image:
+        "https://images.unsplash.com/photo-1476718406336-bb5a9690ee2a?auto=format&fit=crop&q=80&w=1080",
+      featured: false,
+      content: {
+        paragraphs: [
+          "Transitioning to childcare requires a structured approach to the child's allergies. A formal Allergy Action Plan, developed in collaboration with a doctor, should always be provided in writing to the staff.",
+          "Visual identification in the kitchen and at the dining table is an effective barrier against serving errors. It is crucial that staff are instructed in symptom recognition and the correct use of medication.",
+          "Involve the child in age-appropriate dialogue about 'safe' and 'unsafe' food to build early awareness and self-care.",
+        ],
+        heading: "Structure and Trust",
+        tip: "Make it easy for staff by providing labeled containers with alternative ingredients that can be used during communal events.",
+      },
+    },
+    {
+      id: 7,
+      title: "Cross-Contamination and 'Traces of' Labeling",
+      category: "Tips",
+      readTime: "4 min",
+      excerpt:
+        "Understand the risk behind voluntary warning labels on food products.",
+      image:
+        "https://images.unsplash.com/photo-1534723328310-e82dad3ee43f?auto=format&fit=crop&q=80&w=1080",
+      featured: false,
+      content: {
+        paragraphs: [
+          "'May contain traces of' is a preventive label used by manufacturers when there is a risk of unintentional transfer of allergens during production or transport.",
+          "Unlike the mandatory ingredient list, trace labeling is not regulated by specific threshold values in legislation. This creates a gray area for both manufacturers and consumers.",
+          "For individuals with extremely low tolerance, even microscopic amounts can trigger anaphylaxis, which is why the label should be taken seriously.",
+        ],
+        heading: "Risk Analysis",
+        tip: "If you have a life-threatening allergy, 'traces of' labeling should always be considered a real risk and the product avoided.",
+      },
+    },
+    {
+      id: 8,
+      title: "Professional Management of Dining Out",
+      category: "Guides",
+      readTime: "5 min",
+      excerpt:
+        "Strategies to ensure a risk-free meal when eating at restaurants.",
+      image:
+        "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=1080",
+      featured: false,
+      content: {
+        paragraphs: [
+          "Successful dining out starts with proactive communication. Contact the restaurant during off-peak hours to discuss their allergen management procedures.",
+          "Upon arrival, address your allergies directly with both the server and the head chef. Be specific about the risk of cross-contamination via utensils and frying oil.",
+          "Simple dishes with few components are often the safest choices, as they minimize the number of potential points of failure in preparation.",
+        ],
+        heading: "Communication Strategy",
+        tip: "Show your SafeEat profile or a printed allergy card to the staff. Written information minimizes the risk of misunderstandings in a busy kitchen.",
+      },
+    },
+    {
+      id: 9,
+      title: "Consumer Protection: Mandatory Disclosure Laws",
+      category: "News",
+      readTime: "3 min",
+      excerpt:
+        "Know the legislation that ensures your access to allergen information.",
+      image:
+        "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80&w=1080",
+      featured: false,
+      content: {
+        paragraphs: [
+          "In the EU, it is mandatory for all food businesses, including restaurants, cafeterias, and takeaway outlets, to be able to provide information on the 14 main allergens.",
+          "The information must be accessible to the consumer without prior request, either in writing on the menu or via clear signage indicating where the information can be found.",
+          "The inability or unwillingness to provide correct information is a violation of food safety laws and should be reported to the relevant authorities.",
+        ],
+        heading: "Your Rights",
+        tip: "If staff are unsure, ask to see the technical data sheets for the semi-finished products used. You have the right to full transparency.",
+      },
+    },
+    {
+      id: 10,
+      title: "Technical Recipe: Emulsified Chocolate Cake (Dairy-Free)",
+      category: "Opskrifter",
+      readTime: "15 min",
+      excerpt:
+        "An optimized recipe utilizing chemical reactions to achieve maximum moisture without the use of dairy.",
+      image:
+        "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&q=80&w=1080",
+      featured: false,
+      content: {
+        paragraphs: [
+          "This recipe relies on the interaction between acid (vinegar) and base (baking soda), creating CO2 bubbles that ensure a light structure without the need for egg proteins.",
+          "Ingredients: 250g sifted wheat flour, 200g cane sugar, 4 tbsp cocoa (min. 20% fat), 1 tsp baking powder, 1 tsp baking soda, 1 dl neutral rapeseed oil, 2 dl tempered water, and 1 tbsp apple cider vinegar.",
+          "Instructions: Sift dry ingredients to ensure homogeneity. Add wet components and stir only until the batter is combined to avoid over-developing gluten. Bake at 180°C (350°F) for 25-30 minutes.",
+        ],
+        heading: "Method and Science",
+        tip: "Use an oil high in monounsaturated fats to ensure the cake remains moist even after cooling.",
+      },
+    },
+  ],
+};

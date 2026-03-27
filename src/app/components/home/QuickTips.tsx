@@ -31,7 +31,7 @@ export function QuickTips() {
       id: 2,
       icon: ShoppingBag,
       title: "Scan før køb",
-      description: "Brug appen i butikken for sikker indkøb",
+      description: "Brug appen i butikken for at undgå inddhold",
     },
     {
       id: 3,

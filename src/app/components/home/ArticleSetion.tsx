@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
 import { ImageWithFallback } from "../ImageWithFallback";
 import { ARTICLES, CATEGORIES } from "../articles/articleData";
 
@@ -8,12 +9,23 @@ interface ArticleSectionProps {
 }
 
 export function ArticleSection({ searchQuery }: ArticleSectionProps) {
-  const [activeCategory, setActiveCategory] = useState("Alle");
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
 
-  const filteredArticles = ARTICLES.filter((article) => {
+  const currentLang = i18n.language?.startsWith("en") ? "en" : "da";
+  const currentCategories = CATEGORIES[currentLang];
+  const currentArticles = ARTICLES[currentLang];
+
+  const [activeCategory, setActiveCategory] = useState(currentCategories[0]);
+
+  useEffect(() => {
+    setActiveCategory(currentCategories[0]);
+  }, [currentLang, currentCategories]);
+
+  const filteredArticles = currentArticles.filter((article) => {
     const categoryMatch =
-      activeCategory === "Alle" || article.category === activeCategory;
+      activeCategory === currentCategories[0] ||
+      article.category === activeCategory;
     const searchMatch =
       !searchQuery ||
       article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -24,7 +36,7 @@ export function ArticleSection({ searchQuery }: ArticleSectionProps) {
   return (
     <div className="space-y-6">
       <div className="flex overflow-x-auto gap-3 pb-2 -mx-6 px-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-        {CATEGORIES.map((cat) => (
+        {currentCategories.map((cat) => (
           <button
             key={cat}
             onClick={() => setActiveCategory(cat)}
@@ -43,12 +55,12 @@ export function ArticleSection({ searchQuery }: ArticleSectionProps) {
       <section>
         <div className="flex justify-between items-end mb-5 px-1">
           <h2 className="text-xl font-black text-slate-900 tracking-tight">
-            {activeCategory === "Alle"
-              ? "Seneste nyt & guides"
+            {activeCategory === currentCategories[0]
+              ? t("latest_news_and_guides", "Seneste nyt & guides")
               : activeCategory}
           </h2>
           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pb-1">
-            {filteredArticles.length} artikler
+            {filteredArticles.length} {t("articles_count", "artikler")}
           </span>
         </div>
 

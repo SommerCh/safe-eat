@@ -1,14 +1,15 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router";
 import { useProfile } from "../context/ProfileContext";
 import { Button } from "../components/ui/button";
+import { SaveProduct } from "../components/Others/SaveProduct";
 import {
   CheckCircle2,
   AlertTriangle,
   ChevronLeft,
   Info,
   Heart,
-  ArrowRight,
+  RotateCcw,
 } from "lucide-react";
 
 export function Result() {
@@ -16,22 +17,37 @@ export function Result() {
   const location = useLocation();
   const { addToScanHistory, favorites, toggleFavorite } = useProfile();
 
-  const aiResult = location.state?.aiResult;
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // --- TEST DATA START: Så du kan se siden uden at scanne ---
+  const mockResult = {
+    isSafe: false,
+    extractedIngredients: ["Hvedemel", "Sukker", "Mælkepulver", "Palmeolie"],
+    foundAllergens: ["Mælkepulver"],
+  };
+  // --- TEST DATA SLUT ---
+
+  const aiResult = location.state?.aiResult || mockResult;
+
+  // Lav et unikt, stabilt ID baseret på de præcise ingredienser
+  const ingredientsHash = aiResult.extractedIngredients
+    ? aiResult.extractedIngredients.join(",")
+    : "raw-scan-no-ingredients";
 
   useEffect(() => {
-    if (!aiResult) {
+    if (!location.state?.aiResult && !mockResult) {
       navigate("/scanner");
       return;
     }
 
-    const generatedName =
+    const nameForHistory =
       aiResult.extractedIngredients && aiResult.extractedIngredients.length > 0
         ? aiResult.extractedIngredients.slice(0, 3).join(", ") + "..."
         : "Scannet produkt";
 
     addToScanHistory({
       date: new Date().toISOString(),
-      productName: generatedName,
+      productName: nameForHistory,
       safe: aiResult.isSafe,
     });
   }, []);
@@ -43,7 +59,39 @@ export function Result() {
       ? aiResult.extractedIngredients.slice(0, 3).join(", ") + "..."
       : "Scannet produkt";
 
-  const isFavorite = favorites.includes(generatedName);
+  // Tjek på ingredientsHash i stedet for på navnet, så det reagerer med det samme
+  const isFavorite = favorites.some(
+    (fav: any) =>
+      typeof fav === "object" && fav.ingredientsHash === ingredientsHash,
+  );
+
+  const handleConfirmSave = async (
+    productName: string,
+    storeName: string,
+    notes: string,
+    imageFile: File | null,
+  ) => {
+    let imageUrl = null;
+    if (imageFile) {
+      imageUrl = URL.createObjectURL(imageFile);
+    }
+
+    const favoriteObject = {
+      id: Date.now(),
+      type: "product",
+      ingredientsHash: ingredientsHash, // Vi gemmer ID'et her
+      productName: productName || generatedName,
+      store: storeName,
+      notes: notes,
+      image: imageUrl,
+      isSafe: aiResult.isSafe,
+      date: new Date().toISOString(),
+    };
+
+    // Din smart-toggle i ProfileContext klarer resten
+    await toggleFavorite(favoriteObject as any);
+    setIsModalOpen(false);
+  };
 
   const finalMessage = aiResult.isSafe
     ? "Ingen forbudte ingredienser fundet."
@@ -51,28 +99,32 @@ export function Result() {
 
   return (
     <div className="min-h-screen bg-white pb-12">
-      <div className="px-6 pt-12 pb-6 flex justify-between items-center bg-white border-b border-slate-50">
+      {/* Header med pt-20 standard */}
+      <div className="px-6 pt-20 pb-6 flex justify-between items-center bg-white border-b border-slate-100 sticky top-0 z-10">
         <button
           onClick={() => navigate("/scanner")}
           className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center border border-slate-100 active:scale-95 transition-all"
         >
-          <ChevronLeft className="w-6 h-6 text-slate-700 pr-0.5" />
+          <ChevronLeft className="w-6 h-6 text-slate-700" />
         </button>
 
         <button
-          onClick={() => toggleFavorite(generatedName as any)}
+          onClick={() => setIsModalOpen(true)}
           className={`w-12 h-12 rounded-full flex items-center justify-center transition-all border ${
             isFavorite
               ? "bg-red-50 border-red-100 text-red-500"
               : "bg-slate-50 border-slate-100 text-slate-400"
           }`}
         >
-          <Heart className={`w-5 h-5 ${isFavorite ? "fill-current" : ""}`} />
+          <Heart
+            className={`w-5 h-5 ${
+              isFavorite ? "fill-red-500 text-red-500" : ""
+            }`}
+          />
         </button>
       </div>
 
       <div className="px-8 py-10 flex flex-col items-center">
-        {/* Status Ikon */}
         <div className="mb-10 flex flex-col items-center text-center">
           <div
             className={`w-24 h-24 rounded-full flex items-center justify-center mb-6 ${
@@ -104,56 +156,55 @@ export function Result() {
         </div>
 
         <div className="w-full space-y-4 text-center">
-          <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest">
+          <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em]">
             Fundne Ingredienser:
           </h3>
 
           <div className="flex flex-wrap gap-2 justify-center">
-            {aiResult.extractedIngredients &&
-            aiResult.extractedIngredients.length > 0 ? (
-              aiResult.extractedIngredients.map((ing: string, i: number) => {
-                const isAllergen = aiResult.foundAllergens?.some(
-                  (allergen: string) =>
-                    ing.toLowerCase().includes(allergen.toLowerCase()),
-                );
-                return (
-                  <span
-                    key={i}
-                    className={`px-4 py-2 rounded-2xl text-[11px] font-bold border shadow-sm ${
-                      isAllergen
-                        ? "bg-rose-100 text-rose-700 border-rose-200"
-                        : "bg-slate-50 text-slate-600 border-slate-100"
-                    }`}
-                  >
-                    {ing}
-                  </span>
-                );
-              })
-            ) : (
-              <span className="text-slate-400 text-sm italic">
-                Kunne ikke tyde nogen ingredienser på billedet.
-              </span>
-            )}
+            {aiResult.extractedIngredients?.map((ing: string, i: number) => {
+              const isAllergen = aiResult.foundAllergens?.some(
+                (allergen: string) =>
+                  ing.toLowerCase().includes(allergen.toLowerCase()),
+              );
+              return (
+                <span
+                  key={i}
+                  className={`px-4 py-2 rounded-2xl text-[11px] font-bold border shadow-sm ${
+                    isAllergen
+                      ? "bg-rose-100 text-rose-700 border-rose-200"
+                      : "bg-slate-50 text-slate-600 border-slate-100"
+                  }`}
+                >
+                  {ing}
+                </span>
+              );
+            })}
           </div>
         </div>
 
-        {/* Knapper */}
         <div className="w-full mt-10 space-y-3">
           <Button
             onClick={() => navigate("/scanner")}
-            className="w-full h-16 bg-slate-950 text-white rounded-2xl text-lg font-bold shadow-sm flex items-center justify-center gap-3 transition-all active:scale-[0.98]"
+            className="w-full h-16 bg-black text-white rounded-2xl text-base font-bold shadow-md active:scale-[0.98] transition-all flex items-center justify-center gap-2"
           >
-            Åbn scanner <ArrowRight className="w-5 h-5" />
+            <RotateCcw className="w-5 h-5" />
+            Scan næste vare
           </Button>
 
           <button
             onClick={() => navigate("/setup")}
-            className="w-full py-4 text-slate-400 font-bold text-xs uppercase tracking-widest hover:text-slate-600 transition-colors"
+            className="w-full py-4 text-slate-400 font-bold text-[10px] uppercase tracking-widest active:text-slate-600 transition-colors"
           >
             Rediger min madprofil
           </button>
         </div>
       </div>
+
+      <SaveProduct
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleConfirmSave}
+      />
     </div>
   );
 }

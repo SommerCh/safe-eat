@@ -36,7 +36,6 @@ export function TagInput({ tags, onTagsChange }: TagInputProps) {
       </Label>
 
       <div className="min-h-[120px] p-4 bg-slate-50 border-2 border-slate-200 rounded-3xl space-y-4 focus-within:bg-white focus-within:border-blue-500 transition-all">
-        {/* Her vises dine Tags */}
         <div className="flex flex-wrap gap-2">
           {tags.map((tag) => (
             <span

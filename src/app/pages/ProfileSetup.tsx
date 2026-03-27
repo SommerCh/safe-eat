@@ -20,8 +20,8 @@ export function ProfileSetup() {
     Array.isArray(profile.diet)
       ? profile.diet
       : profile.diet
-        ? [profile.diet]
-        : [],
+      ? [profile.diet]
+      : [],
   );
   const [selectedHealth, setSelectedHealth] = useState<string[]>(
     profile.health || [],
@@ -107,7 +107,7 @@ export function ProfileSetup() {
 
   return (
     <div className="min-h-screen bg-white pb-32">
-      <div className="bg-white px-6 pt-12 pb-6 sticky top-0 z-10 border-b border-slate-100 flex justify-between items-start">
+      <div className="bg-white px-6 pt-20 pb-6 sticky top-0 z-10 border-b border-slate-100 flex justify-between items-start">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-slate-950">
             Din madprofil
@@ -132,6 +132,7 @@ export function ProfileSetup() {
           selected={selectedHealth}
           onToggle={handleToggleHealth}
         />
+
         <NolistInput
           items={nolist}
           onRemove={handleRemoveItem}

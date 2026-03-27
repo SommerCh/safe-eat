@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { Button } from "../components/ui/button";
 import { AppleIcon, Chrome, Mail, Lock, Eye, EyeOff, User } from "lucide-react";
 import { supabase } from "../../app/lib/supabase";
+import { Link } from "react-router";
 
 export function Onboarding() {
   const navigate = useNavigate();
@@ -72,7 +73,7 @@ export function Onboarding() {
           <img
             src="/logotext.svg"
             alt="SafeEat logo"
-            className="w-full h-auto p-4"
+            className="w-full h-auto p-4 sticky top-0 pt-20"
           />
 
           <p className="text-center text-slate-500 max-w-xs">
@@ -202,8 +203,8 @@ export function Onboarding() {
                   ? "Logger ind..."
                   : "Opretter..."
                 : isLogin
-                  ? "Log ind"
-                  : "Opret profil"}
+                ? "Log ind"
+                : "Opret profil"}
             </Button>
           </form>
 
@@ -223,8 +224,14 @@ export function Onboarding() {
           </p>
         </div>
 
-        <p className="text-center text-xs text-slate-400 pt-4">
-          Ved at fortsætte accepterer du vores vilkår og betingelser
+        <p className="text-center text-xs text-slate-400 pt-4 px-6 leading-relaxed">
+          Ved at fortsætte accepterer du vores{" "}
+          <Link
+            to="/terms"
+            className="underline underline-offset-2 hover:text-slate-600"
+          >
+            vilkår, betingelser & privatlivspolitik
+          </Link>
         </p>
       </div>
     </div>

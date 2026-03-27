@@ -2,7 +2,6 @@ import { X } from "lucide-react";
 import { Label } from "../ui/label";
 import { DIET_MAP } from "../../lib/foodData";
 
-// Vi henter navnene direkte fra dit map
 const dietOptions = Object.keys(DIET_MAP);
 
 interface DietSelectorProps {

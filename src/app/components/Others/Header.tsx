@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { SearchBar } from "./ui/SearchBar";
-import { supabase } from "../lib/supabase";
+import { SearchBar } from "../ui/SearchBar";
+import { supabase } from "../../lib/supabase";
 
 interface HomeHeaderProps {
   searchQuery: string;
@@ -44,7 +44,7 @@ export function HomeHeader({ searchQuery, setSearchQuery }: HomeHeaderProps) {
   };
 
   return (
-    <div className="bg-white px-6 pt-12 pb-6 sticky top-0 z-10 border-b border-slate-100">
+    <div className="bg-white px-6 pt-20 pb-6 sticky top-0 z-10 border-b border-slate-100">
       <div className="mb-6">
         <h1 className="text-3xl font-bold tracking-tight text-slate-900">
           {getGreeting()}

@@ -24,11 +24,7 @@ export function HealthSelector({ selected, onToggle }: HealthSelectorProps) {
         <Label className="text-lg font-semibold text-gray-900">
           Sundhed & Livsstil
         </Label>
-        <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-          Bemærk: Scanneren kører med nultolerance. Vælger du f.eks. Diabetes,
-          vil produkter med selv små mængder tilsat sukker blive markeret som
-          usikre.
-        </p>
+
       </div>
 
       <div className="flex flex-wrap gap-2">

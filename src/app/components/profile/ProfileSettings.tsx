@@ -11,28 +11,39 @@ import {
 } from "lucide-react";
 import { supabase } from "../../lib/supabase";
 import { Button } from "../../components/ui/button";
+import appLogo from "../../../../public/logo.png";
 
 export function ProfileSettings() {
   const navigate = useNavigate();
-
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [initialEmail, setInitialEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: "", type: "" });
+  const [isPremium, setIsPremium] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
       const {
         data: { user },
       } = await supabase.auth.getUser();
+
       if (user) {
         const userEmail = user.email || "";
         setEmail(userEmail);
         setInitialEmail(userEmail);
         setName(user.user_metadata?.full_name || "");
+
+        const { data } = await supabase
+          .from("profiles")
+          .select("is_premium")
+          .eq("id", user.id)
+          .single();
+
+        if (data) {
+          setIsPremium(data.is_premium);
+        }
       }
     };
     fetchUser();
@@ -89,7 +100,9 @@ export function ProfileSettings() {
       const { error } = await supabase.rpc("delete_user");
 
       if (error) {
-        alert("Der opstod en fejl under sletning af profilen.");
+        alert(
+          "Der opstod en fejl under sletning af profilen. Har du opsat RPC funktionen i Supabase?",
+        );
         return;
       }
       await supabase.auth.signOut();
@@ -111,13 +124,26 @@ export function ProfileSettings() {
 
         <button
           onClick={() => navigate(-1)}
-          className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center hover:bg-slate-100 border border-slate-100 transition-colors"
+          className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center hover:bg-slate-100 border border-slate-100 transition-colors shrink-0"
         >
           <ChevronLeft className="w-6 h-6 text-slate-700" />
         </button>
       </div>
 
-      <div className="px-6 py-8 space-y-12 max-w-md mx-auto">
+      <div className="px-6 py-8 max-w-md mx-auto">
+        {isPremium && (
+          <div className="flex items-center gap-2 mb-6 ml-1">
+            <img
+              src={appLogo}
+              alt="SafeEat logo"
+              className="w-5 h-5 object-contain"
+            />
+            <span className="text-sm font-bold text-slate-700">
+              Safe Eat Pro user
+            </span>
+          </div>
+        )}
+
         <form onSubmit={handleUpdateProfile} className="space-y-8">
           <div className="space-y-2">
             <label className="text-sm font-semibold text-slate-700 ml-1">
@@ -135,7 +161,6 @@ export function ProfileSettings() {
             </div>
           </div>
 
-          {/* E-mail */}
           <div className="space-y-2">
             <label className="text-sm font-semibold text-slate-700 ml-1">
               E-mailadresse
@@ -152,7 +177,6 @@ export function ProfileSettings() {
             </div>
           </div>
 
-          {/* Adgangskode */}
           <div className="space-y-2">
             <label className="text-sm font-semibold text-slate-700 ml-1">
               Ny adgangskode
@@ -194,8 +218,9 @@ export function ProfileSettings() {
           </Button>
         </form>
 
-        <div className="pt-8 space-y-4 border-t border-slate-100">
+        <div className="pt-8 mt-12 space-y-4 border-t border-slate-100">
           <button
+            type="button"
             onClick={handleLogout}
             className="w-full flex items-center justify-center gap-2 h-14 bg-slate-50 text-slate-700 hover:bg-slate-100 rounded-2xl text-base font-semibold transition-all active:scale-[0.98]"
           >
@@ -204,6 +229,7 @@ export function ProfileSettings() {
           </button>
 
           <button
+            type="button"
             onClick={handleDeleteProfile}
             className="w-full flex items-center justify-center gap-2 h-14 bg-white border-2 border-red-50 text-red-600 hover:bg-red-50 rounded-2xl text-base font-semibold transition-all active:scale-[0.98]"
           >

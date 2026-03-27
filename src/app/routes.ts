@@ -8,6 +8,7 @@ import { Result } from "./pages/Result";
 import { ProfileSettings } from "./components/profile/ProfileSettings";
 import { ArticleDetail } from "./pages/ArticleDetail";
 import { Favorites } from "./pages/Favorites";
+import { LegalPage } from "./pages/Legal";
 
 export const router = createBrowserRouter([
   {
@@ -46,10 +47,15 @@ export const router = createBrowserRouter([
         path: "favorites",
         Component: Favorites,
       },
+
       // {
       //   path: "dictionary",
       //   Component: Dictionary,
       // },
     ],
+  },
+  {
+    path: "terms",
+    Component: LegalPage,
   },
 ]);

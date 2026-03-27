@@ -26,9 +26,10 @@ interface ProfileContextType {
   setScannedIngredients: (ingredients: string[]) => void;
   scanHistory: ScanHistory[];
   addToScanHistory: (scan: ScanHistory) => void;
-  favorites: (string | number)[];
-  toggleFavorite: (id: string | number) => void;
-  toggleNoListItem: (ingredient: string) => void; // Tilføjet!
+  favorites: any[]; 
+  toggleFavorite: (item: any) => void;
+  updateFavorite: (updatedItem: any) => void; 
+  toggleNoListItem: (ingredient: string) => void; 
 }
 
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
@@ -39,7 +40,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
     return saved ? JSON.parse(saved) : { allergies: [], diet: [], nolist: [] };
   });
 
-  const [favorites, setFavorites] = useState<(string | number)[]>(() => {
+  const [favorites, setFavorites] = useState<any[]>(() => {
     const saved = localStorage.getItem("userFavorites");
     return saved ? JSON.parse(saved) : [];
   });
@@ -67,13 +68,36 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
     setScanHistory((prev) => [scan, ...prev].slice(0, 50));
   };
 
-  const toggleFavorite = (id: string | number) => {
-    setFavorites((prev) =>
-      prev.includes(id) ? prev.filter((favId) => favId !== id) : [...prev, id],
+  const toggleFavorite = (item: any) => {
+    setFavorites((prev) => {
+      // Find ud af om vi kigger på et simpelt ID eller et objekt med ID
+      const itemId = typeof item === "object" ? item.id : item;
+      
+      const exists = prev.some((fav) => {
+        const favId = typeof fav === "object" ? fav.id : fav;
+        return favId === itemId;
+      });
+
+      if (exists) {
+        return prev.filter((fav) => {
+          const favId = typeof fav === "object" ? fav.id : fav;
+          return favId !== itemId;
+        });
+      } else {
+        return [...prev, item];
+      }
+    });
+  };
+
+  const updateFavorite = (updatedItem: any) => {
+    setFavorites((prev) => 
+      prev.map((fav) => {
+        const favId = typeof fav === "object" ? fav.id : fav;
+        return favId === updatedItem.id ? updatedItem : fav;
+      })
     );
   };
 
-  // NY FUNKTION: Tænder og slukker for ingredienser i nolist
   const toggleNoListItem = (ingredient: string) => {
     const cleanItem = ingredient.toLowerCase().trim();
     setProfile((prev) => {
@@ -96,7 +120,8 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
         addToScanHistory,
         favorites,
         toggleFavorite,
-        toggleNoListItem, // Eksporteret!
+        updateFavorite, 
+        toggleNoListItem, 
       }}
     >
       {children}
