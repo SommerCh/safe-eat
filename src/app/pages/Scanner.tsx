@@ -247,7 +247,7 @@ export function Scanner() {
 
       {!capturedImage && (
         <>
-          <div className="absolute top-15 left-0 right-0 z-10 flex justify-center px-4 pointer-events-none">
+          <div className="absolute top-8 left-0 right-0 z-10 flex justify-center px-4 pointer-events-none">
             <div className="bg-black/60 backdrop-blur-md text-white px-5 py-3 rounded-full text-sm font-medium border border-white/10 shadow-lg text-center tracking-wide">
               Tag et billede af{" "}
               <span className="font-bold text-[#F4642B]">ingredienslisten</span>
