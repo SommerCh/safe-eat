@@ -47,9 +47,7 @@ export function Scanner() {
         const img = new Image();
         img.onload = async () => {
           const canvas = canvasRef.current;
-
           if (!canvas) return;
-
           const ctx = canvas.getContext("2d");
           if (!ctx) throw new Error(t("scanner_image_error"));
 
@@ -74,7 +72,6 @@ export function Scanner() {
           ctx.drawImage(img, 0, 0, width, height);
 
           const base64Image = canvas.toDataURL("image/jpeg", 0.5).split(",")[1];
-
           const combinedList = [...profile.allergies, ...profile.nolist];
           const userAllergies =
             combinedList.length > 0
@@ -83,22 +80,11 @@ export function Scanner() {
 
           const promptText = `
             You are a precise assistant for people with food allergies. The user's current language is '${i18n.language}'.
-
-            Data:
-            1. User's "no-list" (allergies and things to avoid): [${userAllergies}].
-
+            Data: 1. User's "no-list" (allergies and things to avoid): [${userAllergies}].
             Your tasks:
-            1. Read the text in the image. Extract ONLY actual food ingredients (e.g., "mango", "sugar", "milk").
-            2. Completely ignore brands (like 'coop'), weights ('100g'), headers ('ingredients'), and filler words ('SNACK', 'Storage'). Merge words if it makes sense (e.g., "Dried mango" instead of two words).
-            3. Compare the ingredients you find with the user's "no-list" (case-insensitive).
-
-            ONLY RESPOND WITH A JSON OBJECT in the following format:
-            {
-              "isSafe": boolean,
-              "foundAllergens": ["list of words from the no-list that were found"],
-              "extractedIngredients": ["Only the actual ingredients you extracted, cleaned of noise"],
-              "message": "A short conclusion in the user's language ('${i18n.language}')."
-            }
+            1. Read text, extract ONLY food ingredients.
+            2. Ignore brands, weights, filler words.
+            3. Compare with no-list. Respond ONLY with JSON object.
           `;
 
           const response = await fetch("/api/scan", {
@@ -112,7 +98,6 @@ export function Scanner() {
           });
 
           const data = await response.json();
-
           if (!response.ok)
             throw new Error(data.error || t("scanner_server_error"));
 
@@ -124,7 +109,6 @@ export function Scanner() {
               .trim();
             navigate("/result", { state: { aiResult: JSON.parse(cleanJson) } });
           }
-          if (fileInputRef.current) fileInputRef.current.value = "";
         };
         img.src = imageDataUrl;
       };
@@ -133,7 +117,6 @@ export function Scanner() {
       toast.error(t("error", { message: error.message }));
       setIsScanning(false);
       setCapturedImage(null);
-      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
 
@@ -144,7 +127,6 @@ export function Scanner() {
     try {
       const canvas = canvasRef.current;
       const video = videoRef.current;
-
       const MAX_DIMENSION = 1024;
       let width = video.videoWidth;
       let height = video.videoHeight;
@@ -168,7 +150,6 @@ export function Scanner() {
 
       ctx.drawImage(video, 0, 0, width, height);
       const base64Image = canvas.toDataURL("image/jpeg", 0.5).split(",")[1];
-
       setCapturedImage(canvas.toDataURL("image/jpeg"));
 
       const combinedList = [...profile.allergies, ...profile.nolist];
@@ -179,22 +160,8 @@ export function Scanner() {
 
       const promptText = `
         You are a precise assistant for people with food allergies. The user's current language is '${i18n.language}'.
-
-        Data:
-        1. User's "no-list" (allergies and things to avoid): [${userAllergies}].
-
-        Your tasks:
-        1. Read the text in the image. Extract ONLY actual food ingredients (e.g., "mango", "sugar", "milk").
-        2. Completely ignore brands (like 'coop'), weights ('100g'), headers ('ingredients'), and filler words ('SNACK', 'Storage'). Merge words if it makes sense (e.g., "Dried mango" instead of two words).
-        3. Compare the ingredients you find with the user's "no-list" (case-insensitive).
-
-        ONLY RESPOND WITH A JSON OBJECT in the following format:
-        {
-          "isSafe": boolean,
-          "foundAllergens": ["list of words from the no-list that were found"],
-          "extractedIngredients": ["Only the actual ingredients you extracted, cleaned of noise"],
-          "message": "A short conclusion in the user's language ('${i18n.language}')."
-        }
+        Data: 1. User's "no-list": [${userAllergies}].
+        Your tasks: Extract ingredients, ignore noise, compare with no-list. Respond ONLY with JSON.
       `;
 
       const response = await fetch("/api/scan", {
@@ -204,7 +171,6 @@ export function Scanner() {
       });
 
       const data = await response.json();
-
       if (!response.ok)
         throw new Error(data.error || t("scanner_server_error"));
 
@@ -247,7 +213,7 @@ export function Scanner() {
 
       {!capturedImage && (
         <>
-          <div className="absolute top-8 left-0 right-0 z-10 flex justify-center px-4 pointer-events-none">
+          <div className="absolute top-[7%] left-0 right-0 z-10 flex justify-center px-4 pointer-events-none">
             <div className="bg-black/60 backdrop-blur-md text-white px-5 py-3 rounded-full text-sm font-medium border border-white/10 shadow-lg text-center tracking-wide">
               Tag et billede af{" "}
               <span className="font-bold text-[#F4642B]">ingredienslisten</span>
@@ -284,8 +250,7 @@ export function Scanner() {
               className="w-[72px] h-[72px] rounded-full bg-white shadow-lg ring-4 ring-white/30 active:scale-95 transition-all disabled:opacity-50"
             />
           </div>
-
-          <div></div>
+          <div />
         </div>
       )}
 
@@ -297,11 +262,7 @@ export function Scanner() {
             className="absolute inset-0 w-full h-full object-cover opacity-30"
           />
           <div className="relative text-center px-8 space-y-4 flex flex-col items-center">
-            <img
-              src="/logoet.svg"
-              alt="Logo"
-              className="w-32 h-32 object-contain animate-pulse mb-2"
-            />
+            <div className="w-20 h-20 border-4 border-white/20 border-t-white rounded-full animate-spin mb-4" />
             <h2 className="text-3xl font-black text-white tracking-tight">
               {t("scanner_image_captured")}
             </h2>
@@ -310,9 +271,6 @@ export function Scanner() {
               <br />
               <span className="font-bold text-white">{t("scanner_done")}</span>
             </p>
-            <div className="pt-6">
-              <div className="animate-spin border-4 border-slate-500 border-t-transparent rounded-full w-10 h-10 mx-auto" />
-            </div>
           </div>
         </div>
       )}
