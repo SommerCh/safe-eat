@@ -43,40 +43,11 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Safe Eat</title>
-
-    <script type="module">
-      console.log("1. HTML indlæst. Prøver at starte motor...");
-
-      // Dette script prøver at starte refresh-motoren (kun til lokal brug)
-      try {
-        const { injectIntoGlobalHook } = await import("/@react-refresh");
-        injectIntoGlobalHook(window);
-        window.$RefreshReg$ = () => {};
-        window.$RefreshSig$ = () => (type) => type;
-        window.__vite_plugin_react_preamble_installed__ = true;
-        console.log("✅ Lokal motor startet!");
-      } catch (e) {
-        console.log(
-          "ℹ️ Kører i Produktion (Xcode/Vercel) - Springer motor over.",
-        );
-      }
-    </script>
-
-    <script>
-      // Fanger fejl hvis noget går galt senere
-      window.onerror = function (msg, url, line) {
-        alert("FEJL: " + msg + "\nLinje: " + line);
-        return false;
-      };
-    </script>
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <script type="module" src="src/main.tsx"></script>
   </body>
 </html>
