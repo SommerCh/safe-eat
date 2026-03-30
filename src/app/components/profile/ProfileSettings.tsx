@@ -9,18 +9,19 @@ import {
   Trash2,
   ChevronLeft,
   LogOut,
-  Globe, // Tilføjet til sprog-ikon
+  Globe,
+  ArrowRight,
 } from "lucide-react";
 import { supabase } from "../../lib/supabase";
-import { Button } from "../../components/ui/button";
 import appLogo from "../../../../assets/logo.png";
 
 export function ProfileSettings() {
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation(); // Tilføjet i18n her
+  const { t, i18n } = useTranslation();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [initialEmail, setInitialEmail] = useState("");
+  const [initialName, setInitialName] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: "", type: "" });
@@ -32,9 +33,11 @@ export function ProfileSettings() {
 
       if (user) {
         const userEmail = user.email || "";
+        const fullName = user.user_metadata?.full_name || "";
         setEmail(userEmail);
         setInitialEmail(userEmail);
-        setName(user.user_metadata?.full_name || "");
+        setName(fullName);
+        setInitialName(fullName);
 
         const { data } = await supabase
           .from("profiles")
@@ -50,50 +53,51 @@ export function ProfileSettings() {
     fetchUser();
   }, []);
 
-  // Funktion til at skifte sprog
   const toggleLanguage = () => {
-    const newLang = i18n.language === "da" ? "en" : "da";
-    i18n.changeLanguage(newLang);
+    const newLang = i18n.language.startsWith('da') ? 'en' : 'da';
+    i18n.changeLanguage(newLang).then(() => {
+      localStorage.setItem('i18nextLng', newLang);
+    });
   };
 
-  const handleUpdateProfile = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+  const autoSaveField = async (type: "name" | "email") => {
+    if (type === "name" && name === initialName) return;
+    if (type === "email" && email === initialEmail) return;
+
     setMessage({ text: "", type: "" });
-
-    const updates: any = {
-      data: { full_name: name },
-    };
-
-    if (email !== initialEmail) {
-      updates.email = email;
-    }
-
-    if (password.length >= 6) {
-      updates.password = password;
-    }
+    const updates: any = {};
+    
+    if (type === "name") updates.data = { full_name: name };
+    if (type === "email") updates.email = email;
 
     const { error } = await supabase.auth.updateUser(updates);
 
     if (error) {
-      setMessage({
-        text: t("profile.error", "Fejl: ") + error.message,
-        type: "error",
-      });
+      setMessage({ text: t("profile.error") + error.message, type: "error" });
+      if (type === "name") setName(initialName);
+      if (type === "email") setEmail(initialEmail);
     } else {
-      setMessage({
-        text: t("profile.update_success", "Din profil er blevet opdateret!"),
-        type: "success",
-      });
-      setInitialEmail(email);
-      setPassword("");
-
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        setName(user.user_metadata?.full_name || "");
-      }
+      setMessage({ text: t("profile.update_success"), type: "success" });
+      if (type === "name") setInitialName(name);
+      if (type === "email") setInitialEmail(email);
+      setTimeout(() => setMessage({ text: "", type: "" }), 3000);
     }
+  };
 
+  const handlePasswordUpdate = async () => {
+    if (password.length < 6) return;
+    setLoading(true);
+    setMessage({ text: "", type: "" });
+
+    const { error } = await supabase.auth.updateUser({ password });
+
+    if (error) {
+      setMessage({ text: t("profile.error") + error.message, type: "error" });
+    } else {
+      setMessage({ text: t("profile.update_success"), type: "success" });
+      setPassword("");
+      setTimeout(() => setMessage({ text: "", type: "" }), 3000);
+    }
     setLoading(false);
   };
 
@@ -103,15 +107,11 @@ export function ProfileSettings() {
   };
 
   const handleDeleteProfile = async () => {
-    const confirmDelete = window.confirm(
-      t("profile.delete_confirm", "Er du helt sikker på, at du vil slette din profil? Dette kan ikke fortrydes.")
-    );
-
+    const confirmDelete = window.confirm(t("profile.delete_confirm"));
     if (confirmDelete) {
       const { error } = await supabase.rpc("delete_user");
       if (error) {
-        console.error("Slette-fejl:", error);
-        alert(t("profile.delete_error", "Kunne ikke slette bruger"));
+        alert(t("profile.delete_error"));
         return;
       }
       await supabase.auth.signOut();
@@ -120,14 +120,14 @@ export function ProfileSettings() {
   };
 
   return (
-    <div className="min-h-screen bg-white "> 
+    <div className="min-h-screen bg-white"> 
       <div className="bg-white px-6 pt-6 pb-6 sticky top-0 z-10 border-b border-slate-100 flex justify-between items-start">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-slate-950">
-            {t("profile.settings_title", "Indstillinger")}
+            {t("profile.settings_title")}
           </h1>
           <p className="text-slate-500 mt-2 font-medium">
-            {t("profile.settings_subtitle", "Administrer din konto og sikkerhed")}
+            {t("profile.settings_subtitle")}
           </p>
         </div>
 
@@ -140,7 +140,6 @@ export function ProfileSettings() {
       </div>
 
       <div className="px-6 py-8 max-w-md mx-auto">
-        {/* Enkel sprogvælger-knap tilføjet her */}
         <button 
           onClick={toggleLanguage}
           className="w-full mb-8 h-14 bg-slate-50 border-2 border-slate-100 rounded-2xl flex items-center justify-between px-4"
@@ -148,27 +147,27 @@ export function ProfileSettings() {
           <div className="flex items-center gap-3">
             <Globe className="w-5 h-5 text-slate-400" />
             <span className="font-semibold text-slate-700">
-              {i18n.language === "da" ? "Dansk" : "English"}
+              {i18n.language.startsWith('da') ? "Dansk" : "English"}
             </span>
           </div>
           <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-            {t("profile.change_lang", "Skift")}
+            {t("profile.change_lang")}
           </span>
         </button>
 
         {isPremium && (
-          <div className="flex items-center gap-2 mb-6 ml-1">
+          <div className="flex items-center gap-2 mb-8 ml-1">
             <img src={appLogo} alt="SafeEat logo" className="w-5 h-5 object-contain" />
             <span className="text-sm font-bold text-slate-700">
-              {t("profile.premium_user", "Safe Eat Pro user")}
+              {t("profile.premium_user")}
             </span>
           </div>
         )}
 
-        <form onSubmit={handleUpdateProfile} className="space-y-8">
+        <div className="space-y-8">
           <div className="space-y-2">
             <label className="text-sm font-semibold text-slate-700 ml-1">
-              {t("profile.label_name", "Navn")}
+              {t("profile.label_name")}
             </label>
             <div className="relative">
               <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -176,7 +175,8 @@ export function ProfileSettings() {
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder={t("profile.placeholder_name", "Indtast dit navn")}
+                onBlur={() => autoSaveField("name")}
+                placeholder={t("profile.placeholder_name")}
                 className="w-full h-14 pl-12 pr-4 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:bg-white focus:border-slate-400 outline-none transition-all"
               />
             </div>
@@ -184,7 +184,7 @@ export function ProfileSettings() {
 
           <div className="space-y-2">
             <label className="text-sm font-semibold text-slate-700 ml-1">
-              {t("profile.label_email", "E-mailadresse")}
+              {t("profile.label_email")}
             </label>
             <div className="relative">
               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -193,6 +193,7 @@ export function ProfileSettings() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                onBlur={() => autoSaveField("email")}
                 className="w-full h-14 pl-12 pr-4 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:bg-white focus:border-slate-400 outline-none transition-all"
               />
             </div>
@@ -200,18 +201,28 @@ export function ProfileSettings() {
 
           <div className="space-y-2">
             <label className="text-sm font-semibold text-slate-700 ml-1">
-              {t("profile.label_password", "Ny adgangskode")}
+              {t("profile.label_password")}
             </label>
-            <div className="relative">
+            <div className="relative group">
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
               <input
                 type="password"
-                minLength={6}
                 value={password}
+                autoComplete="new-password"
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder={t("profile.placeholder_password_change", "Skriv kun for at ændre")}
-                className="w-full h-14 pl-12 pr-4 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:bg-white focus:border-slate-400 outline-none transition-all"
+                placeholder={t("profile.placeholder_password")}
+                className="w-full h-14 pl-12 pr-28 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:bg-white focus:border-slate-400 outline-none transition-all"
               />
+              {password.length >= 6 && (
+                <button
+                  onClick={handlePasswordUpdate}
+                  disabled={loading}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 h-10 px-4 bg-slate-900 text-white rounded-xl text-xs font-bold flex items-center gap-2 hover:bg-black transition-all animate-in fade-in zoom-in duration-200"
+                >
+                  {loading ? "..." : "Opdater"}
+                  <ArrowRight className="w-3 h-3" />
+                </button>
+              )}
             </div>
           </div>
 
@@ -223,15 +234,7 @@ export function ProfileSettings() {
               <p className="text-sm font-medium">{message.text}</p>
             </div>
           )}
-
-          <Button
-            type="submit"
-            disabled={loading}
-            className="w-full h-14 bg-slate-950 text-white hover:bg-black rounded-2xl text-base font-bold shadow-sm transition-all active:scale-[0.98]"
-          >
-            {loading ? t("profile.btn_saving", "Gemmer...") : t("profile.btn_save_changes", "Gem ændringer")}
-          </Button>
-        </form>
+        </div>
 
         <div className="pt-8 mt-12 space-y-4 border-t border-slate-100">
           <button
@@ -240,7 +243,7 @@ export function ProfileSettings() {
             className="w-full flex items-center justify-center gap-2 h-14 bg-slate-50 text-slate-700 hover:bg-slate-100 rounded-2xl text-base font-semibold transition-all active:scale-[0.98]"
           >
             <LogOut className="w-5 h-5" />
-            {t("profile.btn_logout", "Log ud")}
+            {t("profile.btn_logout")}
           </button>
 
           <button
@@ -249,7 +252,7 @@ export function ProfileSettings() {
             className="w-full flex items-center justify-center gap-2 h-14 bg-white border-2 border-red-50 text-red-600 hover:bg-red-50 rounded-2xl text-base font-semibold transition-all active:scale-[0.98]"
           >
             <Trash2 className="w-5 h-5" />
-            {t("profile.btn_delete_profile", "Slet profil")}
+            {t("profile.btn_delete_profile")}
           </button>
         </div>
       </div>

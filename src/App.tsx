@@ -1,5 +1,3 @@
-console.log("3. App.tsx filen bliver læst nu...");
-
 import { useEffect } from "react";
 import { RouterProvider } from "react-router";
 import { router } from "./app/routes";

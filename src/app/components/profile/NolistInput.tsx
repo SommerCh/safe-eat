@@ -54,7 +54,6 @@ export function NolistInput({
               key={item}
               className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-100 text-slate-900 rounded-xl text-sm font-semibold animate-in zoom-in duration-200"
             >
-              {/* Her vises ordet nu råt uden t() funktion */}
               {item}
               <button
                 type="button"

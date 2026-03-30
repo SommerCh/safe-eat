@@ -54,7 +54,7 @@ export function ArticleSection({ searchQuery }: ArticleSectionProps) {
 
       <section>
         <div className="flex justify-between items-end mb-5 px-1">
-          <h2 className="text-xl font-black text-slate-900 tracking-tight">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4 px-1">
             {activeCategory === currentCategories[0]
               ? t("latest_news_and_guides", "Seneste nyt & guides")
               : activeCategory}
