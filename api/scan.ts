@@ -1,8 +1,8 @@
 export default async function handler(req: any, res: any) {
   if (req.method !== "POST") {
-    return res.status(405).json({ 
-      error: "Method not allowed", 
-      code: "method_not_allowed" 
+    return res.status(405).json({
+      error: "Method not allowed",
+      code: "method_not_allowed",
     });
   }
 
@@ -11,16 +11,16 @@ export default async function handler(req: any, res: any) {
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!base64Image || typeof base64Image !== "string") {
-      return res.status(400).json({ 
-        error: "Invalid image received", 
-        code: "invalid_image" 
+      return res.status(400).json({
+        error: "Invalid image received",
+        code: "invalid_image",
       });
     }
 
     if (!apiKey) {
-      return res.status(500).json({ 
-        error: "Server configuration error", 
-        code: "server_error" 
+      return res.status(500).json({
+        error: "Server configuration error",
+        code: "server_error",
       });
     }
 
@@ -54,16 +54,15 @@ export default async function handler(req: any, res: any) {
     if (!googleResponse.ok) {
       return res.status(googleResponse.status).json({
         error: data.error?.message || "AI Error",
-        code: "server_error" 
+        code: "server_error",
       });
     }
 
     return res.status(200).json(data);
-
   } catch (error: any) {
-    return res.status(500).json({ 
-      error: error.message, 
-      code: "server_error" 
+    return res.status(500).json({
+      error: error.message,
+      code: "server_error",
     });
   }
 }
