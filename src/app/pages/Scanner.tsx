@@ -12,29 +12,40 @@ export function Scanner() {
   const { profile } = useProfile();
 
   const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const isMounted = useRef(true);
 
   const [isScanning, setIsScanning] = useState(false);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
 
   useEffect(() => {
+    isMounted.current = true;
     async function startCamera() {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: "environment" },
         });
-        if (videoRef.current) videoRef.current.srcObject = stream;
+        if (isMounted.current) {
+          streamRef.current = stream;
+          if (videoRef.current) videoRef.current.srcObject = stream;
+        } else {
+          // If component unmounted while we were waiting, stop the stream immediately.
+          stream.getTracks().forEach((track) => track.stop());
+        }
       } catch (err) {
         toast.error(
           t("scanner_camera_error", "Kunne ikke få adgang til kameraet"),
         );
       }
     }
+
     startCamera();
+
     return () => {
-      const currentStream = videoRef.current?.srcObject as MediaStream;
-      currentStream?.getTracks().forEach((track) => track.stop());
+      isMounted.current = false;
+      streamRef.current?.getTracks().forEach((track) => track.stop());
     };
   }, [t]);
 
@@ -156,8 +167,16 @@ export function Scanner() {
             const reader = new FileReader();
             reader.onload = (ev) => {
               const img = new Image();
+              img.onerror = () => {
+                toast.error(t("scanner_image_error"));
+                setIsScanning(false);
+              };
               img.onload = () => resizeAndProcess(img);
               img.src = ev.target?.result as string;
+            };
+            reader.onerror = () => {
+              toast.error(t("scanner_image_error"));
+              setIsScanning(false);
             };
             reader.readAsDataURL(file);
           }

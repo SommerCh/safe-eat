@@ -74,7 +74,7 @@ export function ArticleDetail() {
 
   const relatedArticles = currentArticles
     .filter((a) => a.id !== article.id && a.category === article.category)
-    .slice(0, 4);
+    .slice(0, 9);
 
   if (relatedArticles.length < 9) {
     const fallbackRelated = currentArticles

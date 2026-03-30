@@ -11,6 +11,7 @@ import {
   Info,
   Heart,
   RotateCcw,
+  Search,
 } from "lucide-react";
 
 export function Result() {
@@ -21,20 +22,14 @@ export function Result() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const mockResult = {
-    isSafe: false,
-    extractedIngredients: ["Hvedemel", "Sukker", "Mælkepulver", "Palmeolie"],
-    foundAllergens: ["Mælkepulver"],
-  };
+  const aiResult = location.state?.aiResult;
 
-  const aiResult = location.state?.aiResult || mockResult;
-
-  const ingredientsHash = aiResult.extractedIngredients
+  const ingredientsHash = aiResult?.extractedIngredients
     ? aiResult.extractedIngredients.join(",")
     : "raw-scan-no-ingredients";
 
   useEffect(() => {
-    if (!location.state?.aiResult && !mockResult) {
+    if (!aiResult) {
       navigate("/scanner");
       return;
     }
@@ -47,11 +42,13 @@ export function Result() {
     addToScanHistory({
       date: new Date().toISOString(),
       productName: nameForHistory,
-      safe: aiResult.isSafe,
+      safe: aiResult.productType === "OTHER" ? true : aiResult.isSafe,
     });
   }, []);
 
   if (!aiResult) return null;
+
+  const isFood = aiResult.productType === "FOOD";
 
   const generatedName =
     aiResult.extractedIngredients && aiResult.extractedIngredients.length > 0
@@ -90,13 +87,18 @@ export function Result() {
     setIsModalOpen(false);
   };
 
-  const allergensList = aiResult.foundAllergens?.join(", ") || "";
-  const finalMessage = aiResult.isSafe
-    ? t("result_safe_msg", "Ingen forbudte ingredienser fundet.")
-    : `${t("result_contains", "Produktet indeholder:")} ${allergensList}`;
+  const finalMessage = isFood
+    ? aiResult.isSafe
+      ? t("result_safe_msg", "Ingen forbudte ingredienser fundet.")
+      : `${t(
+          "result_contains",
+          "Produktet indeholder:",
+        )} ${aiResult.foundAllergens?.join(", ")}`
+    : aiResult.message ||
+      t("result_info_default", "Her er indholdet af varen.");
 
   return (
-    <div className="bg-white">
+    <div className="bg-white min-h-screen">
       <div className="px-6 pt-6 pb-6 flex justify-between items-center bg-white border-b border-slate-100 sticky top-0 z-10">
         <button
           onClick={() => navigate("/scanner")}
@@ -125,19 +127,25 @@ export function Result() {
         <div className="mb-10 flex flex-col items-center text-center">
           <div
             className={`w-24 h-24 rounded-full flex items-center justify-center mb-6 ${
-              aiResult.isSafe
+              !isFood
+                ? "bg-slate-100 text-slate-600"
+                : aiResult.isSafe
                 ? "bg-emerald-100 text-emerald-600"
                 : "bg-rose-100 text-rose-500"
             }`}
           >
-            {aiResult.isSafe ? (
+            {!isFood ? (
+              <Search className="w-12 h-12" />
+            ) : aiResult.isSafe ? (
               <CheckCircle2 className="w-12 h-12" />
             ) : (
               <AlertTriangle className="w-12 h-12" />
             )}
           </div>
           <h2 className="text-4xl font-black text-slate-900 tracking-tight">
-            {aiResult.isSafe
+            {!isFood
+              ? t("result_info_title", "Produkt Info")
+              : aiResult.isSafe
               ? t("result_safe_title", "Helt sikker!")
               : t("result_danger_title", "Pas på!")}
           </h2>
@@ -145,7 +153,9 @@ export function Result() {
 
         <div
           className={`w-full rounded-3xl p-6 mb-8 flex items-start gap-4 border ${
-            aiResult.isSafe
+            !isFood
+              ? "bg-slate-50 border-slate-100 text-slate-600"
+              : aiResult.isSafe
               ? "bg-emerald-50/50 border-emerald-100 text-emerald-900"
               : "bg-rose-50 border-rose-100 text-rose-900"
           }`}
@@ -156,15 +166,18 @@ export function Result() {
 
         <div className="w-full space-y-4 text-center">
           <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em]">
-            {t("found_ingredients_label", "Fundne Ingredienser:")}
+            {isFood
+              ? t("found_ingredients_label", "Fundne Ingredienser:")
+              : t("found_contents_label", "Indholdsstoffer:")}
           </h3>
 
           <div className="flex flex-wrap gap-2 justify-center">
             {aiResult.extractedIngredients?.map((ing: string, i: number) => {
-              const isAllergen = aiResult.foundAllergens?.some(
-                (allergen: string) =>
+              const isAllergen =
+                isFood &&
+                aiResult.foundAllergens?.some((allergen: string) =>
                   ing.toLowerCase().includes(allergen.toLowerCase()),
-              );
+                );
               return (
                 <span
                   key={i}
