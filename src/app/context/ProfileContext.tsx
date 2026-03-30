@@ -3,6 +3,8 @@ import {
   useContext,
   useEffect,
   useState,
+  useCallback,
+  useMemo,
   type ReactNode,
 } from "react";
 
@@ -26,18 +28,20 @@ interface ProfileContextType {
   setScannedIngredients: (ingredients: string[]) => void;
   scanHistory: ScanHistory[];
   addToScanHistory: (scan: ScanHistory) => void;
-  favorites: any[]; 
+  favorites: any[];
   toggleFavorite: (item: any) => void;
-  updateFavorite: (updatedItem: any) => void; 
-  toggleNoListItem: (ingredient: string) => void; 
+  updateFavorite: (updatedItem: any) => void;
+  toggleNoListItem: (ingredient: string) => void;
 }
 
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
 
 export function ProfileProvider({ children }: { children: ReactNode }) {
-  const [profile, setProfile] = useState<UserProfile>(() => {
+  const [profile, setProfileState] = useState<UserProfile>(() => {
     const saved = localStorage.getItem("userProfile");
-    return saved ? JSON.parse(saved) : { allergies: [], diet: [], health: [], nolist: [] };
+    return saved
+      ? JSON.parse(saved)
+      : { allergies: [], diet: [], health: [], nolist: [] };
   });
 
   const [favorites, setFavorites] = useState<any[]>(() => {
@@ -64,67 +68,80 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("scanHistory", JSON.stringify(scanHistory));
   }, [scanHistory]);
 
-  const addToScanHistory = (scan: ScanHistory) => {
-    setScanHistory((prev) => [scan, ...prev].slice(0, 50));
-  };
+  const setProfile = useCallback((newProfile: UserProfile) => {
+    setProfileState(newProfile);
+  }, []);
 
-  const toggleFavorite = (item: any) => {
+  const addToScanHistory = useCallback((scan: ScanHistory) => {
+    setScanHistory((prev) => [scan, ...prev].slice(0, 50));
+  }, []);
+
+  const toggleFavorite = useCallback((item: any) => {
     setFavorites((prev) => {
       const itemId = typeof item === "object" ? item.id : item;
-      
-      const exists = prev.some((fav) => {
-        const favId = typeof fav === "object" ? fav.id : fav;
-        return favId === itemId;
-      });
+      const exists = prev.some(
+        (fav) => (typeof fav === "object" ? fav.id : fav) === itemId,
+      );
 
       if (exists) {
-        return prev.filter((fav) => {
-          const favId = typeof fav === "object" ? fav.id : fav;
-          return favId !== itemId;
-        });
+        return prev.filter(
+          (fav) => (typeof fav === "object" ? fav.id : fav) !== itemId,
+        );
       } else {
         return [...prev, item];
       }
     });
-  };
+  }, []);
 
-  const updateFavorite = (updatedItem: any) => {
-    setFavorites((prev) => 
-      prev.map((fav) => {
-        const favId = typeof fav === "object" ? fav.id : fav;
-        return favId === updatedItem.id ? updatedItem : fav;
-      })
+  const updateFavorite = useCallback((updatedItem: any) => {
+    setFavorites((prev) =>
+      prev.map((fav) =>
+        (typeof fav === "object" ? fav.id : fav) === updatedItem.id
+          ? updatedItem
+          : fav,
+      ),
     );
-  };
+  }, []);
 
-  const toggleNoListItem = (ingredient: string) => {
+  const toggleNoListItem = useCallback((ingredient: string) => {
     const cleanItem = ingredient.toLowerCase().trim();
-    setProfile((prev) => {
+    setProfileState((prev) => {
       const currentList = prev.nolist || [];
       const newList = currentList.includes(cleanItem)
         ? currentList.filter((item) => item !== cleanItem)
         : [...currentList, cleanItem];
       return { ...prev, nolist: newList };
     });
-  };
+  }, []);
+
+  const value = useMemo(
+    () => ({
+      profile,
+      setProfile,
+      scannedIngredients,
+      setScannedIngredients,
+      scanHistory,
+      addToScanHistory,
+      favorites,
+      toggleFavorite,
+      updateFavorite,
+      toggleNoListItem,
+    }),
+    [
+      profile,
+      setProfile,
+      scannedIngredients,
+      scanHistory,
+      addToScanHistory,
+      favorites,
+      toggleFavorite,
+      updateFavorite,
+      toggleNoListItem,
+    ],
+  );
 
   return (
-    <ProfileContext.Provider
-      value={{
-        profile,
-        setProfile,
-        scannedIngredients,
-        setScannedIngredients,
-        scanHistory,
-        addToScanHistory,
-        favorites,
-        toggleFavorite,
-        updateFavorite, 
-        toggleNoListItem, 
-      }}
-    >
-      {children}
-    </ProfileContext.Provider>
+    <ProfileContext.Provider value={value}>{children}</ProfileContext.Provider>
   );
 }
 
