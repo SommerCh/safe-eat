@@ -13,7 +13,7 @@ import {
   Package,
 } from "lucide-react";
 import { useProfile } from "../context/ProfileContext";
-import { SaveProduct } from "../components/others/SaveProduct";
+import { SaveProduct } from "../components/othersItems/SaveProduct";
 import { toast } from "sonner";
 import { ARTICLES } from "../components/articles/articleData";
 import foodData from "../lib/dicData";

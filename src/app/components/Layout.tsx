@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Outlet, useLocation, ScrollRestoration } from "react-router";
-import { BottomNav } from "./others/BottomNav";
+import { BottomNav } from "./othersItems/BottomNav";
 import { Paywall } from "../components/home/Paywall";
 import { supabase } from "../lib/supabase";
 

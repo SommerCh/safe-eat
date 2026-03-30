@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router";
 import { useProfile } from "../context/ProfileContext";
 import { useTranslation } from "react-i18next";
 import { Button } from "../components/ui/button";
-import { SaveProduct } from "../components/others/SaveProduct";
+import { SaveProduct } from "../components/othersItems/SaveProduct";
 import {
   CheckCircle2,
   AlertTriangle,
