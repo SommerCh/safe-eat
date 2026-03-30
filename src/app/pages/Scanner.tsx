@@ -102,8 +102,8 @@ export function Scanner() {
       const data = await response.json();
       if (!response.ok) {
         const errorMessage = data.code
-          ? t(`api_errors.${data.code}`, data.error)
-          : data.error || "Server error";
+          ? `${t(`api_errors.${data.code}`)}: ${data.error}`
+          : `${data.error || "Server error"}`;
         throw new Error(errorMessage);
       }
 
