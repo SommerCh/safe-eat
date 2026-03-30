@@ -1,20 +1,38 @@
 export default async function handler(req: any, res: any) {
-  if (req.method !== "POST") return res.status(405).json({ error: "Kun POST" });
+  if (req.method !== "POST") {
+    return res
+      .status(405)
+      .json({
+        code: "method_not_allowed",
+        error: "Only POST requests are allowed",
+      });
+  }
 
   try {
     const { base64Image, promptText } = req.body;
     const apiKey = process.env.GEMINI_API_KEY;
 
-    if (!base64Image || typeof base64Image !== 'string') {
-      return res.status(400).json({ error: "Intet gyldigt billede modtaget" });
+    if (!base64Image || typeof base64Image !== "string") {
+      return res
+        .status(400)
+        .json({
+          code: "invalid_image",
+          error: "Invalid or missing image provided",
+        });
     }
 
-    if (!apiKey) return res.status(500).json({ error: "API-nøgle mangler" });
+    if (!apiKey) {
+      return res
+        .status(500)
+        .json({ code: "api_key_missing", error: "Server is missing API key" });
+    }
 
     const chosenModel = "models/gemini-2.5-flash";
     const generateUrl = `https://generativelanguage.googleapis.com/v1beta/${chosenModel}:generateContent?key=${apiKey}`;
 
-    const cleanBase64 = base64Image.includes(",") ? base64Image.split(",")[1] : base64Image;
+    const cleanBase64 = base64Image.includes(",")
+      ? base64Image.split(",")[1]
+      : base64Image;
 
     const googleResponse = await fetch(generateUrl, {
       method: "POST",
@@ -24,12 +42,12 @@ export default async function handler(req: any, res: any) {
           {
             parts: [
               { text: promptText },
-              { inline_data: { mime_type: "image/jpeg", data: cleanBase64 } },
+              { inlineData: { mimeType: "image/jpeg", data: cleanBase64 } },
             ],
           },
         ],
         generationConfig: {
-          response_mime_type: "application/json",
+          responseMimeType: "application/json",
         },
       }),
     });
@@ -37,14 +55,22 @@ export default async function handler(req: any, res: any) {
     const data = await googleResponse.json();
 
     if (!googleResponse.ok) {
-      return res.status(googleResponse.status).json({ 
-        error: `AI Fejl: ${data.error?.message || "Ukendt fejl"}` 
-      });
+      // Forward the error from Google, but add a code for the frontend
+      return res
+        .status(googleResponse.status)
+        .json({
+          code: "ai_error",
+          error: data.error?.message || "Unknown AI error",
+        });
     }
 
     return res.status(200).json(data);
-
   } catch (error: any) {
-    return res.status(500).json({ error: error.message });
+    return res
+      .status(500)
+      .json({
+        code: "server_error",
+        error: error.message || "An internal server error occurred",
+      });
   }
 }

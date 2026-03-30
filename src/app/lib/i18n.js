@@ -461,6 +461,9 @@ const resources = {
       api_errors: {
         invalid_image: "Billedet er ugyldigt eller mangler.",
         server_error: "Der skete en fejl på serveren. Prøv igen senere.",
+        api_key_missing: "Serveren er konfigureret forkert.",
+        method_not_allowed: "Ugyldig anmodning til serveren.",
+        ai_error: "Fejl fra AI-tjenesten. Prøv igen.",
         blurry_image: "Billedet er for utydeligt til at blive analyseret.",
         rate_limit: "Du har scannet for mange ting hurtigt efter hinanden. Vent lidt.",
         default: "Noget gik galt under scanningen."
@@ -925,6 +928,9 @@ const resources = {
       api_errors: {
         invalid_image: "The image is invalid or missing.",
         server_error: "A server error occurred. Please try again later.",
+        api_key_missing: "The server is misconfigured.",
+        method_not_allowed: "Invalid request to the server.",
+        ai_error: "Error from the AI service. Please try again.",
         blurry_image: "The image is too blurry to analyze.",
         rate_limit: "You've scanned too many items quickly. Please wait a moment.",
         default: "Something went wrong during the scan."
