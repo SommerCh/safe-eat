@@ -39,10 +39,7 @@ export function Result() {
 
     if (hasSavedToHistory.current) return;
 
-    const nameForHistory =
-      aiResult.extractedIngredients && aiResult.extractedIngredients.length > 0
-        ? aiResult.extractedIngredients.slice(0, 3).join(", ") + "..."
-        : t("scanned_product_default", "Scannet produkt");
+    const nameForHistory = t("scanned_product_default", "Scannet produkt");
 
     hasSavedToHistory.current = true;
     addToScanHistory({
@@ -56,11 +53,7 @@ export function Result() {
 
   const isFood = aiResult.productType === "FOOD";
 
-  const generatedName =
-    aiResult.extractedIngredients && aiResult.extractedIngredients.length > 0
-      ? aiResult.extractedIngredients.slice(0, 3).join(", ") + "..."
-      : t("scanned_product_default", "Scannet produkt");
-
+  const generatedName = "";
   const isFavorite = ingredientsHash
     ? favorites.some(
         (fav: any) =>
@@ -78,7 +71,8 @@ export function Result() {
       id: Date.now(),
       type: "product",
       ingredientsHash: ingredientsHash,
-      productName: productName || generatedName,
+      productName:
+        productName.trim() || t("scanned_product_default", "Scannet produkt"),
       store: storeName,
       notes: notes,
       image: currentPreview,
@@ -100,7 +94,7 @@ export function Result() {
 
   return (
     <div className="bg-white min-h-screen pb-[env(safe-area-inset-bottom)]">
-      <div className="px-6 pt-[calc(env(safe-area-inset-top)+8px)] pb-6 flex justify-between items-center bg-white border-b border-slate-100 sticky top-0 z-10">
+      <div className="px-6 pt-[calc(env(safe-area-inset-top)+16px)] pb-6 flex justify-between items-center bg-white border-b border-slate-100 sticky top-0 z-10">
         <button
           onClick={() => navigate("/scanner")}
           className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center border border-slate-100 active:scale-95 transition-all"

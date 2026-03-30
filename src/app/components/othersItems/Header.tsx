@@ -47,7 +47,7 @@ export function HomeHeader({ searchQuery, setSearchQuery }: HomeHeaderProps) {
   };
 
   return (
-    <div className="bg-white px-6 pt-[calc(env(safe-area-inset-top)+8px)] pb-6 sticky top-0 z-10 border-b border-slate-100">
+    <div className="bg-white px-6 pt-[calc(env(safe-area-inset-top)+16px)] pb-6 sticky top-0 z-10 border-b border-slate-100">
       {" "}
       <div className="mb-6">
         <h1 className="text-3xl font-bold tracking-tight text-slate-900">

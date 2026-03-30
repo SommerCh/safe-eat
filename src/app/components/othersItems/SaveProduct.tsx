@@ -191,8 +191,17 @@ export function SaveProduct({
                 type="text"
                 value={productName}
                 onChange={(e) => setProductName(e.target.value)}
-                className="w-full h-14 pl-12 pr-4 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:bg-white focus:border-slate-400 outline-none font-medium text-slate-950"
+                className="w-full h-14 pl-12 pr-12 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:bg-white focus:border-slate-400 outline-none font-medium text-slate-950"
               />
+              {productName && (
+                <button
+                  type="button"
+                  onClick={() => setProductName("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-slate-200/50 hover:bg-slate-200 rounded-full transition-colors"
+                >
+                  <X className="w-4 h-4 text-slate-600" />
+                </button>
+              )}
             </div>
           </div>
 
@@ -206,8 +215,17 @@ export function SaveProduct({
                 type="text"
                 value={storeName}
                 onChange={(e) => setStoreName(e.target.value)}
-                className="w-full h-14 pl-12 pr-4 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:bg-white focus:border-slate-400 outline-none font-medium text-slate-950"
+                className="w-full h-14 pl-12 pr-12 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:bg-white focus:border-slate-400 outline-none font-medium text-slate-950"
               />
+              {storeName && (
+                <button
+                  type="button"
+                  onClick={() => setStoreName("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-slate-200/50 hover:bg-slate-200 rounded-full transition-colors"
+                >
+                  <X className="w-4 h-4 text-slate-600" />
+                </button>
+              )}
             </div>
           </div>
 
@@ -220,8 +238,17 @@ export function SaveProduct({
               <textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                className="w-full h-32 pl-12 pr-4 pt-4 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:bg-white focus:border-slate-400 outline-none font-medium text-slate-950 resize-none"
+                className="w-full h-32 pl-12 pr-12 pt-4 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:bg-white focus:border-slate-400 outline-none font-medium text-slate-950 resize-none"
               />
+              {notes && (
+                <button
+                  type="button"
+                  onClick={() => setNotes("")}
+                  className="absolute right-3 top-4 w-8 h-8 flex items-center justify-center bg-slate-200/50 hover:bg-slate-200 rounded-full transition-colors"
+                >
+                  <X className="w-4 h-4 text-slate-600" />
+                </button>
+              )}
             </div>
           </div>
 
