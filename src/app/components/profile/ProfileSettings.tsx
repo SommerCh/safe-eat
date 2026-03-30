@@ -9,6 +9,7 @@ import {
   Trash2,
   ChevronLeft,
   LogOut,
+  Globe, // Tilføjet til sprog-ikon
 } from "lucide-react";
 import { supabase } from "../../lib/supabase";
 import { Button } from "../../components/ui/button";
@@ -16,7 +17,7 @@ import appLogo from "../../../../assets/logo.png";
 
 export function ProfileSettings() {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation(); // Tilføjet i18n her
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [initialEmail, setInitialEmail] = useState("");
@@ -27,9 +28,7 @@ export function ProfileSettings() {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const { data: { user } } = await supabase.auth.getUser();
 
       if (user) {
         const userEmail = user.email || "";
@@ -50,6 +49,12 @@ export function ProfileSettings() {
     };
     fetchUser();
   }, []);
+
+  // Funktion til at skifte sprog
+  const toggleLanguage = () => {
+    const newLang = i18n.language === "da" ? "en" : "da";
+    i18n.changeLanguage(newLang);
+  };
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,9 +88,7 @@ export function ProfileSettings() {
       setInitialEmail(email);
       setPassword("");
 
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         setName(user.user_metadata?.full_name || "");
       }
@@ -101,38 +104,30 @@ export function ProfileSettings() {
 
   const handleDeleteProfile = async () => {
     const confirmDelete = window.confirm(
-      t(
-        "profile.delete_confirm",
-        "Er du helt sikker på, at du vil slette din profil? Dette kan ikke fortrydes.",
-      ),
+      t("profile.delete_confirm", "Er du helt sikker på, at du vil slette din profil? Dette kan ikke fortrydes.")
     );
 
     if (confirmDelete) {
       const { error } = await supabase.rpc("delete_user");
-
       if (error) {
         console.error("Slette-fejl:", error);
         alert(t("profile.delete_error", "Kunne ikke slette bruger"));
         return;
       }
-
       await supabase.auth.signOut();
       navigate("/");
     }
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="bg-white px-6 pt-12 pb-6 sticky top-0 z-10 border-b border-slate-100 flex justify-between items-start">
+    <div className="min-h-screen bg-white "> 
+      <div className="bg-white px-6 pt-6 pb-6 sticky top-0 z-10 border-b border-slate-100 flex justify-between items-start">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-slate-950">
             {t("profile.settings_title", "Indstillinger")}
           </h1>
           <p className="text-slate-500 mt-2 font-medium">
-            {t(
-              "profile.settings_subtitle",
-              "Administrer din konto og sikkerhed",
-            )}
+            {t("profile.settings_subtitle", "Administrer din konto og sikkerhed")}
           </p>
         </div>
 
@@ -144,14 +139,26 @@ export function ProfileSettings() {
         </button>
       </div>
 
-      <div className="px-6 py-8 max-w-md mx-auto pb-32">
+      <div className="px-6 py-8 max-w-md mx-auto">
+        {/* Enkel sprogvælger-knap tilføjet her */}
+        <button 
+          onClick={toggleLanguage}
+          className="w-full mb-8 h-14 bg-slate-50 border-2 border-slate-100 rounded-2xl flex items-center justify-between px-4"
+        >
+          <div className="flex items-center gap-3">
+            <Globe className="w-5 h-5 text-slate-400" />
+            <span className="font-semibold text-slate-700">
+              {i18n.language === "da" ? "Dansk" : "English"}
+            </span>
+          </div>
+          <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+            {t("profile.change_lang", "Skift")}
+          </span>
+        </button>
+
         {isPremium && (
           <div className="flex items-center gap-2 mb-6 ml-1">
-            <img
-              src={appLogo}
-              alt="SafeEat logo"
-              className="w-5 h-5 object-contain"
-            />
+            <img src={appLogo} alt="SafeEat logo" className="w-5 h-5 object-contain" />
             <span className="text-sm font-bold text-slate-700">
               {t("profile.premium_user", "Safe Eat Pro user")}
             </span>
@@ -202,26 +209,17 @@ export function ProfileSettings() {
                 minLength={6}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder={t(
-                  "profile.placeholder_password_change",
-                  "Skriv kun for at ændre",
-                )}
+                placeholder={t("profile.placeholder_password_change", "Skriv kun for at ændre")}
                 className="w-full h-14 pl-12 pr-4 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:bg-white focus:border-slate-400 outline-none transition-all"
               />
             </div>
           </div>
 
           {message.text && (
-            <div
-              className={`p-4 rounded-2xl flex items-start gap-3 animate-in fade-in slide-in-from-top-2 ${
-                message.type === "success"
-                  ? "bg-emerald-50 text-emerald-800"
-                  : "bg-red-50 text-red-800"
-              }`}
-            >
-              {message.type === "success" && (
-                <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-              )}
+            <div className={`p-4 rounded-2xl flex items-start gap-3 animate-in fade-in slide-in-from-top-2 ${
+              message.type === "success" ? "bg-emerald-50 text-emerald-800" : "bg-red-50 text-red-800"
+            }`}>
+              {message.type === "success" && <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />}
               <p className="text-sm font-medium">{message.text}</p>
             </div>
           )}
@@ -231,9 +229,7 @@ export function ProfileSettings() {
             disabled={loading}
             className="w-full h-14 bg-slate-950 text-white hover:bg-black rounded-2xl text-base font-bold shadow-sm transition-all active:scale-[0.98]"
           >
-            {loading
-              ? t("profile.btn_saving", "Gemmer...")
-              : t("profile.btn_save_changes", "Gem ændringer")}
+            {loading ? t("profile.btn_saving", "Gemmer...") : t("profile.btn_save_changes", "Gem ændringer")}
           </Button>
         </form>
 

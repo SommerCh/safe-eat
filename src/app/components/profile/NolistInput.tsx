@@ -33,7 +33,7 @@ export function NolistInput({
     <div className="space-y-4">
       <div className="flex items-center justify-between px-1">
         <Label className="text-xl font-bold tracking-tight text-slate-950">
-          {t("profile.section_personal", "Personlig liste")}
+          {t("profile.section_personal")}
         </Label>
         {items.length > 0 && (
           <button
@@ -42,18 +42,19 @@ export function NolistInput({
             className="flex items-center gap-1.5 text-sm font-medium text-slate-400 hover:text-red-600 transition-colors"
           >
             <Trash2 className="w-4 h-4" />
-            {t("profile.clear_all", "Ryd alle")}
+            {t("profile.clear_all")}
           </button>
         )}
       </div>
 
-      <div className="p-5 bg-slate-50 border-2 border-slate-200 rounded-[2rem] space-y-5 focus-within:bg-white focus-within:border-slate-400 transition-all duration-200">
-        <div className="flex flex-wrap gap-2">
+      <div className="px-5 pt-5 pb-4 bg-slate-50 border-2 border-slate-200 rounded-[2rem] space-y-3 focus-within:bg-white focus-within:border-slate-400 transition-all duration-200">
+        <div className="flex flex-wrap gap-2 max-h-44 overflow-y-auto pr-1 content-start scrollbar-hide">
           {items.map((item) => (
             <span
               key={item}
               className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-100 text-slate-900 rounded-xl text-sm font-semibold animate-in zoom-in duration-200"
             >
+              {/* Her vises ordet nu råt uden t() funktion */}
               {item}
               <button
                 type="button"
@@ -67,18 +68,18 @@ export function NolistInput({
 
           {items.length === 0 && (
             <p className="text-slate-400 text-sm italic py-2 px-1">
-              {t("profile.personal_empty", "Listen er tom...")}
+              {t("profile.personal_empty")}
             </p>
           )}
         </div>
 
-        <div className="relative pt-4 border-t border-slate-50 flex items-center">
+        <div className="relative pt-3 border-t border-slate-100 flex items-center">
           <input
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={t("profile.personal_placeholder", "Tilføj f.eks. palmeolie...")}
+            placeholder={t("profile.personal_placeholder")}
             className="flex-1 bg-transparent outline-none text-slate-900 placeholder:text-slate-300 text-base py-1"
           />
           <button

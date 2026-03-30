@@ -93,16 +93,13 @@ export function Favorites() {
       )
       .join("\n");
 
-    const introText = t(
-      "share_favorites_intro",
-      "Her er mine Safe Eat favoritter:",
-    );
+    const introText = t("favorites.share_intro");
     const fullText = introText + "\n\n" + listText;
 
     if (navigator.share) {
       try {
         await navigator.share({
-          title: t("share_favorites_title", "Mine Safe Eat Favoritter"),
+          title: t("favorites.share_title"),
           text: fullText,
         });
       } catch (err) {
@@ -110,7 +107,7 @@ export function Favorites() {
       }
     } else {
       navigator.clipboard.writeText(fullText);
-      alert(t("list_copied", "Listen er kopieret!"));
+      alert(t("favorites.list_copied"));
     }
   };
 
@@ -125,10 +122,10 @@ export function Favorites() {
         <div className="flex justify-between items-start mb-6">
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-              {t("favorites_title", "Mine favoritter")}
+              {t("favorites.title")}
             </h1>
             <p className="text-slate-500 mt-2 font-medium">
-              {t("favorites_subtitle", "Administrer dine gemte emner")}
+              {t("favorites.subtitle")}
             </p>
           </div>
 
@@ -162,7 +159,7 @@ export function Favorites() {
                   : "bg-white border-slate-200 text-slate-700 hover:border-slate-300"
               }`}
             >
-              {t("all_filter", "Alle")}
+              {t("favorites.filter_all")}
               {!selectedStore && <X className="w-4 h-4" />}
             </button>
             {uniqueStores.map((store) => {
@@ -194,7 +191,7 @@ export function Favorites() {
               <Heart className="w-8 h-8 text-slate-200" />
             </div>
             <h2 className="text-xl font-bold text-slate-900">
-              {t("no_favorites", "Ingen favoritter endnu")}
+              {t("favorites.no_favorites")}
             </h2>
           </div>
         ) : (
@@ -202,8 +199,7 @@ export function Favorites() {
             {filteredProducts.length > 0 && (
               <section>
                 <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] mb-5 ml-1">
-                  {t("saved_products", "Gemte produkter")} (
-                  {filteredProducts.length})
+                  {t("favorites.section_products")} ({filteredProducts.length})
                 </h2>
                 <div className="space-y-4">
                   {filteredProducts.map((product: any) => (
@@ -237,8 +233,7 @@ export function Favorites() {
                         <div className="flex items-center gap-1.5 text-slate-500">
                           <MapPin size={12} className="shrink-0" />
                           <p className="text-xs font-semibold truncate uppercase tracking-wider">
-                            {product.store ||
-                              t("unknown_store", "Ukendt butik")}
+                            {product.store || t("favorites.unknown_store")}
                           </p>
                         </div>
                       </div>
@@ -258,8 +253,7 @@ export function Favorites() {
             {!selectedStore && favoritedFoods.length > 0 && (
               <section>
                 <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] mb-5 ml-1">
-                  {t("saved_ingredients", "Gemte råvarer")} (
-                  {favoritedFoods.length})
+                  {t("favorites.section_ingredients")} ({favoritedFoods.length})
                 </h2>
                 <div className="space-y-3">
                   {favoritedFoods.map((food) => (
@@ -276,7 +270,7 @@ export function Favorites() {
                           {food.kategori}
                         </h3>
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-tight">
-                          {t("saved_dictionary", "Gemt ordbog")}
+                          {t("favorites.type_dictionary")}
                         </p>
                       </div>
                       <button
@@ -294,8 +288,7 @@ export function Favorites() {
             {!selectedStore && favoritedArticles.length > 0 && (
               <section>
                 <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] mb-5 ml-1">
-                  {t("saved_articles_count", "Gemte artikler")} (
-                  {favoritedArticles.length})
+                  {t("favorites.section_articles")} ({favoritedArticles.length})
                 </h2>
                 <div className="space-y-4">
                   {favoritedArticles.map((article) => (

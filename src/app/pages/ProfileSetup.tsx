@@ -12,7 +12,7 @@ import { DIET_MAP, HEALTH_MAP, ALLERGY_MAP } from "../lib/foodData";
 
 export function ProfileSetup() {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { profile, setProfile } = useProfile();
 
   const [selectedAllergies, setSelectedAllergies] = useState<string[]>(
@@ -71,11 +71,15 @@ export function ProfileSetup() {
   };
 
   const updateNolist = (ingredients: string[], isAdding: boolean) => {
+    const processedIngredients = ingredients.map((i) =>
+      i18n.language === "en" ? t(`ingredients.${i}`, i) : i
+    );
+
     if (isAdding) {
-      setNolist((prev) => Array.from(new Set([...prev, ...ingredients])));
+      setNolist((prev) => Array.from(new Set([...prev, ...processedIngredients])));
     } else {
       setNolist((prev) =>
-        prev.filter((item) => !ingredients.includes(item.toLowerCase())),
+        prev.filter((item) => !processedIngredients.includes(item)),
       );
     }
   };
@@ -111,15 +115,15 @@ export function ProfileSetup() {
       <div className="bg-white px-6 pt-6 pb-6 sticky top-0 z-10 border-b border-slate-100 flex justify-between items-start">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-slate-950">
-            {t("profile_setup_title", "Din madprofil")}
+            {t("profile.title")}
           </h1>
           <p className="text-slate-500 mt-2 font-medium">
-            {t("profile_setup_subtitle", "Gemmes automatisk")}
+            {t("profile.subtitle")}
           </p>
         </div>
         <button
           onClick={() => navigate("/settings")}
-          className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center border border-slate-100 mt-1"
+          className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center border border-slate-100 transition-colors active:scale-95"
         >
           <Settings className="w-6 h-6 text-slate-700" />
         </button>
@@ -148,8 +152,7 @@ export function ProfileSetup() {
             onClick={() => navigate("/scanner")}
             className="w-full h-16 bg-slate-950 text-white rounded-2xl text-lg font-bold shadow-sm flex items-center justify-center gap-3"
           >
-            {t("open_scanner", "Åbn scanner")}{" "}
-            <ArrowRight className="w-5 h-5" />
+            {t("profile.button_open_scanner")} <ArrowRight className="w-5 h-5" />
           </Button>
 
           <button
@@ -161,10 +164,10 @@ export function ProfileSetup() {
             </div>
             <div className="flex-1 text-left">
               <span className="block text-slate-900 font-bold text-base">
-                {t("my_favorites", "Mine favoritter")}
+                {t("profile.link_favorites")}
               </span>
               <span className="text-slate-500 text-xs">
-                {t("my_favorites_sub", "Se dine gemte produkter")}
+                {t("profile.link_history")}
               </span>
             </div>
             <ChevronRight className="w-5 h-5 text-slate-300" />
