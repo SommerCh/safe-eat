@@ -208,6 +208,7 @@ import { useProfile } from "../context/ProfileContext";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { ImageIcon } from "lucide-react";
+import appLogo from "../../../assets/logo.png";
 
 export function Scanner() {
   const navigate = useNavigate();
@@ -263,7 +264,6 @@ export function Scanner() {
       const resultText = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
       if (resultText) {
-        // Da API'et nu tvinger JSON, kan vi parse det direkte
         navigate("/result", { state: { aiResult: JSON.parse(resultText) } });
       }
     } catch (error: any) {
@@ -390,10 +390,16 @@ export function Scanner() {
 
       {capturedImage && (
         <div className="absolute inset-0 bg-black/80 backdrop-blur-md flex flex-col items-center justify-center z-20">
-          <div className="w-16 h-16 border-4 border-white/10 border-t-[#F4642B] rounded-full animate-spin mb-4" />
-          <h2 className="text-white font-bold text-lg">
-            {t("scanner_analyzing", "Analyserer...")}
-          </h2>
+          <div className="text-center px-8 space-y-4 flex flex-col items-center">
+            <img
+              src={appLogo}
+              alt="Safe Eat Logo"
+              className="h-24 w-auto object-contain animate-pulse mb-4"
+            />
+            <p className="text-white/60 font-medium text-sm">
+              {t("scanner_analyzing", "Analyserer ingredienser...")}
+            </p>
+          </div>
         </div>
       )}
     </div>
