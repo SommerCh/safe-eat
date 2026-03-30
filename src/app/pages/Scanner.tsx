@@ -246,44 +246,25 @@ export function Scanner() {
           : t("scanner_no_allergies");
 
       const promptText = `
-        You are a precise assistant for food allergies. User language: ${i18n.language}.
-        User avoids: [${userAllergies}].
-        Task: Extract ingredients and compare with avoid-list.
-        RESPOND ONLY WITH JSON:
-        {
-          "isSafe": boolean,
-          "foundAllergens": ["items from user list found"],
-          "extractedIngredients": ["all ingredients found"],
-          "message": "summary in ${i18n.language}"
-        }
+        Analyze ingredients for: [${userAllergies}]. 
+        Language: ${i18n.language}.
+        JSON format: {"isSafe": boolean, "foundAllergens": [], "extractedIngredients": [], "message": "string"}
       `;
 
       const response = await fetch("/api/scan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ base64Image, promptText, lang: i18n.language }),
+        body: JSON.stringify({ base64Image, promptText }),
       });
 
       const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Server error");
 
-      // --- DETEKTIV ALERT ---
-      if (data.modelUsed) {
-        alert("DIN APP BRUGER LIGE NU: " + data.modelUsed);
-      }
-
-      if (!response.ok)
-        throw new Error(data.error || t("scanner_server_error"));
-
-      // Vi skal nu kigge inde i 'data.analysis', fordi vi har pakket svaret ind i API'et
-      const resultText =
-        data.analysis?.candidates?.[0]?.content?.parts?.[0]?.text;
+      const resultText = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
       if (resultText) {
-        const cleanJson = resultText
-          .replace(/```json/g, "")
-          .replace(/```/g, "")
-          .trim();
-        navigate("/result", { state: { aiResult: JSON.parse(cleanJson) } });
+        // Da API'et nu tvinger JSON, kan vi parse det direkte
+        navigate("/result", { state: { aiResult: JSON.parse(resultText) } });
       }
     } catch (error: any) {
       toast.error(t("error", { message: error.message }));
@@ -298,43 +279,29 @@ export function Scanner() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const MAX_DIMENSION = 1024;
-    let width = img instanceof HTMLVideoElement ? img.videoWidth : img.width;
-    let height = img instanceof HTMLVideoElement ? img.videoHeight : img.height;
+    const MAX_DIM = 800;
+    let w = img instanceof HTMLVideoElement ? img.videoWidth : img.width;
+    let h = img instanceof HTMLVideoElement ? img.videoHeight : img.height;
 
-    if (width > height) {
-      if (width > MAX_DIMENSION) {
-        height = Math.round((height * MAX_DIMENSION) / width);
-        width = MAX_DIMENSION;
+    if (w > h) {
+      if (w > MAX_DIM) {
+        h = (h * MAX_DIM) / w;
+        w = MAX_DIM;
       }
     } else {
-      if (height > MAX_DIMENSION) {
-        width = Math.round((width * MAX_DIMENSION) / height);
-        height = MAX_DIMENSION;
+      if (h > MAX_DIM) {
+        w = (w * MAX_DIM) / h;
+        h = MAX_DIM;
       }
     }
 
-    canvas.width = width;
-    canvas.height = height;
-    ctx.drawImage(img, 0, 0, width, height);
+    canvas.width = w;
+    canvas.height = h;
+    ctx.drawImage(img, 0, 0, w, h);
 
-    const base64Image = canvas.toDataURL("image/jpeg", 0.5).split(",")[1];
-    setCapturedImage(canvas.toDataURL("image/jpeg"));
-    processImageAndNavigate(base64Image);
-  };
-
-  const handleUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file || isScanning) return;
-    setIsScanning(true);
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = new Image();
-      img.onload = () => resizeAndProcess(img);
-      img.src = e.target?.result as string;
-    };
-    reader.readAsDataURL(file);
+    const base64Data = canvas.toDataURL("image/jpeg", 0.4).split(",")[1];
+    setCapturedImage(canvas.toDataURL("image/jpeg", 0.4));
+    processImageAndNavigate(base64Data);
   };
 
   const handleScan = () => {
@@ -350,7 +317,19 @@ export function Scanner() {
         type="file"
         accept="image/*"
         ref={fileInputRef}
-        onChange={handleUpload}
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) {
+            setIsScanning(true);
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+              const img = new Image();
+              img.onload = () => resizeAndProcess(img);
+              img.src = ev.target?.result as string;
+            };
+            reader.readAsDataURL(file);
+          }
+        }}
         className="hidden"
       />
 
@@ -368,10 +347,10 @@ export function Scanner() {
           className="flex justify-center px-6"
         >
           {!capturedImage && (
-            <div className="bg-black/60 backdrop-blur-md text-white px-5 py-3 rounded-full text-sm font-medium border border-white/10 shadow-lg text-center">
-              {t("scanner_instruction", "Tag et billede af")}{" "}
+            <div className="bg-black/60 backdrop-blur-md text-white px-5 py-3 rounded-full text-sm font-medium border border-white/10 shadow-lg">
+              {t("scanner_instruction", "Scan")}{" "}
               <span className="font-bold text-[#F4642B]">
-                {t("scanner_target", "ingredienslisten")}
+                {t("scanner_target", "ingredienser")}
               </span>
             </div>
           )}
@@ -388,27 +367,22 @@ export function Scanner() {
           )}
         </div>
 
-        <div className="pb-8 px-10 grid grid-cols-3 items-center">
+        <div className="pb-10 px-10 flex justify-center gap-10 items-center">
           {!capturedImage && (
             <>
-              <div className="flex justify-start">
-                <button
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={isScanning}
-                  className="w-14 h-14 rounded-full bg-black/40 backdrop-blur-md border border-white/20 flex items-center justify-center active:scale-95 transition-all disabled:opacity-50"
-                >
-                  <ImageIcon className="w-6 h-6 text-white" />
-                </button>
-              </div>
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className="w-14 h-14 rounded-full bg-black/40 backdrop-blur-md border border-white/20 flex items-center justify-center active:scale-95 transition-all"
+              >
+                <ImageIcon className="w-6 h-6 text-white" />
+              </button>
 
-              <div className="flex justify-center">
-                <button
-                  onClick={handleScan}
-                  disabled={isScanning}
-                  className="w-20 h-20 rounded-full bg-white shadow-xl ring-4 ring-white/20 active:scale-90 transition-all disabled:opacity-50"
-                />
-              </div>
-              <div />
+              <button
+                onClick={handleScan}
+                className="w-20 h-20 rounded-full bg-white shadow-xl ring-4 ring-white/20 active:scale-90 transition-all"
+              />
+
+              <div className="w-14" />
             </>
           )}
         </div>
@@ -416,13 +390,10 @@ export function Scanner() {
 
       {capturedImage && (
         <div className="absolute inset-0 bg-black/80 backdrop-blur-md flex flex-col items-center justify-center z-20">
-          <div className="text-center px-8 space-y-4 flex flex-col items-center">
-            <div className="w-16 h-16 border-4 border-white/10 border-t-[#F4642B] rounded-full animate-spin mb-4" />
-            <h2 className="text-2xl font-bold text-white">
-              {t("scanner_image_captured")}
-            </h2>
-            <p className="text-white/60">{t("scanner_analyzing")}</p>
-          </div>
+          <div className="w-16 h-16 border-4 border-white/10 border-t-[#F4642B] rounded-full animate-spin mb-4" />
+          <h2 className="text-white font-bold text-lg">
+            {t("scanner_analyzing", "Analyserer...")}
+          </h2>
         </div>
       )}
     </div>
