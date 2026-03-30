@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { supabase } from "../../lib/supabase";
 import { Button } from "../../components/ui/button";
-import appLogo from "../../../../public/logo.png";
+import appLogo from "../../../../assets/logo.png";
 
 export function ProfileSettings() {
   const navigate = useNavigate();

@@ -249,7 +249,7 @@ import { Button } from "../../components/ui/button";
 import { Purchases } from "@revenuecat/purchases-capacitor";
 import { Capacitor } from "@capacitor/core";
 import { supabase } from "../../lib/supabase";
-import appLogo from "../../../../public/LogoAndText.png";
+import appLogo from "../../../../assets/LogoAndText.png";
 
 interface PaywallProps {
   onSuccess: () => void;
