@@ -119,7 +119,6 @@ export function Favorites() {
   return (
     <div className="bg-white">
       <div className="bg-white px-6 pt-[calc(env(safe-area-inset-top)+16px)] pb-6 sticky top-0 z-20 border-b border-slate-100">
-        {" "}
         <div className="flex justify-between items-start mb-6">
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-slate-900">
@@ -221,8 +220,15 @@ export function Favorites() {
                           <h3 className="text-slate-950 font-bold text-base truncate">
                             {product.productName}
                           </h3>
+                          {/* HER ER ÆNDRINGEN: Package-ikonet skifter nu farve ligesom resultatskærmen */}
                           {product.productType === "OTHER" ? (
-                            <Package className="w-4 h-4 text-slate-500 shrink-0" />
+                            <Package
+                              className={`w-4 h-4 shrink-0 ${
+                                product.isSafe
+                                  ? "text-emerald-500"
+                                  : "text-rose-500"
+                              }`}
+                            />
                           ) : product.isSafe ? (
                             <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
                           ) : (
