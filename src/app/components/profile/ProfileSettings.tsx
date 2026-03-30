@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { supabase } from "../../lib/supabase";
 import appLogo from "../../../../assets/logo.png";
+import { toast } from "sonner";
 
 export function ProfileSettings() {
   const navigate = useNavigate();
@@ -99,7 +100,12 @@ export function ProfileSettings() {
   };
 
   const handlePasswordUpdate = async () => {
-    if (password.length < 6) return;
+    if (password.length < 6) {
+      toast.error(
+        t("profile.password_too_short", "Adgangskoden skal være mindst 6 tegn"),
+      );
+      return;
+    }
     setLoading(true);
     setMessage({ text: "", type: "" });
 

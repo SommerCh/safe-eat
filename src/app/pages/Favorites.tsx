@@ -10,7 +10,7 @@ import {
   AlertTriangle,
   CheckCircle2,
   Share,
-  X,
+  Package,
 } from "lucide-react";
 import { useProfile } from "../context/ProfileContext";
 import { SaveProduct } from "../components/Others/SaveProduct";
@@ -67,7 +67,6 @@ export function Favorites() {
     productName: string,
     storeName: string,
     notes: string,
-    imageFile: File | null,
     currentPreview: string | null,
   ) => {
     if (editingProduct) {
@@ -76,7 +75,7 @@ export function Favorites() {
         productName,
         store: storeName,
         notes,
-        image: imageFile ? URL.createObjectURL(imageFile) : currentPreview,
+        image: currentPreview,
       };
       await updateFavorite(updated);
     }
@@ -223,7 +222,9 @@ export function Favorites() {
                           <h3 className="text-slate-950 font-bold text-base truncate">
                             {product.productName}
                           </h3>
-                          {product.isSafe ? (
+                          {product.productType === "OTHER" ? (
+                            <Package className="w-4 h-4 text-slate-500 shrink-0" />
+                          ) : product.isSafe ? (
                             <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
                           ) : (
                             <AlertTriangle className="w-4 h-4 text-rose-500 shrink-0" />

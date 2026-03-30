@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, type ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { X, Tag, MapPin, AlignLeft, Plus } from "lucide-react";
 import { Button } from "../ui/button";
+import { toast } from "sonner";
 
 interface SaveProductProps {
   isOpen: boolean;
@@ -10,7 +11,6 @@ interface SaveProductProps {
     productName: string,
     storeName: string,
     notes: string,
-    imageFile: File | null,
     currentPreview: string | null,
   ) => Promise<void>;
   initialData?: any;
@@ -27,7 +27,6 @@ export function SaveProduct({
   const [productName, setProductName] = useState("");
   const [storeName, setStoreName] = useState("");
   const [notes, setNotes] = useState("");
-  const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -42,7 +41,6 @@ export function SaveProduct({
       setStoreName("");
       setNotes("");
       setImagePreview(null);
-      setImageFile(null);
     }
   }, [initialData, isOpen]);
 
@@ -52,7 +50,6 @@ export function SaveProduct({
 
   const handleRemoveImage = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setImageFile(null);
     setImagePreview(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -62,10 +59,42 @@ export function SaveProduct({
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setImageFile(file);
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
+      reader.onload = (ev) => {
+        const img = new Image();
+        img.onerror = () => {
+          toast.error(t("scanner_image_error"));
+        };
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const MAX_DIM = 1024;
+          let w = img.width;
+          let h = img.height;
+
+          if (w > h) {
+            if (w > MAX_DIM) {
+              h = Math.round((h * MAX_DIM) / w);
+              w = MAX_DIM;
+            }
+          } else {
+            if (h > MAX_DIM) {
+              w = Math.round((w * MAX_DIM) / h);
+              h = MAX_DIM;
+            }
+          }
+
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext("2d");
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, w, h);
+            setImagePreview(canvas.toDataURL("image/jpeg", 0.6));
+          }
+        };
+        img.src = ev.target?.result as string;
+      };
+      reader.onerror = () => {
+        toast.error(t("scanner_image_error"));
       };
       reader.readAsDataURL(file);
     }
@@ -75,7 +104,7 @@ export function SaveProduct({
     if (!productName.trim()) return;
     setLoading(true);
     try {
-      await onSave(productName, storeName, notes, imageFile, imagePreview);
+      await onSave(productName, storeName, notes, imagePreview);
       onClose();
     } catch (error) {
       console.error(error);

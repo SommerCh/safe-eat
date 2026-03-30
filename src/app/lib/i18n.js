@@ -33,6 +33,10 @@ const resources = {
       found_ingredients_label: "Fundne Ingredienser:",
       scan_next_button: "Scan næste vare",
       edit_profile_link: "Rediger min madprofil",
+      result_info_title: "Produkt Info",
+      result_info_default: "Her er indholdet af varen.",
+      found_contents_label: "Indholdsstoffer:",
+      scanned_product_default: "Scannet produkt",
       tips: {
         header: "Hurtige tips",
         double_check_title: "Dobbelttjek altid",
@@ -441,6 +445,13 @@ const resources = {
         rights_title: "Dine Rettigheder",
         rights_p: "Du har til enhver tid ret til at få dine data slettet. Du kan rydde dine lokale allergidata direkte på din profilside."
       },
+      api_errors: {
+        invalid_image: "Billedet er ugyldigt eller mangler.",
+        server_error: "Der skete en fejl på serveren. Prøv igen senere.",
+        blurry_image: "Billedet er for utydeligt til at blive analyseret.",
+        rate_limit: "Du har scannet for mange ting hurtigt efter hinanden. Vent lidt.",
+        default: "Noget gik galt under scanningen."
+      },
     }
   },
   en: {
@@ -470,6 +481,10 @@ const resources = {
       result_danger_title: "Watch out!",
       result_safe_msg: "No unwanted ingredients found.",
       result_contains: "Product contains:",
+      result_info_title: "Product Info",
+      result_info_default: "Here are the contents of the item.",
+      found_contents_label: "Contents / Ingredients:",
+      scanned_product_default: "Scanned product",
       found_ingredients_label: "Found Ingredients:",
       scan_next_button: "Scan next item",
       edit_profile_link: "Edit my food profile",
@@ -880,6 +895,13 @@ const resources = {
         privacy_images_p: "When you scan, the image is sent to Google AI for text analysis. The image is not stored permanently.",
         rights_title: "Your Rights",
         rights_p: "You have the right to have your data deleted at any time. You can clear your local allergy data directly on your profile page."
+      },
+      api_errors: {
+        invalid_image: "The image is invalid or missing.",
+        server_error: "A server error occurred. Please try again later.",
+        blurry_image: "The image is too blurry to analyze.",
+        rate_limit: "You've scanned too many items quickly. Please wait a moment.",
+        default: "Something went wrong during the scan."
       },
     }
   }

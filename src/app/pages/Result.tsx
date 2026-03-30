@@ -68,13 +68,8 @@ export function Result() {
     productName: string,
     storeName: string,
     notes: string,
-    imageFile: File | null,
+    currentPreview: string | null,
   ) => {
-    let imageUrl = null;
-    if (imageFile) {
-      imageUrl = URL.createObjectURL(imageFile);
-    }
-
     const favoriteObject = {
       id: Date.now(),
       type: "product",
@@ -82,8 +77,9 @@ export function Result() {
       productName: productName || generatedName,
       store: storeName,
       notes: notes,
-      image: imageUrl,
+      image: currentPreview,
       isSafe: aiResult.isSafe,
+      productType: aiResult.productType,
       date: new Date().toISOString(),
     };
 

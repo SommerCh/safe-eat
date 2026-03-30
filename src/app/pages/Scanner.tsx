@@ -67,14 +67,14 @@ export function Scanner() {
 
       const promptText = `
         You are a product analyzer. User language: ${currentLang}.
-        User food allergies: [${userAllergies}].
+        User prohibited ingredients: [${userAllergies}].
 
         TASK:
-        1. Identify the product. Is it "FOOD" or "OTHER" (cosmetics, medicine, etc.)?
+        1. Identify the product ("FOOD" or "OTHER").
         2. Extract all ingredients/contents found on the label.
-        3. If FOOD: Compare with user allergies and set "isSafe".
-        4. If OTHER: List contents and set "isSafe" to true (since food allergies don't apply).
-        5. Safety check: If the image is too blurry to read, set "isSafe" to false and explain why in "message".
+        3. Compare ALL extracted ingredients with the prohibited list.
+        4. Set "isSafe" to false if any prohibited items are found.
+        5. QUALITY CHECK: If the image is too blurry to read or text is unreadable, set "isUnreadable" to true.
 
         RESPOND ONLY IN JSON:
         {
@@ -82,7 +82,8 @@ export function Scanner() {
           "isSafe": boolean,
           "foundAllergens": ["items found"],
           "extractedIngredients": ["all ingredients"],
-          "message": "Summary in ${currentLang}"
+          "isUnreadable": boolean,
+          "message": "Helpful message in ${currentLang} if blurry"
         }
       `;
 
@@ -100,25 +101,27 @@ export function Scanner() {
       if (resultText) {
         const aiResult = JSON.parse(resultText);
 
-        if (
-          aiResult.extractedIngredients.length === 0 &&
-          aiResult.productType === "FOOD"
-        ) {
+        // Vi tjekker nu specifikt på om AI'en melder billedet ulæseligt
+        if (aiResult.isUnreadable) {
           toast.error(
             aiResult.message ||
-              t("scanner_retry_msg", "Kunne ikke læse teksten. Prøv igen."),
+              t("scanner_retry_msg", "Billedet er for sløret. Prøv igen."),
+            { id: "scan-retry" },
           );
           setIsScanning(false);
           setCapturedImage(null);
+          if (fileInputRef.current) fileInputRef.current.value = "";
           return;
         }
 
+        if (fileInputRef.current) fileInputRef.current.value = "";
         navigate("/result", { state: { aiResult } });
       }
     } catch (error: any) {
       toast.error(t("error", { message: error.message }));
       setIsScanning(false);
       setCapturedImage(null);
+      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
 
@@ -174,8 +177,18 @@ export function Scanner() {
             const reader = new FileReader();
             reader.onload = (ev) => {
               const img = new Image();
+              img.onerror = () => {
+                toast.error(t("scanner_image_error"));
+                setIsScanning(false);
+                if (fileInputRef.current) fileInputRef.current.value = "";
+              };
               img.onload = () => resizeAndProcess(img);
               img.src = ev.target?.result as string;
+            };
+            reader.onerror = () => {
+              toast.error(t("scanner_image_error"));
+              setIsScanning(false);
+              if (fileInputRef.current) fileInputRef.current.value = "";
             };
             reader.readAsDataURL(file);
           }
