@@ -14,7 +14,7 @@ export function ArticleSection({ searchQuery }: ArticleSectionProps) {
 
   const currentLang = i18n.language?.startsWith("en") ? "en" : "da";
   const currentCategories = CATEGORIES[currentLang];
-  const currentArticles = ARTICLES[currentLang];
+  const currentArticles = ARTICLES[currentLang] || [];
 
   const [activeCategory, setActiveCategory] = useState(currentCategories[0]);
 

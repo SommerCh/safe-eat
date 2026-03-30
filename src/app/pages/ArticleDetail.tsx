@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useLocation, useNavigate, useParams } from "react-router";
 import { useTranslation } from "react-i18next";
 import { ChevronLeft, Share, ChevronUp, Heart } from "lucide-react";
@@ -13,28 +13,58 @@ export function ArticleDetail() {
   const { t, i18n } = useTranslation();
   const { favorites, toggleFavorite } = useProfile();
 
+  // 1. Vi opretter et anker til toppen af siden
+  const topRef = useRef<HTMLDivElement>(null);
+
   const currentLang = i18n.language?.startsWith("en") ? "en" : "da";
-  const currentArticles = ARTICLES[currentLang];
+  const currentArticles = ARTICLES[currentLang] || [];
 
   const article = currentArticles.find((a) => a.id === Number(id));
 
+  // --- DEN SKUDSIKRE SCROLL-LOGIK START ---
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [location.pathname]);
+    // Funktion der tvinger scroll på alle tænkelige måder
+    const forceScrollToTop = () => {
+      // Standard window scroll
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+
+      // Vores nye "Sledgehammer": Rul det specifikke usynlige element ind i skærmen
+      if (topRef.current) {
+        topRef.current.scrollIntoView({ behavior: "instant", block: "start" });
+      }
+    };
+
+    // Kør med det samme
+    forceScrollToTop();
+
+    // Kør igen efter 50ms, i tilfælde af at React var for langsom til at tegne skærmen
+    const timeoutId = setTimeout(forceScrollToTop, 50);
+
+    return () => clearTimeout(timeoutId);
+  }, [id, location.pathname]); // Kører hver gang URL'en (eller ID'et) ændrer sig
+  // --- DEN SKUDSIKRE SCROLL-LOGIK SLUT ---
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (topRef.current) {
+      topRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   if (!article) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
-        <p className="text-slate-500 mb-4">{t("article_not_found")}</p>
+        <p className="text-slate-500 mb-4">
+          {t("article_not_found", "Artiklen blev ikke fundet")}
+        </p>
         <button
           onClick={() => navigate("/")}
           className="text-blue-600 font-semibold"
         >
-          {t("go_back")}
+          {t("go_back", "Gå tilbage")}
         </button>
       </div>
     );
@@ -42,8 +72,24 @@ export function ArticleDetail() {
 
   const isFavorite = favorites.includes(article.id);
 
+  const relatedArticles = currentArticles
+    .filter((a) => a.id !== article.id && a.category === article.category)
+    .slice(0, 4);
+
+  if (relatedArticles.length < 4) {
+    const fallbackRelated = currentArticles
+      .filter((a) => a.id !== article.id && !relatedArticles.includes(a))
+      .slice(0, 9 - relatedArticles.length);
+    relatedArticles.push(...fallbackRelated);
+  }
+
   return (
-    <div className="min-h-screen bg-white pb-24">
+    <div className="min-h-screen bg-white relative">
+      <div
+        ref={topRef}
+        className="absolute top-0 left-0 w-full h-[1px] opacity-0 pointer-events-none -z-10"
+      />
+
       <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md px-4 py-4 flex items-center justify-between border-b border-slate-100">
         <button
           onClick={() => navigate(-1)}
@@ -106,7 +152,41 @@ export function ArticleDetail() {
           </div>
         </div>
 
-        <div className="mt-12 flex justify-center">
+        {relatedArticles.length > 0 && (
+          <div className="mt-16 pt-10 border-t border-slate-100 -mx-6">
+            <h2 className="text-xl font-bold text-slate-900 mb-6 px-6">
+              {t("you_might_also_like", "Andre læser også")}
+            </h2>
+
+            <div className="flex overflow-x-auto gap-4 pb-6 px-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+              {relatedArticles.map((relArticle) => (
+                <div
+                  key={relArticle.id}
+                  onClick={() => navigate(`/article/${relArticle.id}`)}
+                  className="w-[240px] flex-shrink-0 bg-white rounded-2xl p-3 shadow-sm border border-slate-100 flex flex-col gap-3 cursor-pointer hover:bg-slate-50 active:scale-[0.98] transition-all group"
+                >
+                  <div className="w-full h-32 rounded-xl overflow-hidden relative">
+                    <ImageWithFallback
+                      src={relArticle.image}
+                      alt={relArticle.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                  <div className="flex flex-col px-1 pb-1">
+                    <span className="text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">
+                      {relArticle.category}
+                    </span>
+                    <h3 className="text-sm font-bold text-slate-900 leading-snug line-clamp-2">
+                      {relArticle.title}
+                    </h3>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="mt-8 flex justify-center">
           <button
             onClick={scrollToTop}
             className="w-12 h-12 flex items-center justify-center bg-slate-100 rounded-full hover:bg-slate-200 transition-colors"
