@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import { useProfile } from "../context/ProfileContext";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
-import { ImageIcon } from "lucide-react";
+import { ImageIcon, RefreshCw } from "lucide-react";
 import appLogo from "../../../assets/logo.png";
 
 export function Scanner() {
@@ -19,24 +19,27 @@ export function Scanner() {
 
   const [isScanning, setIsScanning] = useState(false);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [facingMode, setFacingMode] = useState<"environment" | "user">(
+    "environment",
+  );
 
   useEffect(() => {
     isMounted.current = true;
     async function startCamera() {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: "environment" },
+          video: { facingMode: facingMode },
         });
         if (isMounted.current) {
           streamRef.current = stream;
           if (videoRef.current) videoRef.current.srcObject = stream;
         } else {
-          // If component unmounted while we were waiting, stop the stream immediately.
           stream.getTracks().forEach((track) => track.stop());
         }
       } catch (err) {
         toast.error(
           t("scanner_camera_error", "Kunne ikke få adgang til kameraet"),
+          { id: "camera-error" },
         );
       }
     }
@@ -47,7 +50,11 @@ export function Scanner() {
       isMounted.current = false;
       streamRef.current?.getTracks().forEach((track) => track.stop());
     };
-  }, [t]);
+  }, [t, facingMode]);
+
+  const toggleCamera = () => {
+    setFacingMode((prev) => (prev === "environment" ? "user" : "environment"));
+  };
 
   const processImageAndNavigate = async (base64Image: string) => {
     try {
@@ -167,16 +174,8 @@ export function Scanner() {
             const reader = new FileReader();
             reader.onload = (ev) => {
               const img = new Image();
-              img.onerror = () => {
-                toast.error(t("scanner_image_error"));
-                setIsScanning(false);
-              };
               img.onload = () => resizeAndProcess(img);
               img.src = ev.target?.result as string;
-            };
-            reader.onerror = () => {
-              toast.error(t("scanner_image_error"));
-              setIsScanning(false);
             };
             reader.readAsDataURL(file);
           }
@@ -233,7 +232,12 @@ export function Scanner() {
                 className="w-20 h-20 rounded-full bg-white shadow-xl ring-4 ring-white/20 active:scale-90 transition-all"
               />
 
-              <div className="w-14" />
+              <button
+                onClick={toggleCamera}
+                className="w-14 h-14 rounded-full bg-black/40 backdrop-blur-md border border-white/20 flex items-center justify-center active:scale-95 transition-all"
+              >
+                <RefreshCw className="w-6 h-6 text-white" />
+              </button>
             </>
           )}
         </div>

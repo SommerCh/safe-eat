@@ -11,7 +11,7 @@ import {
   Info,
   Heart,
   RotateCcw,
-  Search,
+  Package,
   ChevronRight,
 } from "lucide-react";
 
@@ -25,9 +25,10 @@ export function Result() {
 
   const aiResult = location.state?.aiResult;
 
-  const ingredientsHash = aiResult?.extractedIngredients
-    ? aiResult.extractedIngredients.join(",")
-    : "raw-scan-no-ingredients";
+  const ingredientsHash =
+    aiResult?.extractedIngredients && aiResult.extractedIngredients.length > 0
+      ? aiResult.extractedIngredients.join(",")
+      : null;
 
   useEffect(() => {
     if (!aiResult) {
@@ -45,7 +46,7 @@ export function Result() {
       productName: nameForHistory,
       safe: aiResult.productType === "OTHER" ? true : aiResult.isSafe,
     });
-  }, []);
+  }, [aiResult, navigate, t, addToScanHistory]);
 
   if (!aiResult) return null;
 
@@ -56,10 +57,12 @@ export function Result() {
       ? aiResult.extractedIngredients.slice(0, 3).join(", ") + "..."
       : t("scanned_product_default", "Scannet produkt");
 
-  const isFavorite = favorites.some(
-    (fav: any) =>
-      typeof fav === "object" && fav.ingredientsHash === ingredientsHash,
-  );
+  const isFavorite = ingredientsHash
+    ? favorites.some(
+        (fav: any) =>
+          typeof fav === "object" && fav.ingredientsHash === ingredientsHash,
+      )
+    : false;
 
   const handleConfirmSave = async (
     productName: string,
@@ -136,7 +139,7 @@ export function Result() {
             }`}
           >
             {!isFood ? (
-              <Search className="w-12 h-12" />
+              <Package className="w-12 h-12" />
             ) : aiResult.isSafe ? (
               <CheckCircle2 className="w-12 h-12" />
             ) : (
@@ -212,23 +215,25 @@ export function Result() {
           </button>
         </div>
 
-        <button
-          onClick={() => navigate("/favorites")}
-          className="w-full flex items-center gap-4 p-4 bg-white border border-slate-100 rounded-2xl transition-all active:scale-[0.98]"
-        >
-          <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center">
-            <Heart className="w-5 h-5 text-red-500 fill-red-500" />
-          </div>
-          <div className="flex-1 text-left">
-            <span className="block text-slate-900 font-bold text-base">
-              {t("profile.link_favorites")}
-            </span>
-            <span className="text-slate-500 text-xs">
-              {t("profile.link_history")}
-            </span>
-          </div>
-          <ChevronRight className="w-5 h-5 text-slate-300" />
-        </button>
+        <div className="w-full mt-8">
+          <button
+            onClick={() => navigate("/favorites")}
+            className="w-full flex items-center gap-4 p-4 bg-white border border-slate-100 rounded-2xl transition-all active:scale-[0.98]"
+          >
+            <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center">
+              <Heart className="w-5 h-5 text-red-500 fill-red-500" />
+            </div>
+            <div className="flex-1 text-left">
+              <span className="block text-slate-900 font-bold text-base">
+                {t("profile.link_favorites")}
+              </span>
+              <span className="text-slate-500 text-xs">
+                {t("profile.link_history")}
+              </span>
+            </div>
+            <ChevronRight className="w-5 h-5 text-slate-300" />
+          </button>
+        </div>
       </div>
 
       <SaveProduct

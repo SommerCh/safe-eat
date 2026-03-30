@@ -13,7 +13,6 @@ export function ArticleDetail() {
   const { t, i18n } = useTranslation();
   const { favorites, toggleFavorite } = useProfile();
 
-  // 1. Vi opretter et anker til toppen af siden
   const topRef = useRef<HTMLDivElement>(null);
 
   const currentLang = i18n.language?.startsWith("en") ? "en" : "da";
@@ -21,31 +20,23 @@ export function ArticleDetail() {
 
   const article = currentArticles.find((a) => a.id === Number(id));
 
-  // --- DEN SKUDSIKRE SCROLL-LOGIK START ---
   useEffect(() => {
-    // Funktion der tvinger scroll på alle tænkelige måder
     const forceScrollToTop = () => {
-      // Standard window scroll
       window.scrollTo({ top: 0, left: 0, behavior: "instant" });
       document.documentElement.scrollTop = 0;
       document.body.scrollTop = 0;
 
-      // Vores nye "Sledgehammer": Rul det specifikke usynlige element ind i skærmen
       if (topRef.current) {
         topRef.current.scrollIntoView({ behavior: "instant", block: "start" });
       }
     };
 
-    // Kør med det samme
     forceScrollToTop();
 
-    // Kør igen efter 50ms, i tilfælde af at React var for langsom til at tegne skærmen
     const timeoutId = setTimeout(forceScrollToTop, 50);
 
     return () => clearTimeout(timeoutId);
-  }, [id, location.pathname]); // Kører hver gang URL'en (eller ID'et) ændrer sig
-  // --- DEN SKUDSIKRE SCROLL-LOGIK SLUT ---
-
+  }, [id, location.pathname]);
   const scrollToTop = () => {
     if (topRef.current) {
       topRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
