@@ -72,11 +72,13 @@ export function ProfileSetup() {
 
   const updateNolist = (ingredients: string[], isAdding: boolean) => {
     const processedIngredients = ingredients.map((i) =>
-      i18n.language === "en" ? t(`ingredients.${i}`, i) : i
+      i18n.language === "en" ? t(`ingredients.${i}`, i) : i,
     );
 
     if (isAdding) {
-      setNolist((prev) => Array.from(new Set([...prev, ...processedIngredients])));
+      setNolist((prev) =>
+        Array.from(new Set([...prev, ...processedIngredients])),
+      );
     } else {
       setNolist((prev) =>
         prev.filter((item) => !processedIngredients.includes(item)),
@@ -112,7 +114,7 @@ export function ProfileSetup() {
 
   return (
     <div className="bg-white">
-      <div className="bg-white px-6 pt-6 pb-6 sticky top-0 z-10 border-b border-slate-100 flex justify-between items-start">
+      <div className="bg-white px-6 pt-[calc(env(safe-area-inset-top))] pb-6 sticky top-0 z-10 border-b border-slate-100 flex justify-between items-start">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-slate-950">
             {t("profile.title")}
@@ -152,7 +154,8 @@ export function ProfileSetup() {
             onClick={() => navigate("/scanner")}
             className="w-full h-16 bg-slate-950 text-white rounded-2xl text-lg font-bold shadow-sm flex items-center justify-center gap-3"
           >
-            {t("profile.button_open_scanner")} <ArrowRight className="w-5 h-5" />
+            {t("profile.button_open_scanner")}{" "}
+            <ArrowRight className="w-5 h-5" />
           </Button>
 
           <button

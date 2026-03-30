@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { HomeHeader } from "../components/Others/Header";
+import { HomeHeader } from "../components/others/Header";
 import { QuickTips } from "../components/home/QuickTips";
 import { ArticleSection } from "../components/home/ArticleSection";
 

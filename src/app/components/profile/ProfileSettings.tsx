@@ -148,7 +148,7 @@ export function ProfileSettings() {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="bg-white px-6 pt-6 pb-6 sticky top-0 z-10 border-b border-slate-100 flex justify-between items-start">
+      <div className="bg-white px-6 pt-[env(safe-area-inset-top)] pb-6 sticky top-0 z-10 border-b border-slate-100 flex justify-between items-start">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-slate-950">
             {t("profile.settings_title")}
@@ -157,7 +157,6 @@ export function ProfileSettings() {
             {t("profile.settings_subtitle")}
           </p>
         </div>
-
         <button
           onClick={() => navigate(-1)}
           className="w-10 h-10 flex items-center justify-center bg-slate-100 rounded-full hover:bg-slate-200 transition-colors"

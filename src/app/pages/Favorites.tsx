@@ -13,7 +13,7 @@ import {
   Package,
 } from "lucide-react";
 import { useProfile } from "../context/ProfileContext";
-import { SaveProduct } from "../components/Others/SaveProduct";
+import { SaveProduct } from "../components/others/SaveProduct";
 import { toast } from "sonner";
 import { ARTICLES } from "../components/articles/articleData";
 import foodData from "../lib/dicData";
@@ -118,7 +118,8 @@ export function Favorites() {
 
   return (
     <div className="bg-white">
-      <div className="bg-white px-6 pt-6 pb-6 sticky top-0 z-20 border-b border-slate-100">
+      <div className="bg-white px-6 pt-[calc(env(safe-area-inset-top))] pb-6 sticky top-0 z-20 border-b border-slate-100">
+        {" "}
         <div className="flex justify-between items-start mb-6">
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-slate-900">
@@ -147,7 +148,6 @@ export function Favorites() {
             )}
           </div>
         </div>
-
         {uniqueStores.length > 0 && (
           <div className="flex flex-wrap gap-2">
             <button

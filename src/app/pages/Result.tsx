@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router";
 import { useProfile } from "../context/ProfileContext";
 import { useTranslation } from "react-i18next";
 import { Button } from "../components/ui/button";
-import { SaveProduct } from "../components/Others/SaveProduct";
+import { SaveProduct } from "../components/others/SaveProduct";
 import {
   CheckCircle2,
   AlertTriangle,
@@ -99,15 +99,14 @@ export function Result() {
       )} ${aiResult.foundAllergens?.join(", ")}`;
 
   return (
-    <div className="bg-white min-h-screen">
-      <div className="px-6 pt-6 pb-6 flex justify-between items-center bg-white border-b border-slate-100 sticky top-0 z-10">
+    <div className="bg-white min-h-screen pb-[env(safe-area-inset-bottom)]">
+      <div className="px-6 pt-[calc(env(safe-area-inset-top))] pb-6 flex justify-between items-center bg-white border-b border-slate-100 sticky top-0 z-10">
         <button
           onClick={() => navigate("/scanner")}
           className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center border border-slate-100 active:scale-95 transition-all"
         >
           <ChevronLeft className="w-6 h-6 text-slate-700" />
         </button>
-
         <button
           onClick={() => {
             if (isFavorite) {
@@ -134,7 +133,6 @@ export function Result() {
           />
         </button>
       </div>
-
       <div className="px-8 py-10 flex flex-col items-center">
         <div className="mb-10 flex flex-col items-center text-center">
           <div
@@ -236,7 +234,6 @@ export function Result() {
           </button>
         </div>
       </div>
-
       <SaveProduct
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

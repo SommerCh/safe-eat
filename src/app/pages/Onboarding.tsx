@@ -70,14 +70,10 @@ export function Onboarding() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex flex-col items-center justify-center px-6 py-8">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex flex-col items-center justify-center px-6 pt-[calc(env(safe-area-inset-top))] pb-[calc(env(safe-area-inset-bottom)+32px)]">
       <div className="w-full max-w-md space-y-8">
         <div className="flex flex-col items-center space-y-4">
-          <img
-            src={appLogo}
-            alt="SafeEat logo"
-            className="w-full h-auto p-4"
-          />
+          <img src={appLogo} alt="SafeEat logo" className="w-full h-auto p-4" />
 
           <p className="text-center text-slate-500 max-w-xs">
             {t("auth.onboarding_subtitle")}
@@ -224,9 +220,7 @@ export function Onboarding() {
               }}
               className="font-semibold text-slate-900 hover:text-black ml-1"
             >
-              {isLogin
-                ? t("auth.signup_link")
-                : t("auth.login_link")}
+              {isLogin ? t("auth.signup_link") : t("auth.login_link")}
             </button>
           </p>
         </div>

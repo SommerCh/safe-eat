@@ -220,7 +220,7 @@ export function Scanner() {
 
       <div className="relative flex-1 flex flex-col z-10">
         <div
-          style={{ paddingTop: "calc(env(safe-area-inset-top) + 24px)" }}
+          style={{ paddingTop: "calc(env(safe-area-inset-top))" }}
           className="flex justify-center px-6"
         >
           {!capturedImage && (

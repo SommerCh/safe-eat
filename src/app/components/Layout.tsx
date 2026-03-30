@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Outlet, useLocation, ScrollRestoration } from "react-router";
-import { BottomNav } from "./Others/BottomNav";
+import { BottomNav } from "./others/BottomNav";
 import { Paywall } from "../components/home/Paywall";
 import { supabase } from "../lib/supabase";
 
@@ -63,7 +63,7 @@ export function Layout() {
       <div className="h-[100dvh] flex flex-col bg-white overflow-hidden">
         {!isScanner && (
           <div
-            style={{ height: "env(safe-area-inset-top)" }}
+            style={{ height: "env(safe-area-inset-top))" }}
             className="shrink-0 bg-white"
           />
         )}

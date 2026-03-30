@@ -81,14 +81,14 @@ export function ArticleDetail() {
         className="absolute top-0 left-0 w-full h-[1px] opacity-0 pointer-events-none -z-10"
       />
 
-      <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md px-4 py-4 flex items-center justify-between border-b border-slate-100">
+      <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md px-4 pt-[calc(env(safe-area-inset-top))] pb-4 flex items-center justify-between border-b border-slate-100">
+        {" "}
         <button
           onClick={() => navigate(-1)}
           className="w-10 h-10 flex items-center justify-center bg-slate-100 rounded-full hover:bg-slate-200 transition-colors"
         >
           <ChevronLeft className="w-6 h-6 text-slate-700 pr-1" />
         </button>
-
         <div className="flex items-center gap-2">
           <button
             onClick={() => toggleFavorite(article.id)}
