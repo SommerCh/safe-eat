@@ -127,8 +127,8 @@ export function SaveProduct({
           <div>
             <h1 className="text-3xl font-bold tracking-tight">
               {initialData
-                ? "Rediger produkt"
-                : t("save_product_title", "Gem produkt")}
+                ? t("save_product.edit_title")
+                : t("save_product.save_title")}
             </h1>
           </div>
           <button
@@ -171,12 +171,12 @@ export function SaveProduct({
                   onClick={handleRemoveImage}
                   className="text-sm font-bold text-slate-950 text-left hover:opacity-70 transition-opacity"
                 >
-                  Fjern billede
+                  {t("save_product.remove_image")}
                 </button>
               ) : (
                 <>
                   <span className="text-sm font-bold text-slate-950">
-                    Tilføj billede
+                    {t("save_product.add_image")}
                   </span>
                 </>
               )}
@@ -185,7 +185,7 @@ export function SaveProduct({
 
           <div className="space-y-2">
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
-              {t("label_product_name", "Varens navn")}
+              {t("save_product.label_name")}
             </label>
             <div className="relative">
               <Tag className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -200,7 +200,7 @@ export function SaveProduct({
 
           <div className="space-y-2">
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
-              Butik / Lokation
+              {t("save_product.label_store")}
             </label>
             <div className="relative">
               <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -215,7 +215,7 @@ export function SaveProduct({
 
           <div className="space-y-2">
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
-              Egne noter
+              {t("save_product.label_notes")}
             </label>
             <div className="relative">
               <AlignLeft className="absolute left-4 top-5 w-5 h-5 text-slate-400" />
@@ -233,10 +233,10 @@ export function SaveProduct({
             className="w-full h-14 bg-black text-white rounded-2xl text-base font-bold shadow-md active:scale-[0.98] mt-4 disabled:opacity-50"
           >
             {loading
-              ? "Gemmer..."
+              ? t("save_product.btn_saving")
               : initialData
-              ? "Opdater favorit"
-              : t("btn_save_confirm", "Gem i favoritter")}
+              ? t("save_product.btn_update")
+              : t("save_product.btn_save")}
           </Button>
         </div>
       </div>

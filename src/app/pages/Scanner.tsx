@@ -66,26 +66,32 @@ export function Scanner() {
         : "English";
 
       const promptText = `
-        You are a product analyzer. User language: ${currentLang}.
-        User prohibited ingredients: [${userAllergies}].
+      You are a strict chemical and ingredient analyzer. 
+      Language: ${currentLang}.
+      Prohibited ingredients list: [${userAllergies}].
 
-        TASK:
-        1. Identify the product ("FOOD" or "OTHER").
-        2. Extract all ingredients/contents found on the label.
-        3. Compare ALL extracted ingredients with the prohibited list.
-        4. Set "isSafe" to false if any prohibited items are found.
-        5. QUALITY CHECK: If the image is too blurry to read or text is unreadable, set "isUnreadable" to true.
+      TASK:
+      1. Identify the product.
+      2. List ALL ingredients/substances found on the label.
+      3. Compare EVERY substance with the prohibited list. 
+      4. Set "isSafe" to false if there is a match, regardless of whether the product is food, cosmetic, or medicine.
 
-        RESPOND ONLY IN JSON:
-        {
-          "productType": "FOOD" | "OTHER",
-          "isSafe": boolean,
-          "foundAllergens": ["items found"],
-          "extractedIngredients": ["all ingredients"],
-          "isUnreadable": boolean,
-          "message": "Helpful message in ${currentLang} if blurry"
-        }
-      `;
+      STRICT RULES:
+      - NEVER mention that a product is "not edible" or "not a food product".
+      - NEVER mention that food allergies do not apply to non-food items.
+      - The "message" must be purely factual and objective (e.g., "This product contains [X] and [Y]").
+      - If blurry, set "isUnreadable" to true.
+
+      RESPOND ONLY IN JSON:
+      {
+        "productType": "FOOD" | "OTHER",
+        "isSafe": boolean,
+        "foundAllergens": ["items found"],
+        "extractedIngredients": ["all ingredients"],
+        "isUnreadable": boolean,
+        "message": "A short, neutral factual description in ${currentLang}"
+      }
+    `;
 
       const response = await fetch("/api/scan", {
         method: "POST",
@@ -94,7 +100,12 @@ export function Scanner() {
       });
 
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Server error");
+      if (!response.ok) {
+        const errorMessage = data.code
+          ? t(`api_errors.${data.code}`, data.error)
+          : data.error || "Server error";
+        throw new Error(errorMessage);
+      }
 
       const resultText = data.candidates?.[0]?.content?.parts?.[0]?.text;
 

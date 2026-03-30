@@ -130,16 +130,20 @@ export function ProfileSettings() {
   };
 
   const handleDeleteProfile = async () => {
-    const confirmDelete = window.confirm(t("profile.delete_confirm"));
-    if (confirmDelete) {
-      const { error } = await supabase.rpc("delete_user");
-      if (error) {
-        alert(t("profile.delete_error"));
-        return;
-      }
-      await supabase.auth.signOut();
-      navigate("/");
-    }
+    toast.error(t("profile.delete_confirm"), {
+      action: {
+        label: t("profile.btn_delete_profile"),
+        onClick: async () => {
+          const { error } = await supabase.rpc("delete_user");
+          if (error) {
+            toast.error(t("profile.delete_error"));
+            return;
+          }
+          await supabase.auth.signOut();
+          navigate("/");
+        },
+      },
+    });
   };
 
   return (

@@ -44,7 +44,7 @@ export function Result() {
     addToScanHistory({
       date: new Date().toISOString(),
       productName: nameForHistory,
-      safe: aiResult.productType === "OTHER" ? true : aiResult.isSafe,
+      safe: aiResult.isSafe,
     });
   }, [aiResult, navigate, t, addToScanHistory]);
 
@@ -87,15 +87,12 @@ export function Result() {
     setIsModalOpen(false);
   };
 
-  const finalMessage = isFood
-    ? aiResult.isSafe
-      ? t("result_safe_msg", "Ingen forbudte ingredienser fundet.")
-      : `${t(
-          "result_contains",
-          "Produktet indeholder:",
-        )} ${aiResult.foundAllergens?.join(", ")}`
-    : aiResult.message ||
-      t("result_info_default", "Her er indholdet af varen.");
+  const finalMessage = aiResult.isSafe
+    ? t("result_safe_msg", "Ingen forbudte ingredienser fundet.")
+    : `${t(
+        "result_contains",
+        "Produktet indeholder:",
+      )} ${aiResult.foundAllergens?.join(", ")}`;
 
   return (
     <div className="bg-white min-h-screen">
@@ -108,7 +105,18 @@ export function Result() {
         </button>
 
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => {
+            if (isFavorite) {
+              const existingFav = favorites.find(
+                (fav: any) =>
+                  typeof fav === "object" &&
+                  fav.ingredientsHash === ingredientsHash,
+              );
+              if (existingFav) toggleFavorite(existingFav);
+            } else {
+              setIsModalOpen(true);
+            }
+          }}
           className={`w-12 h-12 rounded-full flex items-center justify-center transition-all border ${
             isFavorite
               ? "bg-red-50 border-red-100 text-red-500"
@@ -127,9 +135,7 @@ export function Result() {
         <div className="mb-10 flex flex-col items-center text-center">
           <div
             className={`w-24 h-24 rounded-full flex items-center justify-center mb-6 ${
-              !isFood
-                ? "bg-slate-100 text-slate-600"
-                : aiResult.isSafe
+              aiResult.isSafe
                 ? "bg-emerald-100 text-emerald-600"
                 : "bg-rose-100 text-rose-500"
             }`}
@@ -143,9 +149,7 @@ export function Result() {
             )}
           </div>
           <h2 className="text-4xl font-black text-slate-900 tracking-tight">
-            {!isFood
-              ? t("result_info_title", "Produkt Info")
-              : aiResult.isSafe
+            {aiResult.isSafe
               ? t("result_safe_title", "Helt sikker!")
               : t("result_danger_title", "Pas på!")}
           </h2>
@@ -153,9 +157,7 @@ export function Result() {
 
         <div
           className={`w-full rounded-3xl p-6 mb-8 flex items-start gap-4 border ${
-            !isFood
-              ? "bg-slate-50 border-slate-100 text-slate-600"
-              : aiResult.isSafe
+            aiResult.isSafe
               ? "bg-emerald-50/50 border-emerald-100 text-emerald-900"
               : "bg-rose-50 border-rose-100 text-rose-900"
           }`}
@@ -173,11 +175,10 @@ export function Result() {
 
           <div className="flex flex-wrap gap-2 justify-center">
             {aiResult.extractedIngredients?.map((ing: string, i: number) => {
-              const isAllergen =
-                isFood &&
-                aiResult.foundAllergens?.some((allergen: string) =>
+              const isAllergen = aiResult.foundAllergens?.some(
+                (allergen: string) =>
                   ing.toLowerCase().includes(allergen.toLowerCase()),
-                );
+              );
               return (
                 <span
                   key={i}
@@ -236,6 +237,7 @@ export function Result() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSave={handleConfirmSave}
+        initialData={{ productName: generatedName }}
       />
     </div>
   );

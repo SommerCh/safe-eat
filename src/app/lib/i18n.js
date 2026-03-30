@@ -103,6 +103,7 @@ const resources = {
         delete_confirm: "Er du helt sikker på, at du vil slette din profil? Dette kan ikke fortrydes.",
         delete_error: "Kunne ikke slette bruger",
         btn_update: "Opdater",
+        password_too_short: "Adgangskoden skal være mindst 6 tegn",
       },
       ingredients: {
         sukker: "sukker",
@@ -401,6 +402,18 @@ const resources = {
         unknown_store: "Ukendt butik",
         type_dictionary: "Gemt ordbog"
       },
+      save_product: {
+        edit_title: "Rediger produkt",
+        save_title: "Gem produkt",
+        label_name: "Varens navn",
+        label_store: "Butik / Lokation",
+        label_notes: "Egne noter",
+        remove_image: "Fjern billede",
+        add_image: "Tilføj billede",
+        btn_saving: "Gemmer...",
+        btn_update: "Opdater favorit",
+        btn_save: "Gem i favoritter"
+      },
       paywall: {
         title: "Få ro i maven på indkøb",
         subtitle: "Lad appen læse de skjulte ingredienser, så du trygt kan handle ind uden stress.",
@@ -554,6 +567,7 @@ const resources = {
         delete_confirm: "Are you sure you want to delete your profile? This cannot be undone.",
         delete_error: "Could not delete user",
         btn_update: "Update",
+        password_too_short: "Password must be at least 6 characters",
       },
       ingredients: {
         sukker: "sugar",
@@ -851,6 +865,18 @@ const resources = {
         section_articles: "Saved articles",
         unknown_store: "Unknown store",
         type_dictionary: "Saved dictionary"
+      },
+      save_product: {
+        edit_title: "Edit product",
+        save_title: "Save product",
+        label_name: "Product name",
+        label_store: "Store / Location",
+        label_notes: "Personal notes",
+        remove_image: "Remove image",
+        add_image: "Add image",
+        btn_saving: "Saving...",
+        btn_update: "Update favorite",
+        btn_save: "Save to favorites"
       },
       paywall: {
         title: "Shop with peace of mind",

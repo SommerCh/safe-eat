@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useProfile } from "../context/ProfileContext";
 import { SaveProduct } from "../components/Others/SaveProduct";
+import { toast } from "sonner";
 import { ARTICLES } from "../components/articles/articleData";
 import foodData from "../lib/dicData";
 
@@ -106,7 +107,7 @@ export function Favorites() {
       }
     } else {
       navigator.clipboard.writeText(fullText);
-      alert(t("favorites.list_copied"));
+      toast.success(t("favorites.list_copied"));
     }
   };
 
@@ -159,7 +160,6 @@ export function Favorites() {
               }`}
             >
               {t("favorites.filter_all")}
-              {!selectedStore}
             </button>
             {uniqueStores.map((store) => {
               const isSelected = selectedStore === store;
@@ -175,7 +175,6 @@ export function Favorites() {
                   }`}
                 >
                   {store}
-                  {isSelected}
                 </button>
               );
             })}
@@ -267,8 +266,11 @@ export function Favorites() {
                         <Search className="w-5 h-5 text-slate-900" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-slate-950 font-bold text-base truncate">
-                          {food.kategori}
+                        <h3 className="text-slate-950 font-bold text-base truncate capitalize">
+                          {t(
+                            `ingredients.${food.kategori.toLowerCase()}`,
+                            food.kategori,
+                          )}
                         </h3>
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-tight">
                           {t("favorites.type_dictionary")}
