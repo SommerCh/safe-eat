@@ -70,7 +70,7 @@ export function Onboarding() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex flex-col items-center justify-center px-6 pt-[calc(env(safe-area-inset-top))] pb-[calc(env(safe-area-inset-bottom)+32px)]">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex flex-col items-center justify-center px-6 pt-[calc(env(safe-area-inset-top)+8px)] pb-[calc(env(safe-area-inset-bottom)+32px)]">
       <div className="w-full max-w-md space-y-8">
         <div className="flex flex-col items-center space-y-4">
           <img src={appLogo} alt="SafeEat logo" className="w-full h-auto p-4" />

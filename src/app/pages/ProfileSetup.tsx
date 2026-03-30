@@ -114,7 +114,7 @@ export function ProfileSetup() {
 
   return (
     <div className="bg-white">
-      <div className="bg-white px-6 pt-[calc(env(safe-area-inset-top))] pb-6 sticky top-0 z-10 border-b border-slate-100 flex justify-between items-start">
+      <div className="bg-white px-6 pt-[calc(env(safe-area-inset-top)+8px)] pb-6 sticky top-0 z-10 border-b border-slate-100 flex justify-between items-start">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-slate-950">
             {t("profile.title")}

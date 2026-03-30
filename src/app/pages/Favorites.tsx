@@ -118,7 +118,7 @@ export function Favorites() {
 
   return (
     <div className="bg-white">
-      <div className="bg-white px-6 pt-[calc(env(safe-area-inset-top))] pb-6 sticky top-0 z-20 border-b border-slate-100">
+      <div className="bg-white px-6 pt-[calc(env(safe-area-inset-top)+8px)] pb-6 sticky top-0 z-20 border-b border-slate-100">
         {" "}
         <div className="flex justify-between items-start mb-6">
           <div>

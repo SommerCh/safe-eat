@@ -100,7 +100,7 @@ export function Result() {
 
   return (
     <div className="bg-white min-h-screen pb-[env(safe-area-inset-bottom)]">
-      <div className="px-6 pt-[calc(env(safe-area-inset-top))] pb-6 flex justify-between items-center bg-white border-b border-slate-100 sticky top-0 z-10">
+      <div className="px-6 pt-[calc(env(safe-area-inset-top)+8px)] pb-6 flex justify-between items-center bg-white border-b border-slate-100 sticky top-0 z-10">
         <button
           onClick={() => navigate("/scanner")}
           className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center border border-slate-100 active:scale-95 transition-all"

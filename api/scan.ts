@@ -51,7 +51,6 @@ export default async function handler(req: any, res: any) {
     const data = await googleResponse.json();
 
     if (!googleResponse.ok) {
-      // Forward the error from Google, but add a code for the frontend
       return res.status(googleResponse.status).json({
         code: "ai_error",
         error: data.error?.message || "Unknown AI error",

@@ -81,7 +81,7 @@ export function ArticleDetail() {
         className="absolute top-0 left-0 w-full h-[1px] opacity-0 pointer-events-none -z-10"
       />
 
-      <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md px-4 pt-[calc(env(safe-area-inset-top))] pb-4 flex items-center justify-between border-b border-slate-100">
+      <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md px-4 pt-[calc(env(safe-area-inset-top)+8px)] pb-4 flex items-center justify-between border-b border-slate-100">
         {" "}
         <button
           onClick={() => navigate(-1)}

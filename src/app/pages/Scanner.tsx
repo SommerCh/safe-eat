@@ -89,9 +89,21 @@ export function Scanner() {
 
       const data = await response.json();
       if (!response.ok) {
-        const errorMessage = data.code
-          ? `${t(`api_errors.${data.code}`)}: ${data.error}`
-          : `${data.error || "Server error"}`;
+        let errorCode = data.code;
+
+        if (
+          !errorCode &&
+          data.error &&
+          (String(data.error).includes("Quota exceeded") ||
+            String(data.error).includes("429"))
+        ) {
+          errorCode = "rate_limit";
+        }
+
+        const errorMessage = errorCode
+          ? t(`api_errors.${errorCode}`)
+          : `${data.error || t("api_errors.server_error")}`;
+
         throw new Error(errorMessage);
       }
 
