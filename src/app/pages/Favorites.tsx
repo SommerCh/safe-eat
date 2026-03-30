@@ -160,7 +160,7 @@ export function Favorites() {
               }`}
             >
               {t("favorites.filter_all")}
-              {!selectedStore && <X className="w-4 h-4" />}
+              {!selectedStore}
             </button>
             {uniqueStores.map((store) => {
               const isSelected = selectedStore === store;
@@ -176,7 +176,7 @@ export function Favorites() {
                   }`}
                 >
                   {store}
-                  {isSelected && <X className="w-4 h-4" />}
+                  {isSelected}
                 </button>
               );
             })}

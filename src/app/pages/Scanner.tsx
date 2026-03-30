@@ -242,14 +242,24 @@ export function Scanner() {
     try {
       const combinedList = [...profile.allergies, ...profile.nolist];
       const userAllergies =
-        combinedList.length > 0
-          ? combinedList.join(", ")
-          : t("scanner_no_allergies");
+        combinedList.length > 0 ? combinedList.join(", ") : "none";
+
+      const currentLang = i18n.language === "da" ? "Danish" : "English";
 
       const promptText = `
-        Analyze ingredients for: [${userAllergies}]. 
-        Language: ${i18n.language}.
-        JSON format: {"isSafe": boolean, "foundAllergens": [], "extractedIngredients": [], "message": "string"}
+        You are a food safety assistant. User avoids: [${userAllergies}].
+        Task:
+        1. Check if the image is readable. If blurry/dark, set "isSafe" to false.
+        2. Extract all ingredients.
+        3. Check for allergens.
+        
+        RESPOND ONLY IN JSON (Message must be in ${currentLang}):
+        {
+          "isSafe": boolean,
+          "foundAllergens": ["found items"],
+          "extractedIngredients": ["all items"],
+          "message": "Short explanation in ${currentLang}"
+        }
       `;
 
       const response = await fetch("/api/scan", {
@@ -264,7 +274,22 @@ export function Scanner() {
       const resultText = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
       if (resultText) {
-        navigate("/result", { state: { aiResult: JSON.parse(resultText) } });
+        const aiResult = JSON.parse(resultText);
+
+        if (aiResult.extractedIngredients.length === 0) {
+          toast.error(
+            aiResult.message ||
+              t(
+                "scanner_retry_msg",
+                "Kunne ikke læse ingredienserne. Prøv igen.",
+              ),
+          );
+          setIsScanning(false);
+          setCapturedImage(null);
+          return;
+        }
+
+        navigate("/result", { state: { aiResult } });
       }
     } catch (error: any) {
       toast.error(t("error", { message: error.message }));
@@ -279,7 +304,7 @@ export function Scanner() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const MAX_DIM = 800;
+    const MAX_DIM = 1024;
     let w = img instanceof HTMLVideoElement ? img.videoWidth : img.width;
     let h = img instanceof HTMLVideoElement ? img.videoHeight : img.height;
 
@@ -299,8 +324,8 @@ export function Scanner() {
     canvas.height = h;
     ctx.drawImage(img, 0, 0, w, h);
 
-    const base64Data = canvas.toDataURL("image/jpeg", 0.4).split(",")[1];
-    setCapturedImage(canvas.toDataURL("image/jpeg", 0.4));
+    const base64Data = canvas.toDataURL("image/jpeg", 0.6).split(",")[1];
+    setCapturedImage(canvas.toDataURL("image/jpeg", 0.6));
     processImageAndNavigate(base64Data);
   };
 
@@ -372,16 +397,14 @@ export function Scanner() {
             <>
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="w-14 h-14 rounded-full bg-black/40 backdrop-blur-md border border-white/20 flex items-center justify-center active:scale-95 transition-all"
+                className="w-14 h-14 rounded-full bg-black/40 backdrop-blur-md border border-white/20 flex items-center justify-center"
               >
                 <ImageIcon className="w-6 h-6 text-white" />
               </button>
-
               <button
                 onClick={handleScan}
                 className="w-20 h-20 rounded-full bg-white shadow-xl ring-4 ring-white/20 active:scale-90 transition-all"
               />
-
               <div className="w-14" />
             </>
           )}
@@ -393,7 +416,7 @@ export function Scanner() {
           <div className="text-center px-8 space-y-4 flex flex-col items-center">
             <img
               src={appLogo}
-              alt="Safe Eat Logo"
+              alt="Logo"
               className="h-24 w-auto object-contain animate-pulse mb-4"
             />
             <p className="text-white/60 font-medium text-sm">
