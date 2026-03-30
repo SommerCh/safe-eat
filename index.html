@@ -46,20 +46,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Safe Eat</title>
 
-    <script type="module">
-      // Dette script kører KUN på din lokale computer
-      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        const script = document.createElement('script');
-        script.type = 'module';
-        script.innerHTML = `
-          import { injectIntoGlobalHook } from "/@react-refresh"
-          injectIntoGlobalHook(window)
-          window.$RefreshReg$ = () => {}
-          window.$RefreshSig$ = () => (type) => type
-          window.__vite_plugin_react_preamble_installed__ = true
-        `;
-        document.head.appendChild(script);
-      }
+    <script>
+      window.onerror = function(msg, url, line, col, error) {
+        var errorInfo = "FEJL: " + msg + "\nFil: " + url + "\nLinje: " + line;
+        console.error(errorInfo);
+        alert(errorInfo); 
+        return false;
+      };
+      console.log("1. HTML er indlæst - starter scripts...");
     </script>
   </head>
   <body>
