@@ -29,7 +29,9 @@ export function ProfileSettings() {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
       if (user) {
         const userEmail = user.email || "";
@@ -54,9 +56,9 @@ export function ProfileSettings() {
   }, []);
 
   const toggleLanguage = () => {
-    const newLang = i18n.language.startsWith('da') ? 'en' : 'da';
+    const newLang = i18n.language.startsWith("da") ? "en" : "da";
     i18n.changeLanguage(newLang).then(() => {
-      localStorage.setItem('i18nextLng', newLang);
+      localStorage.setItem("i18nextLng", newLang);
     });
   };
 
@@ -66,7 +68,7 @@ export function ProfileSettings() {
 
     setMessage({ text: "", type: "" });
     const updates: any = {};
-    
+
     if (type === "name") updates.data = { full_name: name };
     if (type === "email") updates.email = email;
 
@@ -120,7 +122,7 @@ export function ProfileSettings() {
   };
 
   return (
-    <div className="min-h-screen bg-white"> 
+    <div className="min-h-screen bg-white">
       <div className="bg-white px-6 pt-6 pb-6 sticky top-0 z-10 border-b border-slate-100 flex justify-between items-start">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-slate-950">
@@ -140,14 +142,14 @@ export function ProfileSettings() {
       </div>
 
       <div className="px-6 py-8 max-w-md mx-auto">
-        <button 
+        <button
           onClick={toggleLanguage}
           className="w-full mb-8 h-14 bg-slate-50 border-2 border-slate-100 rounded-2xl flex items-center justify-between px-4"
         >
           <div className="flex items-center gap-3">
             <Globe className="w-5 h-5 text-slate-400" />
             <span className="font-semibold text-slate-700">
-              {i18n.language.startsWith('da') ? "Dansk" : "English"}
+              {i18n.language.startsWith("da") ? "Dansk" : "English"}
             </span>
           </div>
           <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
@@ -157,7 +159,11 @@ export function ProfileSettings() {
 
         {isPremium && (
           <div className="flex items-center gap-2 mb-8 ml-1">
-            <img src={appLogo} alt="SafeEat logo" className="w-5 h-5 object-contain" />
+            <img
+              src={appLogo}
+              alt="SafeEat logo"
+              className="w-5 h-5 object-contain"
+            />
             <span className="text-sm font-bold text-slate-700">
               {t("profile.premium_user")}
             </span>
@@ -219,7 +225,7 @@ export function ProfileSettings() {
                   disabled={loading}
                   className="absolute right-2 top-1/2 -translate-y-1/2 h-10 px-4 bg-slate-900 text-white rounded-xl text-xs font-bold flex items-center gap-2 hover:bg-black transition-all animate-in fade-in zoom-in duration-200"
                 >
-                  {loading ? "..." : "Opdater"}
+                  {loading ? "..." : t("profile.btn_update", "Opdater")}
                   <ArrowRight className="w-3 h-3" />
                 </button>
               )}
@@ -227,10 +233,16 @@ export function ProfileSettings() {
           </div>
 
           {message.text && (
-            <div className={`p-4 rounded-2xl flex items-start gap-3 animate-in fade-in slide-in-from-top-2 ${
-              message.type === "success" ? "bg-emerald-50 text-emerald-800" : "bg-red-50 text-red-800"
-            }`}>
-              {message.type === "success" && <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />}
+            <div
+              className={`p-4 rounded-2xl flex items-start gap-3 animate-in fade-in slide-in-from-top-2 ${
+                message.type === "success"
+                  ? "bg-emerald-50 text-emerald-800"
+                  : "bg-red-50 text-red-800"
+              }`}
+            >
+              {message.type === "success" && (
+                <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+              )}
               <p className="text-sm font-medium">{message.text}</p>
             </div>
           )}

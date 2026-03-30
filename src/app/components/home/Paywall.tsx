@@ -441,7 +441,7 @@ export function Paywall({ onSuccess }: PaywallProps) {
                 <p className="text-xs text-slate-700 font-medium leading-tight">
                   {t(
                     "paywall.review_4_text",
-                    '"Dejligt ar man ikke skal have sine læsebriller med på indkøb mere"',
+                    '"Dejligt at man ikke skal have sine læsebriller med på indkøb mere"',
                   )}
                 </p>
                 <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-wide">
