@@ -42,11 +42,11 @@ export function ArticleSection({ searchQuery }: ArticleSectionProps) {
           <button
             key={cat}
             onClick={() => setActiveCategory(cat)}
-            className={`px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all shadow-sm border
+            className={`px-4 py-2 rounded-full border-2 transition-all text-sm font-medium whitespace-nowrap flex items-center gap-1
               ${
                 activeCategory === cat
-                  ? "bg-blue-900 text-white border-blue-900"
-                  : "bg-white text-slate-500 hover:bg-slate-50 border-slate-100"
+                  ? "bg-slate-900 border-slate-900 text-white"
+                  : "bg-white border-slate-200 text-slate-700 hover:border-slate-300"
               }`}
           >
             {cat}
