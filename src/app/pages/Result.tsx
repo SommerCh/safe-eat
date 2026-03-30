@@ -12,6 +12,7 @@ import {
   Heart,
   RotateCcw,
   Search,
+  ChevronRight,
 } from "lucide-react";
 
 export function Result() {
@@ -210,6 +211,24 @@ export function Result() {
             {t("edit_profile_link", "Rediger min madprofil")}
           </button>
         </div>
+
+        <button
+          onClick={() => navigate("/favorites")}
+          className="w-full flex items-center gap-4 p-4 bg-white border border-slate-100 rounded-2xl transition-all active:scale-[0.98]"
+        >
+          <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center">
+            <Heart className="w-5 h-5 text-red-500 fill-red-500" />
+          </div>
+          <div className="flex-1 text-left">
+            <span className="block text-slate-900 font-bold text-base">
+              {t("profile.link_favorites")}
+            </span>
+            <span className="text-slate-500 text-xs">
+              {t("profile.link_history")}
+            </span>
+          </div>
+          <ChevronRight className="w-5 h-5 text-slate-300" />
+        </button>
       </div>
 
       <SaveProduct
