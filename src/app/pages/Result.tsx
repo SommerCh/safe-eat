@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, useLocation } from "react-router";
 import { useProfile } from "../context/ProfileContext";
 import { useTranslation } from "react-i18next";
@@ -22,6 +22,7 @@ export function Result() {
   const { addToScanHistory, favorites, toggleFavorite } = useProfile();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const hasSavedToHistory = useRef(false);
 
   const aiResult = location.state?.aiResult;
 
@@ -36,11 +37,14 @@ export function Result() {
       return;
     }
 
+    if (hasSavedToHistory.current) return;
+
     const nameForHistory =
       aiResult.extractedIngredients && aiResult.extractedIngredients.length > 0
         ? aiResult.extractedIngredients.slice(0, 3).join(", ") + "..."
         : t("scanned_product_default", "Scannet produkt");
 
+    hasSavedToHistory.current = true;
     addToScanHistory({
       date: new Date().toISOString(),
       productName: nameForHistory,

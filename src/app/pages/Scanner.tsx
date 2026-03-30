@@ -110,7 +110,11 @@ export function Scanner() {
       const resultText = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
       if (resultText) {
-        const aiResult = JSON.parse(resultText);
+        const cleanJson = resultText
+          .replace(/```json\n?/g, "")
+          .replace(/```/g, "")
+          .trim();
+        const aiResult = JSON.parse(cleanJson);
 
         if (aiResult.isUnreadable) {
           toast.error(
