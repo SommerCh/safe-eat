@@ -103,15 +103,15 @@ export function Onboarding() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder={t("auth.name_placeholder")}
-                  className="peer w-full h-14 pl-12 pr-12 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:bg-white focus:border-slate-400 outline-none transition-all"
+                  className="peer w-full h-14 pl-12 pr-12 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:border-slate-400 focus:bg-slate-50 focus:ring-0 focus:ring-transparent outline-none transition-all"
                 />
                 {name && (
                   <button 
                     type="button" 
                     onMouseDown={(e) => { e.preventDefault(); setName(""); }}
-                    className="opacity-0 group-focus-within:opacity-100 absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-slate-200/50 rounded-full transition-opacity"
+                    className="opacity-0 group-focus-within:opacity-100 absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center transition-opacity"
                   >
-                    <X className="w-4 h-4 text-slate-600" />
+                    <X className="w-4 h-4 text-slate-400 hover:text-slate-600" />
                   </button>
                 )}
               </div>
@@ -125,15 +125,15 @@ export function Onboarding() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder={t("auth.email_placeholder")}
-                className="peer w-full h-14 pl-12 pr-12 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:bg-white focus:border-slate-400 outline-none transition-all"
+                className="peer w-full h-14 pl-12 pr-12 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:border-slate-400 focus:bg-slate-50 focus:ring-0 focus:ring-transparent outline-none transition-all"
               />
               {email && (
                 <button 
                   type="button" 
                   onMouseDown={(e) => { e.preventDefault(); setEmail(""); }}
-                  className="opacity-0 group-focus-within:opacity-100 absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-slate-200/50 rounded-full transition-opacity"
+                  className="opacity-0 group-focus-within:opacity-100 absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center transition-opacity"
                 >
-                  <X className="w-4 h-4 text-slate-600" />
+                  <X className="w-4 h-4 text-slate-400 hover:text-slate-600" />
                 </button>
               )}
             </div>
@@ -146,22 +146,22 @@ export function Onboarding() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder={isLogin ? t("auth.password_placeholder_login") : t("auth.password_placeholder_signup")}
-                className="peer w-full h-14 pl-12 pr-20 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:bg-white focus:border-slate-400 outline-none transition-all"
+                className="peer w-full h-14 pl-12 pr-20 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:border-slate-400 focus:bg-slate-50 focus:ring-0 focus:ring-transparent outline-none transition-all"
               />
               <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
                 {password && (
                   <button 
                     type="button" 
                     onMouseDown={(e) => { e.preventDefault(); setPassword(""); }}
-                    className="opacity-0 group-focus-within:opacity-100 w-8 h-8 flex items-center justify-center bg-slate-200/50 rounded-full transition-opacity"
+                    className="opacity-0 group-focus-within:opacity-100 w-8 h-8 flex items-center justify-center transition-opacity"
                   >
-                    <X className="w-4 h-4 text-slate-600" />
+                    <X className="w-4 h-4 text-slate-400 hover:text-slate-600" />
                   </button>
                 )}
                 <button 
                   type="button" 
                   onMouseDown={(e) => { e.preventDefault(); setShowPassword(!showPassword); }} 
-                  className="w-8 h-8 flex items-center justify-center text-slate-400"
+                  className="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-600"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>

@@ -29,18 +29,23 @@ export function SaveProduct({
   const [notes, setNotes] = useState("");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const hasInitialized = useRef(false);
 
   useEffect(() => {
-    if (initialData && isOpen) {
-      setProductName(initialData.productName || "");
-      setStoreName(initialData.store || "");
-      setNotes(initialData.notes || "");
-      setImagePreview(initialData.image || null);
-    } else if (isOpen) {
+    if (isOpen) {
+      if (!hasInitialized.current) {
+        setProductName(initialData?.productName || "");
+        setStoreName(initialData?.store || "");
+        setNotes(initialData?.notes || "");
+        setImagePreview(initialData?.image || null);
+        hasInitialized.current = true;
+      }
+    } else {
       setProductName("");
       setStoreName("");
       setNotes("");
       setImagePreview(null);
+      hasInitialized.current = false;
     }
   }, [initialData, isOpen]);
 
@@ -67,7 +72,7 @@ export function SaveProduct({
         };
         img.onload = () => {
           const canvas = document.createElement("canvas");
-          const MAX_DIM = 1024;
+          const MAX_DIM = 512;
           let w = img.width;
           let h = img.height;
 
@@ -88,7 +93,7 @@ export function SaveProduct({
           const ctx = canvas.getContext("2d");
           if (ctx) {
             ctx.drawImage(img, 0, 0, w, h);
-            setImagePreview(canvas.toDataURL("image/jpeg", 0.6));
+            setImagePreview(canvas.toDataURL("image/jpeg", 0.5));
           }
         };
         img.src = ev.target?.result as string;
@@ -131,7 +136,7 @@ export function SaveProduct({
           </div>
           <button
             onClick={onClose}
-            className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center border border-slate-100 shrink-0"
+            className="w-12 h-12 flex items-center justify-center shrink-0"
           >
             <X className="w-6 h-6 text-slate-700" />
           </button>
@@ -197,7 +202,7 @@ export function SaveProduct({
                 <button
                   type="button"
                   onClick={() => setProductName("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-slate-200/50 hover:bg-slate-200 rounded-full transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center"
                 >
                   <X className="w-4 h-4 text-slate-600" />
                 </button>
@@ -221,7 +226,7 @@ export function SaveProduct({
                 <button
                   type="button"
                   onClick={() => setStoreName("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-slate-200/50 hover:bg-slate-200 rounded-full transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center"
                 >
                   <X className="w-4 h-4 text-slate-600" />
                 </button>
@@ -244,7 +249,7 @@ export function SaveProduct({
                 <button
                   type="button"
                   onClick={() => setNotes("")}
-                  className="absolute right-3 top-4 w-8 h-8 flex items-center justify-center bg-slate-200/50 hover:bg-slate-200 rounded-full transition-colors"
+                  className="absolute right-3 top-4 w-8 h-8 flex items-center justify-center"
                 >
                   <X className="w-4 h-4 text-slate-600" />
                 </button>
