@@ -66,30 +66,18 @@ export function Scanner() {
         : "English";
 
       const promptText = `
-      You are a strict chemical and ingredient analyzer. 
-      Language: ${currentLang}.
-      Prohibited ingredients list: [${userAllergies}].
+      You are an ingredient analyzer. Your response must be in JSON format.
+      The user's language is ${currentLang}.
+      The user wants to avoid these ingredients: [${userAllergies}].
 
-      TASK:
-      1. Identify the product.
-      2. List ALL ingredients/substances found on the label.
-      3. Compare EVERY substance with the prohibited list. 
-      4. Set "isSafe" to false if there is a match, regardless of whether the product is food, cosmetic, or medicine.
-
-      STRICT RULES:
-      - NEVER mention that a product is "not edible" or "not a food product".
-      - NEVER mention that food allergies do not apply to non-food items.
-      - The "message" must be purely factual and objective (e.g., "This product contains [X] and [Y]").
-      - If blurry, set "isUnreadable" to true.
-
-      RESPOND ONLY IN JSON:
+      Analyze the image and provide the following JSON structure:
       {
-        "productType": "FOOD" | "OTHER",
-        "isSafe": boolean,
-        "foundAllergens": ["items found"],
-        "extractedIngredients": ["all ingredients"],
-        "isUnreadable": boolean,
-        "message": "A short, neutral factual description in ${currentLang}"
+        "productType": "FOOD" | "OTHER", // First, classify if the product is food or something else (e.g., cosmetics, medicine).
+        "isSafe": boolean, // IMPORTANT: Set to 'false' if ANY of the user's prohibited ingredients are found, regardless of productType. Otherwise, 'true'.
+        "foundAllergens": ["list of prohibited ingredients you found"],
+        "extractedIngredients": ["list of all ingredients you could read from the label"],
+        "isUnreadable": boolean, // Set to true ONLY if the ingredient list is completely unreadable/blurry.
+        "message": "A short, factual summary in ${currentLang}. If not food, just state the findings objectively."
       }
     `;
 
