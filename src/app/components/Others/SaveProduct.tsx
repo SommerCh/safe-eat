@@ -106,8 +106,6 @@ export function SaveProduct({
     try {
       await onSave(productName, storeName, notes, imagePreview);
       onClose();
-    } catch (error) {
-      console.error(error);
     } finally {
       setLoading(false);
     }

@@ -112,7 +112,6 @@ export function Scanner() {
       if (resultText) {
         const aiResult = JSON.parse(resultText);
 
-        // Vi tjekker nu specifikt på om AI'en melder billedet ulæseligt
         if (aiResult.isUnreadable) {
           toast.error(
             aiResult.message ||
