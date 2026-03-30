@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import {
@@ -26,6 +26,15 @@ export function ProfileSettings() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: "", type: "" });
   const [isPremium, setIsPremium] = useState(false);
+  const messageTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (messageTimeoutRef.current) {
+        clearTimeout(messageTimeoutRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -82,7 +91,10 @@ export function ProfileSettings() {
       setMessage({ text: t("profile.update_success"), type: "success" });
       if (type === "name") setInitialName(name);
       if (type === "email") setInitialEmail(email);
-      setTimeout(() => setMessage({ text: "", type: "" }), 3000);
+      if (messageTimeoutRef.current) clearTimeout(messageTimeoutRef.current);
+      messageTimeoutRef.current = setTimeout(() => {
+        setMessage({ text: "", type: "" });
+      }, 3000);
     }
   };
 
@@ -98,7 +110,10 @@ export function ProfileSettings() {
     } else {
       setMessage({ text: t("profile.update_success"), type: "success" });
       setPassword("");
-      setTimeout(() => setMessage({ text: "", type: "" }), 3000);
+      if (messageTimeoutRef.current) clearTimeout(messageTimeoutRef.current);
+      messageTimeoutRef.current = setTimeout(() => {
+        setMessage({ text: "", type: "" });
+      }, 3000);
     }
     setLoading(false);
   };

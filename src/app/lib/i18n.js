@@ -97,7 +97,8 @@ const resources = {
         error: "Fejl: ",
         update_success: "Din profil er blevet opdateret!",
         delete_confirm: "Er du helt sikker på, at du vil slette din profil? Dette kan ikke fortrydes.",
-        delete_error: "Kunne ikke slette bruger"
+        delete_error: "Kunne ikke slette bruger",
+        btn_update: "Opdater",
       },
       ingredients: {
         sukker: "sukker",
@@ -536,7 +537,8 @@ const resources = {
         error: "Error: ",
         update_success: "Your profile has been updated!",
         delete_confirm: "Are you sure you want to delete your profile? This cannot be undone.",
-        delete_error: "Could not delete user"
+        delete_error: "Could not delete user",
+        btn_update: "Update",
       },
       ingredients: {
         sukker: "sugar",

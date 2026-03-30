@@ -250,6 +250,7 @@ import { Purchases } from "@revenuecat/purchases-capacitor";
 import { Capacitor } from "@capacitor/core";
 import { supabase } from "../../lib/supabase";
 import appLogo from "../../../../assets/LogoAndText.png";
+import { toast } from "sonner";
 
 interface PaywallProps {
   onSuccess: () => void;
@@ -265,7 +266,7 @@ export function Paywall({ onSuccess }: PaywallProps) {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      alert(t("paywall.login_required", "Log ind først"));
+      toast.error(t("paywall.login_required", "Log ind først"));
       return;
     }
 
@@ -276,7 +277,7 @@ export function Paywall({ onSuccess }: PaywallProps) {
         .eq("id", user.id);
 
       if (error) {
-        alert(t("paywall.error", "Fejl: ") + error.message);
+        toast.error(t("paywall.error", "Fejl: ") + error.message);
       } else {
         onSuccess();
       }
@@ -299,7 +300,9 @@ export function Paywall({ onSuccess }: PaywallProps) {
         }
       }
     } catch (error: any) {
-      if (!error.userCancelled) alert(error.message);
+      if (!error.userCancelled) {
+        toast.error(error.message);
+      }
     }
   };
 
@@ -315,7 +318,7 @@ export function Paywall({ onSuccess }: PaywallProps) {
         }
       `}</style>
 
-      <div className="px-6 pt-20 pb-4 flex items-center justify-between bg-white border-b border-slate-100 shadow-none shrink-0">
+      <div className="px-6 pt-6 pb-4 flex items-center justify-between bg-white border-b border-slate-100 shadow-none shrink-0">
         <button
           onClick={() => navigate(-1)}
           className="w-10 h-10 flex items-center justify-center bg-slate-100 rounded-full hover:bg-slate-200 transition-colors"
@@ -358,7 +361,7 @@ export function Paywall({ onSuccess }: PaywallProps) {
               <p className="font-semibold text-slate-900 text-sm">
                 {t(
                   "paywall.feature_discord",
-                  "Adgang til Safe Eat VIP Discord",
+                  "Adgang til Safe Eat Discord",
                 )}
               </p>
             </div>

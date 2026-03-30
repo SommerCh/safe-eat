@@ -43,7 +43,9 @@ export function Scanner() {
       const combinedList = [...profile.allergies, ...profile.nolist];
       const userAllergies =
         combinedList.length > 0 ? combinedList.join(", ") : "none";
-      const currentLang = i18n.language === "da" ? "Danish" : "English";
+      const currentLang = i18n.language?.startsWith("da")
+        ? "Danish"
+        : "English";
 
       const promptText = `
         You are a product analyzer. User language: ${currentLang}.

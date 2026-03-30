@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import { ImageWithFallback } from "../ImageWithFallback";
@@ -22,16 +22,18 @@ export function ArticleSection({ searchQuery }: ArticleSectionProps) {
     setActiveCategory(currentCategories[0]);
   }, [currentLang, currentCategories]);
 
-  const filteredArticles = currentArticles.filter((article) => {
-    const categoryMatch =
-      activeCategory === currentCategories[0] ||
-      article.category === activeCategory;
-    const searchMatch =
-      !searchQuery ||
-      article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      article.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
-    return categoryMatch && searchMatch;
-  });
+  const filteredArticles = useMemo(() => {
+    return currentArticles.filter((article) => {
+      const categoryMatch =
+        activeCategory === currentCategories[0] ||
+        article.category === activeCategory;
+      const searchMatch =
+        !searchQuery ||
+        article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        article.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
+      return categoryMatch && searchMatch;
+    });
+  }, [currentArticles, activeCategory, currentCategories, searchQuery]);
 
   return (
     <div className="space-y-6">

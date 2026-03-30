@@ -1,27 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { HomeHeader } from "../components/Others/Header";
 import { QuickTips } from "../components/home/QuickTips";
-import { ArticleSection } from "../components/home/ArticleSetion";
-import { supabase } from "../lib/supabase";
+import { ArticleSection } from "../components/home/ArticleSection";
 
 export function Home() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [userName, setUserName] = useState("");
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user) {
-        const name =
-          user.user_metadata?.full_name || user.email?.split("@")[0] || "";
-        const firstName = name.split(" ")[0];
-        setUserName(firstName);
-      }
-    };
-    fetchUser();
-  }, []);
 
   return (
     <div className="bg-gray-50">
