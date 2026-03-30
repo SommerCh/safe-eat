@@ -1,6 +1,7 @@
 import { useState, type KeyboardEvent } from "react";
 import { X, Plus, Trash2 } from "lucide-react";
 import { Label } from "../ui/label";
+import { useTranslation } from "react-i18next";
 
 interface NolistInputProps {
   items: string[];
@@ -15,6 +16,7 @@ export function NolistInput({
   onAdd,
   onClearAll,
 }: NolistInputProps) {
+  const { t } = useTranslation();
   const [inputValue, setInputValue] = useState("");
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -31,7 +33,7 @@ export function NolistInput({
     <div className="space-y-4">
       <div className="flex items-center justify-between px-1">
         <Label className="text-xl font-bold tracking-tight text-slate-950">
-          Personlig liste
+          {t("profile.section_personal", "Personlig liste")}
         </Label>
         {items.length > 0 && (
           <button
@@ -40,7 +42,7 @@ export function NolistInput({
             className="flex items-center gap-1.5 text-sm font-medium text-slate-400 hover:text-red-600 transition-colors"
           >
             <Trash2 className="w-4 h-4" />
-            Ryd alle
+            {t("profile.clear_all", "Ryd alle")}
           </button>
         )}
       </div>
@@ -65,7 +67,7 @@ export function NolistInput({
 
           {items.length === 0 && (
             <p className="text-slate-400 text-sm italic py-2 px-1">
-              Listen er tom...
+              {t("profile.personal_empty", "Listen er tom...")}
             </p>
           )}
         </div>
@@ -76,7 +78,7 @@ export function NolistInput({
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Tilføj f.eks. palmeolie..."
+            placeholder={t("profile.personal_placeholder", "Tilføj f.eks. palmeolie...")}
             className="flex-1 bg-transparent outline-none text-slate-900 placeholder:text-slate-300 text-base py-1"
           />
           <button

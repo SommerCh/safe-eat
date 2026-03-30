@@ -1,6 +1,7 @@
 import { X } from "lucide-react";
 import { Label } from "../ui/label";
 import { ALLERGY_OPTIONS } from "../../lib/foodData";
+import { useTranslation } from "react-i18next";
 
 interface AllergySelectorProps {
   selected: string[];
@@ -8,10 +9,12 @@ interface AllergySelectorProps {
 }
 
 export function AllergySelector({ selected, onToggle }: AllergySelectorProps) {
+  const { t } = useTranslation();
+
   return (
     <div className="space-y-4">
       <Label className="text-lg font-semibold text-slate-900 ml-1">
-        Vælg dine allergier
+        {t("profile.allergy_title", "Vælg dine allergier")}
       </Label>
 
       <div className="flex flex-wrap gap-2">
@@ -29,7 +32,7 @@ export function AllergySelector({ selected, onToggle }: AllergySelectorProps) {
                   : "bg-white border-slate-200 text-slate-700 hover:border-slate-300"
               }`}
             >
-              {allergy}
+              {t(`food.allergy.${allergy}`)}
               {isSelected && <X className="w-4 h-4" />}
             </button>
           );

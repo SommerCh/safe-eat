@@ -1,8 +1,10 @@
 import { AlertTriangle, ShoppingBag, Users, Heart } from "lucide-react";
 import { useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
 
 export function QuickTips() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleTipClick = (id: number) => {
     switch (id) {
@@ -24,33 +26,33 @@ export function QuickTips() {
     {
       id: 1,
       icon: AlertTriangle,
-      title: "Dobbelttjek altid",
-      description: "Producenter kan ændre opskrifter uden varsel",
+      title: t("tips.double_check_title", "Dobbelttjek altid"),
+      description: t("tips.double_check_desc", "Producenter kan ændre opskrifter uden varsel"),
     },
     {
       id: 2,
       icon: ShoppingBag,
-      title: "Scan før køb",
-      description: "Brug appen i butikken for at undgå inddhold",
+      title: t("tips.scan_before_buy_title", "Scan før køb"),
+      description: t("tips.scan_before_buy_desc", "Brug appen i butikken for at undgå indhold"),
     },
     {
       id: 3,
       icon: Users,
-      title: "Del dine erfaringer",
-      description: "Hop ind på vores Discord og hjælp andre",
+      title: t("tips.share_experience_title", "Del dine erfaringer"),
+      description: t("tips.share_experience_desc", "Hop ind på vores Discord og hjælp andre"),
     },
     {
       id: 4,
       icon: Heart,
-      title: "Gem dine favoritter",
-      description: "Se din personlige liste over sikre produkter",
+      title: t("tips.save_favorites_title", "Gem dine favoritter"),
+      description: t("tips.save_favorites_desc", "Se din personlige liste over sikre produkter"),
     },
   ];
 
   return (
     <section>
       <h2 className="text-lg font-semibold text-gray-900 mb-4 px-1">
-        Hurtige tips
+        {t("tips.header", "Hurtige tips")}
       </h2>
 
       <div className="grid grid-cols-2 gap-3 pb-4">

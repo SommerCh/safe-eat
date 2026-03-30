@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router";
 import { useProfile } from "../context/ProfileContext";
+import { useTranslation } from "react-i18next";
 import { Button } from "../components/ui/button";
 import { SaveProduct } from "../components/Others/SaveProduct";
 import {
@@ -15,21 +16,19 @@ import {
 export function Result() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation();
   const { addToScanHistory, favorites, toggleFavorite } = useProfile();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // --- TEST DATA START: Så du kan se siden uden at scanne ---
   const mockResult = {
     isSafe: false,
     extractedIngredients: ["Hvedemel", "Sukker", "Mælkepulver", "Palmeolie"],
     foundAllergens: ["Mælkepulver"],
   };
-  // --- TEST DATA SLUT ---
 
   const aiResult = location.state?.aiResult || mockResult;
 
-  // Lav et unikt, stabilt ID baseret på de præcise ingredienser
   const ingredientsHash = aiResult.extractedIngredients
     ? aiResult.extractedIngredients.join(",")
     : "raw-scan-no-ingredients";
@@ -43,7 +42,7 @@ export function Result() {
     const nameForHistory =
       aiResult.extractedIngredients && aiResult.extractedIngredients.length > 0
         ? aiResult.extractedIngredients.slice(0, 3).join(", ") + "..."
-        : "Scannet produkt";
+        : t("scanned_product_default", "Scannet produkt");
 
     addToScanHistory({
       date: new Date().toISOString(),
@@ -57,9 +56,8 @@ export function Result() {
   const generatedName =
     aiResult.extractedIngredients && aiResult.extractedIngredients.length > 0
       ? aiResult.extractedIngredients.slice(0, 3).join(", ") + "..."
-      : "Scannet produkt";
+      : t("scanned_product_default", "Scannet produkt");
 
-  // Tjek på ingredientsHash i stedet for på navnet, så det reagerer med det samme
   const isFavorite = favorites.some(
     (fav: any) =>
       typeof fav === "object" && fav.ingredientsHash === ingredientsHash,
@@ -79,7 +77,7 @@ export function Result() {
     const favoriteObject = {
       id: Date.now(),
       type: "product",
-      ingredientsHash: ingredientsHash, // Vi gemmer ID'et her
+      ingredientsHash: ingredientsHash,
       productName: productName || generatedName,
       store: storeName,
       notes: notes,
@@ -88,19 +86,18 @@ export function Result() {
       date: new Date().toISOString(),
     };
 
-    // Din smart-toggle i ProfileContext klarer resten
     await toggleFavorite(favoriteObject as any);
     setIsModalOpen(false);
   };
 
+  const allergensList = aiResult.foundAllergens?.join(", ") || "";
   const finalMessage = aiResult.isSafe
-    ? "Ingen forbudte ingredienser fundet."
-    : `Produktet indeholder: ${aiResult.foundAllergens?.join(", ")}`;
+    ? t("result_safe_msg", "Ingen forbudte ingredienser fundet.")
+    : `${t("result_contains", "Produktet indeholder:")} ${allergensList}`;
 
   return (
-    <div className="min-h-screen bg-white pb-12">
-      {/* Header med pt-20 standard */}
-      <div className="px-6 pt-20 pb-6 flex justify-between items-center bg-white border-b border-slate-100 sticky top-0 z-10">
+    <div className="bg-white">
+      <div className="px-6 pt-6 pb-6 flex justify-between items-center bg-white border-b border-slate-100 sticky top-0 z-10">
         <button
           onClick={() => navigate("/scanner")}
           className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center border border-slate-100 active:scale-95 transition-all"
@@ -140,7 +137,9 @@ export function Result() {
             )}
           </div>
           <h2 className="text-4xl font-black text-slate-900 tracking-tight">
-            {aiResult.isSafe ? "Helt sikker!" : "Pas på!"}
+            {aiResult.isSafe
+              ? t("result_safe_title", "Helt sikker!")
+              : t("result_danger_title", "Pas på!")}
           </h2>
         </div>
 
@@ -157,7 +156,7 @@ export function Result() {
 
         <div className="w-full space-y-4 text-center">
           <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em]">
-            Fundne Ingredienser:
+            {t("found_ingredients_label", "Fundne Ingredienser:")}
           </h3>
 
           <div className="flex flex-wrap gap-2 justify-center">
@@ -188,14 +187,14 @@ export function Result() {
             className="w-full h-16 bg-black text-white rounded-2xl text-base font-bold shadow-md active:scale-[0.98] transition-all flex items-center justify-center gap-2"
           >
             <RotateCcw className="w-5 h-5" />
-            Scan næste vare
+            {t("scan_next_button", "Scan næste vare")}
           </Button>
 
           <button
             onClick={() => navigate("/setup")}
             className="w-full py-4 text-slate-400 font-bold text-[10px] uppercase tracking-widest active:text-slate-600 transition-colors"
           >
-            Rediger min madprofil
+            {t("edit_profile_link", "Rediger min madprofil")}
           </button>
         </div>
       </div>

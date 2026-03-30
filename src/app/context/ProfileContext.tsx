@@ -37,7 +37,7 @@ const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
 export function ProfileProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<UserProfile>(() => {
     const saved = localStorage.getItem("userProfile");
-    return saved ? JSON.parse(saved) : { allergies: [], diet: [], nolist: [] };
+    return saved ? JSON.parse(saved) : { allergies: [], diet: [], health: [], nolist: [] };
   });
 
   const [favorites, setFavorites] = useState<any[]>(() => {
@@ -70,7 +70,6 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
 
   const toggleFavorite = (item: any) => {
     setFavorites((prev) => {
-      // Find ud af om vi kigger på et simpelt ID eller et objekt med ID
       const itemId = typeof item === "object" ? item.id : item;
       
       const exists = prev.some((fav) => {

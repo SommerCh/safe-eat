@@ -24,7 +24,7 @@ export function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24">
+    <div className="bg-gray-50">
       <HomeHeader searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
 
       <div className="px-6 py-6 space-y-8">

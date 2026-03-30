@@ -1,8 +1,7 @@
 import { X } from "lucide-react";
 import { Label } from "../ui/label";
-import { DIET_MAP } from "../../lib/foodData";
-
-const dietOptions = Object.keys(DIET_MAP);
+import { DIET_OPTIONS } from "../../lib/foodData";
+import { useTranslation } from "react-i18next";
 
 interface DietSelectorProps {
   selected: string[];
@@ -10,16 +9,16 @@ interface DietSelectorProps {
 }
 
 export function DietSelector({ selected, onToggle }: DietSelectorProps) {
-  const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+  const { t } = useTranslation();
 
   return (
     <div className="space-y-4">
       <Label className="text-lg font-semibold text-slate-900 ml-1">
-        Vælg dine diæter
+        {t("profile.diet_title", "Vælg dine diæter")}
       </Label>
 
       <div className="flex flex-wrap gap-2">
-        {dietOptions.map((diet) => {
+        {DIET_OPTIONS.map((diet) => {
           const isSelected = selected.includes(diet);
 
           return (
@@ -33,7 +32,7 @@ export function DietSelector({ selected, onToggle }: DietSelectorProps) {
                   : "bg-white border-slate-200 text-slate-700 hover:border-slate-300"
               }`}
             >
-              {capitalize(diet === "vegan" ? "vegansk" : diet)}
+              {t(`food.diet.${diet}`)}
               {isSelected && <X className="w-4 h-4" />}
             </button>
           );

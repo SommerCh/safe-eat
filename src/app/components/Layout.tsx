@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 import { Outlet, useLocation, ScrollRestoration } from "react-router";
 import { BottomNav } from "./Others/BottomNav";
 import { Paywall } from "../components/home/Paywall";
-import { supabase } from "../lib/supabase"; 
+import { supabase } from "../lib/supabase";
 
 export function Layout() {
   const location = useLocation();
   const [isSubscribed, setIsSubscribed] = useState(false);
-  const [loading, setLoading] = useState(true);  
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const checkPremiumStatus = async (userId: string) => {
@@ -16,37 +16,37 @@ export function Layout() {
         .select("is_premium")
         .eq("id", userId)
         .single();
-
       setIsSubscribed(!!data?.is_premium);
       setLoading(false);
     };
 
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        checkPremiumStatus(session.user.id);
-      } else {
+      if (session?.user) checkPremiumStatus(session.user.id);
+      else {
         setIsSubscribed(false);
         setLoading(false);
       }
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) {
-        checkPremiumStatus(session.user.id);
-      } else {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) checkPremiumStatus(session.user.id);
+      else {
         setIsSubscribed(false);
         setLoading(false);
       }
     });
 
-    return () => {
-      subscription.unsubscribe();
-    };
+    return () => subscription.unsubscribe();
   }, []);
 
   if (loading) return null;
 
-  const isPublicPage = location.pathname === "/" || location.pathname === "/terms";
+  const isPublicPage =
+    location.pathname === "/" || location.pathname === "/terms";
+  const isScanner = location.pathname === "/scanner";
+  const hideNav = isPublicPage || location.pathname === "/result";
 
   if (!isPublicPage && !isSubscribed) {
     return (
@@ -57,14 +57,30 @@ export function Layout() {
     );
   }
 
-  const hideNav = location.pathname === "/" || location.pathname === "/result";
-
   return (
     <>
       <ScrollRestoration />
-      <div className="min-h-screen bg-white">
-        <Outlet />
-        {!hideNav && <BottomNav />}
+      <div className="h-[100dvh] flex flex-col bg-white overflow-hidden">
+        {!isScanner && (
+          <div
+            style={{ height: "env(safe-area-inset-top)" }}
+            className="shrink-0 bg-white"
+          />
+        )}
+
+        <main className="flex-1 relative overflow-y-auto">
+          <Outlet />
+        </main>
+
+        {!hideNav && (
+          <footer className="shrink-0 flex flex-col bg-white border-t border-gray-100">
+            <BottomNav />
+            <div
+              style={{ height: "env(safe-area-inset-bottom)" }}
+              className="bg-white"
+            />
+          </footer>
+        )}
       </div>
     </>
   );

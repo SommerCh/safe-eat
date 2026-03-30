@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
 import {
   User,
   Mail,
@@ -15,6 +16,7 @@ import appLogo from "../../../../public/logo.png";
 
 export function ProfileSettings() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [initialEmail, setInitialEmail] = useState("");
@@ -69,9 +71,15 @@ export function ProfileSettings() {
     const { error } = await supabase.auth.updateUser(updates);
 
     if (error) {
-      setMessage({ text: "Fejl: " + error.message, type: "error" });
+      setMessage({
+        text: t("profile.error", "Fejl: ") + error.message,
+        type: "error",
+      });
     } else {
-      setMessage({ text: "Din profil er blevet opdateret!", type: "success" });
+      setMessage({
+        text: t("profile.update_success", "Din profil er blevet opdateret!"),
+        type: "success",
+      });
       setInitialEmail(email);
       setPassword("");
 
@@ -93,7 +101,10 @@ export function ProfileSettings() {
 
   const handleDeleteProfile = async () => {
     const confirmDelete = window.confirm(
-      "Er du helt sikker på, at du vil slette din profil? Dette kan ikke fortrydes.",
+      t(
+        "profile.delete_confirm",
+        "Er du helt sikker på, at du vil slette din profil? Dette kan ikke fortrydes.",
+      ),
     );
 
     if (confirmDelete) {
@@ -101,11 +112,7 @@ export function ProfileSettings() {
 
       if (error) {
         console.error("Slette-fejl:", error);
-        alert(
-          `Kunne ikke slette bruger:\n\nBesked: ${error.message}\nDetaljer: ${
-            error.details || "Ingen"
-          }\nKode: ${error.code}`,
-        );
+        alert(t("profile.delete_error", "Kunne ikke slette bruger"));
         return;
       }
 
@@ -115,14 +122,17 @@ export function ProfileSettings() {
   };
 
   return (
-    <div className="min-h-screen bg-white pb-32">
+    <div className="min-h-screen bg-white">
       <div className="bg-white px-6 pt-12 pb-6 sticky top-0 z-10 border-b border-slate-100 flex justify-between items-start">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-slate-950">
-            Indstillinger
+            {t("profile.settings_title", "Indstillinger")}
           </h1>
           <p className="text-slate-500 mt-2 font-medium">
-            Administrer din konto og sikkerhed
+            {t(
+              "profile.settings_subtitle",
+              "Administrer din konto og sikkerhed",
+            )}
           </p>
         </div>
 
@@ -134,7 +144,7 @@ export function ProfileSettings() {
         </button>
       </div>
 
-      <div className="px-6 py-8 max-w-md mx-auto">
+      <div className="px-6 py-8 max-w-md mx-auto pb-32">
         {isPremium && (
           <div className="flex items-center gap-2 mb-6 ml-1">
             <img
@@ -143,7 +153,7 @@ export function ProfileSettings() {
               className="w-5 h-5 object-contain"
             />
             <span className="text-sm font-bold text-slate-700">
-              Safe Eat Pro user
+              {t("profile.premium_user", "Safe Eat Pro user")}
             </span>
           </div>
         )}
@@ -151,7 +161,7 @@ export function ProfileSettings() {
         <form onSubmit={handleUpdateProfile} className="space-y-8">
           <div className="space-y-2">
             <label className="text-sm font-semibold text-slate-700 ml-1">
-              Navn
+              {t("profile.label_name", "Navn")}
             </label>
             <div className="relative">
               <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -159,7 +169,7 @@ export function ProfileSettings() {
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Indtast dit navn"
+                placeholder={t("profile.placeholder_name", "Indtast dit navn")}
                 className="w-full h-14 pl-12 pr-4 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:bg-white focus:border-slate-400 outline-none transition-all"
               />
             </div>
@@ -167,7 +177,7 @@ export function ProfileSettings() {
 
           <div className="space-y-2">
             <label className="text-sm font-semibold text-slate-700 ml-1">
-              E-mailadresse
+              {t("profile.label_email", "E-mailadresse")}
             </label>
             <div className="relative">
               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -183,7 +193,7 @@ export function ProfileSettings() {
 
           <div className="space-y-2">
             <label className="text-sm font-semibold text-slate-700 ml-1">
-              Ny adgangskode
+              {t("profile.label_password", "Ny adgangskode")}
             </label>
             <div className="relative">
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -192,7 +202,10 @@ export function ProfileSettings() {
                 minLength={6}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Skriv kun for at ændre"
+                placeholder={t(
+                  "profile.placeholder_password_change",
+                  "Skriv kun for at ændre",
+                )}
                 className="w-full h-14 pl-12 pr-4 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:bg-white focus:border-slate-400 outline-none transition-all"
               />
             </div>
@@ -218,7 +231,9 @@ export function ProfileSettings() {
             disabled={loading}
             className="w-full h-14 bg-slate-950 text-white hover:bg-black rounded-2xl text-base font-bold shadow-sm transition-all active:scale-[0.98]"
           >
-            {loading ? "Gemmer..." : "Gem ændringer"}
+            {loading
+              ? t("profile.btn_saving", "Gemmer...")
+              : t("profile.btn_save_changes", "Gem ændringer")}
           </Button>
         </form>
 
@@ -229,7 +244,7 @@ export function ProfileSettings() {
             className="w-full flex items-center justify-center gap-2 h-14 bg-slate-50 text-slate-700 hover:bg-slate-100 rounded-2xl text-base font-semibold transition-all active:scale-[0.98]"
           >
             <LogOut className="w-5 h-5" />
-            Log ud
+            {t("profile.btn_logout", "Log ud")}
           </button>
 
           <button
@@ -238,7 +253,7 @@ export function ProfileSettings() {
             className="w-full flex items-center justify-center gap-2 h-14 bg-white border-2 border-red-50 text-red-600 hover:bg-red-50 rounded-2xl text-base font-semibold transition-all active:scale-[0.98]"
           >
             <Trash2 className="w-5 h-5" />
-            Slet profil
+            {t("profile.btn_delete_profile", "Slet profil")}
           </button>
         </div>
       </div>

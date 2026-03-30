@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { SearchBar } from "../ui/SearchBar";
 import { supabase } from "../../lib/supabase";
+import { useTranslation } from "react-i18next";
 
 interface HomeHeaderProps {
   searchQuery: string;
@@ -8,6 +9,7 @@ interface HomeHeaderProps {
 }
 
 export function HomeHeader({ searchQuery, setSearchQuery }: HomeHeaderProps) {
+  const { t } = useTranslation();
   const [firstName, setFirstName] = useState("");
 
   useEffect(() => {
@@ -37,28 +39,28 @@ export function HomeHeader({ searchQuery, setSearchQuery }: HomeHeaderProps) {
 
   const getGreeting = () => {
     const hour = new Date().getHours();
-    if (hour >= 5 && hour < 10) return "Godmorgen";
-    if (hour >= 10 && hour < 14) return "God formiddag";
-    if (hour >= 14 && hour < 18) return "God eftermiddag";
-    return "Godaften";
+    if (hour >= 5 && hour < 10) return t("greeting_morning", "Godmorgen");
+    if (hour >= 10 && hour < 14) return t("greeting_forenoon", "God formiddag");
+    if (hour >= 14 && hour < 18) return t("greeting_afternoon", "God eftermiddag");
+    return t("greeting_evening", "Godaften");
   };
 
   return (
-    <div className="bg-white px-6 pt-20 pb-6 sticky top-0 z-10 border-b border-slate-100">
+    <div className="bg-white px-6 pt-6 pb-6 sticky top-0 z-10 border-b border-slate-100">
       <div className="mb-6">
         <h1 className="text-3xl font-bold tracking-tight text-slate-900">
           {getGreeting()}
           {firstName ? ` ${firstName}` : ""}
         </h1>
         <p className="text-slate-500 mt-2 font-medium">
-          Find inspiration til din hverdag
+          {t("home_subtitle", "Find inspiration til din hverdag")}
         </p>
       </div>
 
       <SearchBar
         value={searchQuery}
         onChange={setSearchQuery}
-        placeholder="Søg i artikler, tips og opskrifter..."
+        placeholder={t("search_placeholder", "Søg i artikler, tips og opskrifter...")}
       />
     </div>
   );

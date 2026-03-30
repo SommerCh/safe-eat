@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, type ChangeEvent } from "react";
+import { useState, useEffect, useRef, type ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { X, Tag, MapPin, AlignLeft, Plus } from "lucide-react";
 import { Button } from "../ui/button";
@@ -87,128 +87,129 @@ export function SaveProduct({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[110] flex items-end justify-center sm:items-center p-4">
+    <div className="fixed inset-0 z-[110] flex items-end justify-center sm:items-center">
       <div
         className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300"
         onClick={onClose}
       />
 
-      <div className="relative bg-white w-full max-w-md rounded-t-[32px] sm:rounded-[32px] p-8 pb-32 shadow-2xl animate-in slide-in-from-bottom duration-300 z-10 max-h-[90vh] overflow-y-auto text-slate-950">
-        <div className="flex justify-between items-start mb-6 text-slate-950">
-          <div>
+      <div 
+        className="relative bg-white w-full max-w-md rounded-t-[32px] sm:rounded-[32px] shadow-2xl animate-in slide-in-from-bottom duration-300 z-10 max-h-[90vh] flex flex-col"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+      >
+        <div className="overflow-y-auto px-8 pt-8 pb-6 text-slate-950">
+          <div className="flex justify-between items-start mb-8">
             <h1 className="text-3xl font-bold tracking-tight">
               {initialData
-                ? "Rediger produkt"
-                : t("save_product_title", "Gem produkt")}
+                ? t("save_product_edit", "Rediger produkt")
+                : t("save_product_new", "Gem produkt")}
             </h1>
-          </div>
-          <button
-            onClick={onClose}
-            className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center border border-slate-100 shrink-0"
-          >
-            <X className="w-6 h-6 text-slate-700" />
-          </button>
-        </div>
-
-        <div className="space-y-6">
-          <input
-            type="file"
-            accept="image/*"
-            capture="environment"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-            className="hidden"
-          />
-
-          <div className="flex items-center gap-4 mb-2">
             <button
-              onClick={handleCapturePhoto}
-              className="w-20 h-20 bg-slate-50 border-2 border-slate-200 rounded-2xl flex items-center justify-center text-slate-400 relative overflow-hidden active:scale-[0.95] shrink-0"
+              onClick={onClose}
+              className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center border border-slate-100 shrink-0"
             >
-              {imagePreview ? (
-                <img
-                  src={imagePreview}
-                  alt=""
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <Plus size={28} />
-              )}
+              <X className="w-6 h-6 text-slate-700" />
             </button>
-            <div className="flex flex-col">
-              {imagePreview ? (
-                <button
-                  type="button"
-                  onClick={handleRemoveImage}
-                  className="text-sm font-bold text-slate-950 text-left hover:opacity-70 transition-opacity"
-                >
-                  Fjern billede
-                </button>
-              ) : (
-                <>
+          </div>
+
+          <div className="space-y-6">
+            <input
+              type="file"
+              accept="image/*"
+              capture="environment"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              className="hidden"
+            />
+
+            <div className="flex items-center gap-4">
+              <button
+                onClick={handleCapturePhoto}
+                className="w-20 h-20 bg-slate-50 border-2 border-slate-200 rounded-2xl flex items-center justify-center text-slate-400 relative overflow-hidden active:scale-[0.95] shrink-0"
+              >
+                {imagePreview ? (
+                  <img
+                    src={imagePreview}
+                    alt=""
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <Plus size={28} />
+                )}
+              </button>
+              <div className="flex flex-col">
+                {imagePreview ? (
+                  <button
+                    type="button"
+                    onClick={handleRemoveImage}
+                    className="text-sm font-bold text-slate-950 text-left hover:opacity-70 transition-opacity"
+                  >
+                    {t("remove_image", "Fjern billede")}
+                  </button>
+                ) : (
                   <span className="text-sm font-bold text-slate-950">
-                    Tilføj billede
+                    {t("add_image", "Tilføj billede")}
                   </span>
-                </>
-              )}
+                )}
+              </div>
             </div>
-          </div>
 
-          <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
-              {t("label_product_name", "Varens navn")}
-            </label>
-            <div className="relative">
-              <Tag className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-              <input
-                type="text"
-                value={productName}
-                onChange={(e) => setProductName(e.target.value)}
-                className="w-full h-14 pl-12 pr-4 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:bg-white focus:border-slate-400 outline-none font-medium text-slate-950"
-              />
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
+                {t("label_product_name", "Varens navn")}
+              </label>
+              <div className="relative">
+                <Tag className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                <input
+                  type="text"
+                  value={productName}
+                  onChange={(e) => setProductName(e.target.value)}
+                  className="w-full h-14 pl-12 pr-4 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:bg-white focus:border-slate-400 outline-none font-medium text-slate-950"
+                />
+              </div>
             </div>
-          </div>
 
-          <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
-              Butik / Lokation
-            </label>
-            <div className="relative">
-              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-              <input
-                type="text"
-                value={storeName}
-                onChange={(e) => setStoreName(e.target.value)}
-                className="w-full h-14 pl-12 pr-4 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:bg-white focus:border-slate-400 outline-none font-medium text-slate-950"
-              />
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
+                {t("label_store", "Butik / Lokation")}
+              </label>
+              <div className="relative">
+                <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                <input
+                  type="text"
+                  value={storeName}
+                  onChange={(e) => setStoreName(e.target.value)}
+                  className="w-full h-14 pl-12 pr-4 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:bg-white focus:border-slate-400 outline-none font-medium text-slate-950"
+                />
+              </div>
             </div>
-          </div>
 
-          <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
-              Egne noter
-            </label>
-            <div className="relative">
-              <AlignLeft className="absolute left-4 top-5 w-5 h-5 text-slate-400" />
-              <textarea
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                className="w-full h-32 pl-12 pr-4 pt-4 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:bg-white focus:border-slate-400 outline-none font-medium text-slate-950 resize-none"
-              />
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
+                {t("label_notes", "Egne noter")}
+              </label>
+              <div className="relative">
+                <AlignLeft className="absolute left-4 top-5 w-5 h-5 text-slate-400" />
+                <textarea
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  className="w-full h-32 pl-12 pr-4 pt-4 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:bg-white focus:border-slate-400 outline-none font-medium text-slate-950 resize-none"
+                />
+              </div>
             </div>
-          </div>
 
-          <Button
-            onClick={handleConfirmSave}
-            disabled={!productName.trim() || loading}
-            className="w-full h-14 bg-black text-white rounded-2xl text-base font-bold shadow-md active:scale-[0.98] mt-4 disabled:opacity-50"
-          >
-            {loading
-              ? "Gemmer..."
-              : initialData
-              ? "Opdater favorit"
-              : t("btn_save_confirm", "Gem i favoritter")}
-          </Button>
+            <Button
+              onClick={handleConfirmSave}
+              disabled={!productName.trim() || loading}
+              className="w-full h-16 bg-black text-white rounded-2xl text-base font-bold shadow-md active:scale-[0.98] mt-4 mb-4 disabled:opacity-50"
+            >
+              {loading
+                ? t("btn_saving", "Gemmer...")
+                : initialData
+                ? t("btn_update_fav", "Opdater favorit")
+                : t("btn_save_fav", "Gem i favoritter")}
+            </Button>
+          </div>
         </div>
       </div>
     </div>

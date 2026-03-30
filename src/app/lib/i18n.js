@@ -3,25 +3,277 @@ import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
 const resources = {
-    da: {
-        translation: {
+  da: {
+    translation: {
+      nav: {
+        home: "Hjem",
+        profile: "Profil",
+        scan: "Scan"
+      },
+      greeting_morning: "Godmorgen",
+      greeting_forenoon: "God formiddag",
+      greeting_afternoon: "God eftermiddag",
+      greeting_evening: "Godaften",
+      home_subtitle: "Find inspiration til din hverdag",
+      search_placeholder: "Søg i artikler, tips og opskrifter...",
+      latest_news_and_guides: "Seneste nyt & guides",
+      articles_count: "artikler",
+      scanned_product_default: "Scannet produkt",
+      result_safe_title: "Helt sikker!",
+      result_danger_title: "Pas på!",
+      result_safe_msg: "Ingen forbudte ingredienser fundet.",
+      result_contains: "Produktet indeholder:",
+      found_ingredients_label: "Fundne Ingredienser:",
+      scan_next_button: "Scan næste vare",
+      edit_profile_link: "Rediger min madprofil",
+      scanner_instruction: "Tag et billede af",
+      scanner_target: "ingredienslisten",
+      scanner_image_captured: "Billede taget!",
+      scanner_analyzing: "Analyserer ingredienser...",
+      scanner_done: "Færdig",
+      scanner_no_allergies: "Ingen allergier valgt",
+      scanner_camera_error: "Kunne ikke få adgang til kameraet",
+      scanner_image_error: "Fejl ved behandling af billede",
+      scanner_server_error: "Fejl ved scanning",
+      save_product_new: "Gem produkt",
+      save_product_edit: "Rediger produkt",
+      add_image: "Tilføj billede",
+      remove_image: "Fjern billede",
+      label_product_name: "Varens navn",
+      label_store: "Butik / Lokation",
+      label_notes: "Egne noter",
+      btn_saving: "Gemmer...",
+      btn_update_fav: "Opdater favorit",
+      btn_save_fav: "Gem i favoritter",
+      paywall: {
+        title: "Få ro i maven på indkøb",
+        subtitle: "Lad appen læse de skjulte ingredienser, så du trygt kan handle ind uden stress.",
+        feature_ai: "Ubegrænset AI-scanning af varer",
+        feature_discord: "Adgang til Safe Eat VIP Discord",
+        reviews_title: "Hvad siger vores brugere?",
+        review_1_text: '"Meget nemmere at købe ind, nem at bruge!"',
+        review_2_text: '"Ingen mere stress over skjulte e-numre. Tager bare et billede."',
+        review_3_text: '"Mærkelig den ikke har været opfundet før!"',
+        review_4_text: '"Dejligt at man ikke skal have sine læsebriller med på indkøb mere"',
+        pricing_label: "Månedligt Abonnement",
+        price: "19 kr.",
+        per_month: "/md",
+        no_binding: "Ingen binding. Afmeld når som helst.",
+        subscribe_button: "Abonner nu",
+        login_required: "Log ind først",
+        error: "Fejl: "
+      },
+      tips: {
+        header: "Hurtige tips",
+        double_check_title: "Dobbelttjek altid",
+        double_check_desc: "Producenter kan ændre opskrifter uden varsel",
+        scan_before_buy_title: "Scan før køb",
+        scan_before_buy_desc: "Brug appen i butikken for at undgå indhold",
+        share_experience_title: "Del dine erfaringer",
+        share_experience_desc: "Hop ind på vores Discord og hjælp andre",
+        save_favorites_title: "Gem dine favoritter",
+        save_favorites_desc: "Se din personlige liste over sikre produkter"
+      },
+      profile: {
+        allergy_title: "Vælg dine allergier",
+        diet_title: "Vælg dine diæter",
+        section_health: "Sundhed & Livsstil",
+        section_personal: "Personlig liste",
+        clear_all: "Ryd alle",
+        personal_empty: "Listen er tom...",
+        personal_placeholder: "Tilføj f.eks. palmeolie...",
+        settings_title: "Indstillinger",
+        settings_subtitle: "Administrer din konto og sikkerhed",
+        error: "Fejl: ",
+        update_success: "Din profil er blevet opdateret!",
+        delete_confirm: "Er du helt sikker på, at du vil slette din profil? Dette kan ikke fortrydes.",
+        delete_error: "Kunne ikke slette bruger",
+        premium_user: "Safe Eat Pro bruger",
+        label_name: "Navn",
+        label_email: "E-mailadresse",
+        label_password: "Ny adgangskode",
+        placeholder_name: "Indtast dit navn",
+        placeholder_password_change: "Skriv kun for at ændre",
+        btn_saving: "Gemmer...",
+        btn_save_changes: "Gem ændringer",
+        btn_logout: "Log ud",
+        btn_delete_profile: "Slet profil",
+        blacklist_title: "Personlig sortliste",
+        blacklist_empty: "Ingen ingredienser tilføjet endnu...",
+        blacklist_tip: "Tip: Tryk på Enter eller brug komma for at tilføje"
+      },
+      food: {
+        diet: {
+          keto: "Keto",
+          vegan: "Vegansk",
+          paleo: "Pæleo",
+          vegetarian: "Vegetarisk"
+        },
+        health: {
+          anti_inflammatory: "Anti-inflammatorisk",
+          diabetes: "Diabetes",
+          high_blood_pressure: "Forhøjet blodtryk",
+          high_cholesterol: "Forhøjet kolesterol",
+          pregnant: "Gravid",
+          histamine: "Histamin-intolerance",
+          ibs: "Irritabel tyktarm",
+          migraine: "Migræne"
+        },
+        allergy: {
+          nuts: "Nødder",
+          lactose: "Laktose",
+          gluten: "Gluten",
+          eggs: "Æg",
+          shellfish: "Skalddyr",
+          soy: "Soja",
+          fish: "Fisk",
+          sugar: "Sukker",
+          alcohol: "Alkohol"
         }
-    },
-    en: {
-        translation: {
-        }
+      }
     }
+  },
+  en: {
+    translation: {
+      nav: {
+        home: "Home",
+        profile: "Profile",
+        scan: "Scan"
+      },
+      greeting_morning: "Good morning",
+      greeting_forenoon: "Good morning",
+      greeting_afternoon: "Good afternoon",
+      greeting_evening: "Good evening",
+      home_subtitle: "Find inspiration for your day",
+      search_placeholder: "Search articles, tips and recipes...",
+      latest_news_and_guides: "Latest news & guides",
+      articles_count: "articles",
+      scanned_product_default: "Scanned product",
+      result_safe_title: "Safe!",
+      result_danger_title: "Warning!",
+      result_safe_msg: "No prohibited ingredients found.",
+      result_contains: "This product contains:",
+      found_ingredients_label: "Ingredients Found:",
+      scan_next_button: "Scan next item",
+      edit_profile_link: "Edit my food profile",
+      scanner_instruction: "Take a photo of",
+      scanner_target: "the ingredient list",
+      scanner_image_captured: "Photo captured!",
+      scanner_analyzing: "Analyzing ingredients...",
+      scanner_done: "Done",
+      scanner_no_allergies: "No allergies selected",
+      scanner_camera_error: "Could not access the camera",
+      scanner_image_error: "Error processing image",
+      scanner_server_error: "Scan failed",
+      save_product_new: "Save product",
+      save_product_edit: "Edit product",
+      add_image: "Add photo",
+      remove_image: "Remove photo",
+      label_product_name: "Product name",
+      label_store: "Store / Location",
+      label_notes: "Personal notes",
+      btn_saving: "Saving...",
+      btn_update_fav: "Update favorite",
+      btn_save_fav: "Save to favorites",
+      paywall: {
+        title: "Peace of mind while shopping",
+        subtitle: "Let the app read hidden ingredients so you can shop safely without stress.",
+        feature_ai: "Unlimited AI scanning",
+        feature_discord: "Access to Safe Eat VIP Discord",
+        reviews_title: "What our users say",
+        review_1_text: '"Much easier to shop, easy to use!"',
+        review_2_text: '"No more stress over hidden additives. Just take a photo."',
+        review_3_text: '"Surprised this hasn\'t been invented before!"',
+        review_4_text: '"Nice that I don\'t need my reading glasses for shopping anymore"',
+        pricing_label: "Monthly Subscription",
+        price: "$2.99",
+        per_month: "/mo",
+        no_binding: "No commitment. Cancel anytime.",
+        subscribe_button: "Subscribe now",
+        login_required: "Please log in first",
+        error: "Error: "
+      },
+      tips: {
+        header: "Quick tips",
+        double_check_title: "Always double check",
+        double_check_desc: "Manufacturers can change recipes without notice",
+        scan_before_buy_title: "Scan before buying",
+        scan_before_buy_desc: "Use the app in the store to avoid bad ingredients",
+        share_experience_title: "Share your experience",
+        share_experience_desc: "Join our Discord and help others",
+        save_favorites_title: "Save your favorites",
+        save_favorites_desc: "View your personal list of safe products"
+      },
+      profile: {
+        allergy_title: "Select your allergies",
+        diet_title: "Select your diets",
+        section_health: "Health & Lifestyle",
+        section_personal: "Personal list",
+        clear_all: "Clear all",
+        personal_empty: "The list is empty...",
+        personal_placeholder: "Add e.g. palm oil...",
+        settings_title: "Settings",
+        settings_subtitle: "Manage your account and security",
+        error: "Error: ",
+        update_success: "Your profile has been updated!",
+        delete_confirm: "Are you sure you want to delete your profile? This cannot be undone.",
+        delete_error: "Could not delete user",
+        premium_user: "Safe Eat Pro user",
+        label_name: "Name",
+        label_email: "Email address",
+        label_password: "New password",
+        placeholder_name: "Enter your name",
+        placeholder_password_change: "Type only to change",
+        btn_saving: "Saving...",
+        btn_save_changes: "Save changes",
+        btn_logout: "Log out",
+        btn_delete_profile: "Delete profile",
+        blacklist_title: "Personal blacklist",
+        blacklist_empty: "No ingredients added yet...",
+        blacklist_tip: "Tip: Press Enter or use a comma to add"
+      },
+      food: {
+        diet: {
+          keto: "Keto",
+          vegan: "Vegan",
+          paleo: "Paleo",
+          vegetarian: "Vegetarian"
+        },
+        health: {
+          anti_inflammatory: "Anti-inflammatory",
+          diabetes: "Diabetes",
+          high_blood_pressure: "High blood pressure",
+          high_cholesterol: "High cholesterol",
+          pregnant: "Pregnant",
+          histamine: "Histamine intolerance",
+          ibs: "IBS",
+          migraine: "Migraine"
+        },
+        allergy: {
+          nuts: "Nuts",
+          lactose: "Lactose",
+          gluten: "Gluten",
+          eggs: "Eggs",
+          shellfish: "Shellfish",
+          soy: "Soy",
+          fish: "Fish",
+          sugar: "Sugar",
+          alcohol: "Alcohol"
+        }
+      }
+    }
+  }
 };
 
 i18n
-    .use(LanguageDetector)
-    .use(initReactI18next)
-    .init({
-        resources,
-        fallbackLng: "da",
-        interpolation: {
-            escapeValue: false
-        }
-    });
+  .use(LanguageDetector)
+  .use(initReactI18next)
+  .init({
+    resources,
+    fallbackLng: "da",
+    interpolation: {
+      escapeValue: false
+    }
+  });
 
 export default i18n;

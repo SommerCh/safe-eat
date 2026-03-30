@@ -9,7 +9,6 @@ export const ARTICLES = {
       id: 1,
       title: "Dekodning af ingredienslister: En ekspertguide",
       category: "Tips",
-      readTime: "4 min",
       excerpt:
         "Lær at navigere i komplekse deklarationer og identificer skjulte allergener med præcision.",
       image:
@@ -29,7 +28,6 @@ export const ARTICLES = {
       id: 2,
       title: "Glutenfri gastronomi: Københavns førende bagerier",
       category: "Tips",
-      readTime: "3 min",
       excerpt:
         "En oversigt over dedikerede bagerier, hvor håndværk og fødevaresikkerhed går hånd i hånd.",
       image:
@@ -49,7 +47,6 @@ export const ARTICLES = {
       id: 3,
       title: "Skjulte proteiner: Når mælk og æg skifter navn",
       category: "Sundhed",
-      readTime: "5 min",
       excerpt:
         "Identificer de kemiske og tekniske betegnelser for mælke- og æggeproteiner i fødevarer.",
       image:
@@ -69,7 +66,6 @@ export const ARTICLES = {
       id: 4,
       title: "Værdisætning: Supermarkedernes egne allergen-serier",
       category: "Nyheder",
-      readTime: "2 min",
       excerpt:
         "En analyse af pris versus kvalitet i detailhandlens egne 'Fri for'-serier.",
       image:
@@ -89,7 +85,6 @@ export const ARTICLES = {
       id: 5,
       title: "Kulinarisk substitution i det plantebaserede køkken",
       category: "Guides",
-      readTime: "8 min",
       excerpt:
         "Professionelle teknikker til at erstatte animalske allergener uden tab af tekstur og smag.",
       image:
@@ -109,7 +104,6 @@ export const ARTICLES = {
       id: 6,
       title: "Allergi i daginstitutioner: En sikkerhedsguide",
       category: "Sundhed",
-      readTime: "6 min",
       excerpt:
         "Etablering af effektive procedurer og dialog med pædagogisk personale.",
       image:
@@ -129,7 +123,6 @@ export const ARTICLES = {
       id: 7,
       title: "Krydskontaminering og 'Spor af'-mærkning",
       category: "Tips",
-      readTime: "4 min",
       excerpt:
         "Forstå risikoen bag de frivillige advarselsmærkninger på fødevarer.",
       image:
@@ -149,7 +142,6 @@ export const ARTICLES = {
       id: 8,
       title: "Professionel håndtering af restaurantbesøget",
       category: "Guides",
-      readTime: "5 min",
       excerpt:
         "Strategier til at sikre et risikofrit måltid når du spiser ude.",
       image:
@@ -169,7 +161,6 @@ export const ARTICLES = {
       id: 9,
       title: "Forbrugerbeskyttelse: Lovkrav om oplysningspligt",
       category: "Nyheder",
-      readTime: "3 min",
       excerpt:
         "Kend lovgivningen der sikrer din adgang til allergeninformation.",
       image:
@@ -189,7 +180,6 @@ export const ARTICLES = {
       id: 10,
       title: "Teknisk opskrift: Emulgeret chokoladekage (Mælkefri)",
       category: "Opskrifter",
-      readTime: "15 min",
       excerpt:
         "En optimeret opskrift der udnytter kemiske reaktioner til at opnå maksimal saftighed uden brug af mejeri.",
       image:
@@ -211,7 +201,6 @@ export const ARTICLES = {
       id: 1,
       title: "Decoding Ingredient Lists: An Expert Guide",
       category: "Tips",
-      readTime: "4 min",
       excerpt:
         "Learn to navigate complex declarations and identify hidden allergens with precision.",
       image:
@@ -231,7 +220,6 @@ export const ARTICLES = {
       id: 2,
       title: "Gluten-Free Gastronomy: Leading Bakeries in Copenhagen",
       category: "Tips",
-      readTime: "3 min",
       excerpt:
         "An overview of dedicated bakeries where craftsmanship and food safety go hand in hand.",
       image:
@@ -251,7 +239,6 @@ export const ARTICLES = {
       id: 3,
       title: "Hidden Proteins: When Milk and Egg Change Names",
       category: "Health",
-      readTime: "5 min",
       excerpt:
         "Identify the chemical and technical terms for milk and egg proteins in food products.",
       image:
@@ -271,7 +258,6 @@ export const ARTICLES = {
       id: 4,
       title: "Value Assessment: Supermarket Allergen Series",
       category: "News",
-      readTime: "2 min",
       excerpt:
         "An analysis of price versus quality in retail chains' own 'Free From' series.",
       image:
@@ -291,7 +277,6 @@ export const ARTICLES = {
       id: 5,
       title: "Culinary Substitution in Plant-Based Cooking",
       category: "Guides",
-      readTime: "8 min",
       excerpt:
         "Professional techniques for replacing animal allergens without losing texture or flavor.",
       image:
@@ -311,7 +296,6 @@ export const ARTICLES = {
       id: 6,
       title: "Allergies in Childcare: A Safety Guide",
       category: "Health",
-      readTime: "6 min",
       excerpt:
         "Establishing effective procedures and dialogue with pedagogical staff.",
       image:
@@ -331,7 +315,6 @@ export const ARTICLES = {
       id: 7,
       title: "Cross-Contamination and 'Traces of' Labeling",
       category: "Tips",
-      readTime: "4 min",
       excerpt:
         "Understand the risk behind voluntary warning labels on food products.",
       image:
@@ -351,7 +334,6 @@ export const ARTICLES = {
       id: 8,
       title: "Professional Management of Dining Out",
       category: "Guides",
-      readTime: "5 min",
       excerpt:
         "Strategies to ensure a risk-free meal when eating at restaurants.",
       image:
@@ -371,7 +353,6 @@ export const ARTICLES = {
       id: 9,
       title: "Consumer Protection: Mandatory Disclosure Laws",
       category: "News",
-      readTime: "3 min",
       excerpt:
         "Know the legislation that ensures your access to allergen information.",
       image:
@@ -391,7 +372,6 @@ export const ARTICLES = {
       id: 10,
       title: "Technical Recipe: Emulsified Chocolate Cake (Dairy-Free)",
       category: "Opskrifter",
-      readTime: "15 min",
       excerpt:
         "An optimized recipe utilizing chemical reactions to achieve maximum moisture without the use of dairy.",
       image:

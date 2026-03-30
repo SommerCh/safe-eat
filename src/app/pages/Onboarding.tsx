@@ -4,9 +4,11 @@ import { Button } from "../components/ui/button";
 import { AppleIcon, Chrome, Mail, Lock, Eye, EyeOff, User } from "lucide-react";
 import { supabase } from "../../app/lib/supabase";
 import { Link } from "react-router";
+import { useTranslation } from "react-i18next";
 
 export function Onboarding() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const [isLogin, setIsLogin] = useState(true);
   const [name, setName] = useState("");
@@ -33,7 +35,7 @@ export function Onboarding() {
     });
 
     if (error) {
-      setErrorMsg("Fejl: " + error.message);
+      setErrorMsg(t("auth_error_prefix", "Fejl: ") + error.message);
     } else {
       navigate("/setup");
     }
@@ -58,7 +60,7 @@ export function Onboarding() {
     });
 
     if (error) {
-      setErrorMsg("Fejl: " + error.message);
+      setErrorMsg(t("auth_error_prefix", "Fejl: ") + error.message);
     } else {
       navigate("/home");
     }
@@ -67,17 +69,17 @@ export function Onboarding() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex flex-col items-center justify-center px-6 py-12">
+    <div className="bg-gradient-to-b from-slate-50 to-white flex flex-col items-center justify-center px-6 py-8">
       <div className="w-full max-w-md space-y-8">
         <div className="flex flex-col items-center space-y-4">
           <img
             src="/logotext.svg"
             alt="SafeEat logo"
-            className="w-full h-auto p-4 sticky top-0 pt-20"
+            className="w-full h-auto p-4"
           />
 
           <p className="text-center text-slate-500 max-w-xs">
-            Scan ingredienser og lav din personlige madprofil
+            {t("onboarding_subtitle", "Scan ingredienser og lav din personlige madprofil")}
           </p>
         </div>
 
@@ -87,7 +89,7 @@ export function Onboarding() {
             className="w-full h-14 bg-black/40 text-white/70 rounded-2xl text-base shadow-md cursor-not-allowed"
           >
             <AppleIcon className="w-5 h-5 mr-2" />
-            Log ind med Apple
+            {t("login_apple", "Log ind med Apple")}
           </Button>
 
           <Button
@@ -96,11 +98,11 @@ export function Onboarding() {
             className="w-full h-14 border-2 border-slate-100 text-slate-400 rounded-2xl text-base shadow-sm cursor-not-allowed"
           >
             <Chrome className="w-5 h-5 mr-2" />
-            Log ind med Google
+            {t("login_google", "Log ind med Google")}
           </Button>
 
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest animate-pulse">
-            Socialt login kommer snart
+            {t("social_coming_soon", "Socialt login kommer snart")}
           </p>
 
           <div className="relative py-4">
@@ -109,7 +111,7 @@ export function Onboarding() {
             </div>
             <div className="relative flex justify-center text-sm">
               <span className="px-4 bg-white text-slate-500 italic">
-                Brug e-mail indtil da
+                {t("use_email_instead", "Brug e-mail indtil da")}
               </span>
             </div>
           </div>
@@ -126,7 +128,7 @@ export function Onboarding() {
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Navn"
+                  placeholder={t("name_placeholder", "Navn")}
                   className="w-full h-14 pl-12 pr-4 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:bg-white focus:border-slate-400 outline-none transition-all"
                 />
               </div>
@@ -139,7 +141,7 @@ export function Onboarding() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="E-mailadresse"
+                placeholder={t("email_placeholder", "E-mailadresse")}
                 className="w-full h-14 pl-12 pr-4 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:bg-white focus:border-slate-400 outline-none transition-all"
               />
             </div>
@@ -153,7 +155,7 @@ export function Onboarding() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder={
-                  isLogin ? "Din adgangskode" : "Adgangskode (min. 6 tegn)"
+                  isLogin ? t("password_placeholder_login", "Din adgangskode") : t("password_placeholder_signup", "Adgangskode (min. 6 tegn)")
                 }
                 className="w-full h-14 pl-12 pr-12 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:bg-white focus:border-slate-400 outline-none transition-all"
               />
@@ -184,7 +186,7 @@ export function Onboarding() {
                   htmlFor="remember"
                   className="ml-2 text-sm text-slate-600 cursor-pointer select-none"
                 >
-                  Husk mig på denne enhed
+                  {t("remember_me", "Husk mig på denne enhed")}
                 </label>
               </div>
             )}
@@ -200,18 +202,18 @@ export function Onboarding() {
             >
               {loading
                 ? isLogin
-                  ? "Logger ind..."
-                  : "Opretter..."
+                  ? t("logging_in", "Logger ind...")
+                  : t("creating_account", "Opretter...")
                 : isLogin
-                ? "Log ind"
-                : "Opret profil"}
+                ? t("login_button", "Log ind")
+                : t("create_profile_button", "Opret profil")}
             </Button>
           </form>
 
           <p className="text-center text-sm text-slate-600">
             {isLogin
-              ? "Har du ikke en bruger? "
-              : "Har du allerede en bruger? "}
+              ? t("no_account_prompt", "Har du ikke en bruger? ")
+              : t("have_account_prompt", "Har du allerede en bruger? ")}
             <button
               onClick={() => {
                 setIsLogin(!isLogin);
@@ -219,18 +221,18 @@ export function Onboarding() {
               }}
               className="font-semibold text-slate-900 hover:text-black"
             >
-              {isLogin ? "Opret profil" : "Log ind"}
+              {isLogin ? t("signup_link", "Opret profil") : t("login_link", "Log ind")}
             </button>
           </p>
         </div>
 
         <p className="text-center text-xs text-slate-400 pt-4 px-6 leading-relaxed">
-          Ved at fortsætte accepterer du vores{" "}
+          {t("terms_agreement_prefix", "Ved at fortsætte accepterer du vores ")}
           <Link
             to="/terms"
             className="underline underline-offset-2 hover:text-slate-600"
           >
-            vilkår, betingelser & privatlivspolitik
+            {t("terms_agreement_link", "vilkår, betingelser & privatlivspolitik")}
           </Link>
         </p>
       </div>
