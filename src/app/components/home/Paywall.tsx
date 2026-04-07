@@ -53,7 +53,7 @@ export function Paywall({ onSuccess }: PaywallProps) {
           aPackage: offerings.current.monthly,
         });
 
-        if (customerInfo.entitlements.active["safe eat Pro"]) {
+        if (customerInfo.entitlements.active["Safe Eat Pro"]) {
           await supabase
             .from("profiles")
             .update({ is_premium: true })
