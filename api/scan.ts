@@ -66,7 +66,7 @@
 //   }
 // }
 
-
+// Vi deklalerer 'process' manuelt her, så TypeScript holder op med at brokke sig
 declare const process: {
   env: {
     GEMINI_API_KEY: string;
@@ -75,13 +75,19 @@ declare const process: {
 
 export default async function handler(req: any, res: any) {
   // 1. CORS-indstillinger (Dette fixer "Load failed" på iPhone)
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization');
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET,OPTIONS,PATCH,DELETE,POST,PUT",
+  );
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization",
+  );
 
   // 2. Håndter iPhonens "tjek-spørgsmål" (OPTIONS)
-  if (req.method === 'OPTIONS') {
+  if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
 
@@ -94,7 +100,7 @@ export default async function handler(req: any, res: any) {
 
   try {
     const { base64Image, promptText } = req.body;
-    
+
     // Nu ved TypeScript præcis hvad 'process.env.GEMINI_API_KEY' er
     const apiKey = process.env.GEMINI_API_KEY;
 
@@ -111,7 +117,7 @@ export default async function handler(req: any, res: any) {
         .json({ code: "api_key_missing", error: "Server is missing API key" });
     }
 
-    const chosenModel = "models/gemini-2.5-flash"; 
+    const chosenModel = "models/gemini-2.5-flash";
     const generateUrl = `https://generativelanguage.googleapis.com/v1beta/${chosenModel}:generateContent?key=${apiKey}`;
 
     const cleanBase64 = base64Image.includes(",")
