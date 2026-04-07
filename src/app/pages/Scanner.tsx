@@ -371,7 +371,7 @@ export function Scanner() {
     setFacingMode((prev) => (prev === "environment" ? "user" : "environment"));
   };
 
-  const processImageAndNavigate = async (base64Data: string) => {
+const processImageAndNavigate = async (base64Data: string) => {
     try {
       const combinedList = [...profile.allergies, ...profile.nolist];
       const userAllergies = combinedList.length > 0 ? combinedList.join(", ") : "none";
@@ -397,10 +397,17 @@ export function Scanner() {
       }
     `;
 
-      const response = await fetch("https://safe-eat-rho.vercel.app/api/scan", {
+      // DIAGNOSTIK: Vi gemmer URL'en i en variabel for at være 100% sikre
+      const apiUrl = "https://safe-eat-rho.vercel.app/api/scan";
+
+      const response = await fetch(apiUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ base64Image: base64Data, promptText }),
+      }).catch(err => {
+        // HVIS FETCH FEJLER TOTALT (Load failed):
+        alert("NETVÆRKSFEJL DETALJER:\nNavn: " + err.name + "\nBesked: " + err.message + "\nURL forsøgt: " + apiUrl);
+        throw err;
       });
 
       const data = await response.json();
@@ -429,7 +436,8 @@ export function Scanner() {
         navigate("/result", { state: { aiResult } });
       }
     } catch (error: any) {
-      toast.error(t("error", { message: error.message }));
+      // DIAGNOSTIK: Fang alle andre fejl
+      alert("APP FEJL-LOG:\n" + error.message);
       resetScanner();
     }
   };
