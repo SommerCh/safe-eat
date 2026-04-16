@@ -66,7 +66,6 @@
 //   }
 // }
 
-// Vi deklalerer 'process' manuelt her, så TypeScript holder op med at brokke sig
 declare const process: {
   env: {
     GEMINI_API_KEY: string;
@@ -74,7 +73,6 @@ declare const process: {
 };
 
 export default async function handler(req: any, res: any) {
-  // 1. CORS-indstillinger (Dette fixer "Load failed" på iPhone)
   res.setHeader("Access-Control-Allow-Credentials", "true");
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
@@ -86,7 +84,6 @@ export default async function handler(req: any, res: any) {
     "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization",
   );
 
-  // 2. Håndter iPhonens "tjek-spørgsmål" (OPTIONS)
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
@@ -101,7 +98,6 @@ export default async function handler(req: any, res: any) {
   try {
     const { base64Image, promptText } = req.body;
 
-    // Nu ved TypeScript præcis hvad 'process.env.GEMINI_API_KEY' er
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!base64Image || typeof base64Image !== "string") {

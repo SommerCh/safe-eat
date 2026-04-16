@@ -397,7 +397,6 @@ const processImageAndNavigate = async (base64Data: string) => {
       }
     `;
 
-      // DIAGNOSTIK: Vi gemmer URL'en i en variabel for at være 100% sikre
       const apiUrl = "https://safe-eat-rho.vercel.app/api/scan";
 
       const response = await fetch(apiUrl, {
@@ -405,7 +404,6 @@ const processImageAndNavigate = async (base64Data: string) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ base64Image: base64Data, promptText }),
       }).catch(err => {
-        // HVIS FETCH FEJLER TOTALT (Load failed):
         alert("NETVÆRKSFEJL DETALJER:\nNavn: " + err.name + "\nBesked: " + err.message + "\nURL forsøgt: " + apiUrl);
         throw err;
       });
