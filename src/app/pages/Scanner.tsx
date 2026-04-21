@@ -283,7 +283,7 @@ export function Scanner() {
           )}
         </div>
 
-        <div className="pb-10 landscape:pb-4 px-10 flex justify-center gap-10 items-center shrink-0">
+        <div className="pb-10 px-10 flex justify-center gap-10 items-center">
           {!capturedImage && (
             <>
               <button
@@ -300,7 +300,7 @@ export function Scanner() {
                     handleCapture(videoRef.current);
                   }
                 }}
-                className="w-20 h-20 rounded-full bg-white shadow-xl ring-4 ring-white/20 active:scale-90 transition-all shrink-0"
+                className="w-20 h-20 rounded-full bg-white shadow-xl ring-4 ring-white/20 active:scale-90 transition-all"
               />
 
               <button
