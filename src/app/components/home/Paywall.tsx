@@ -69,7 +69,7 @@ export function Paywall({ onSuccess }: PaywallProps) {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col pb-8 shadow-none pt-[calc(env(safe-area-inset-top)+16px)]">
+    <div className="min-h-screen bg-white flex flex-col shadow-none pt-[calc(env(safe-area-inset-top)+16px)]">
       <style>{`
         .hide-scrollbar::-webkit-scrollbar {
           display: none;
@@ -80,7 +80,7 @@ export function Paywall({ onSuccess }: PaywallProps) {
         }
       `}</style>
 
-      <div className="px-6 pt-6 pb-4 flex items-center justify-between bg-white border-b border-slate-100 shadow-none shrink-0">
+      <div className="pt-6 pb-4 flex items-center justify-between bg-white border-b border-slate-100 shadow-none shrink-0">
         <button
           onClick={() => navigate(-1)}
           className="w-10 h-10 flex items-center justify-center bg-slate-100 rounded-full hover:bg-slate-200 transition-colors"
