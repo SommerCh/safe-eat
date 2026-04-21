@@ -47,11 +47,6 @@ export const router = createBrowserRouter([
         path: "favorites",
         Component: Favorites,
       },
-
-      // {
-      //   path: "dictionary",
-      //   Component: Dictionary,
-      // },
     ],
   },
   {
