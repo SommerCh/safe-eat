@@ -73,7 +73,11 @@ export function Layout() {
         </main>
 
         {!hideNav && (
-          <footer className="shrink-0 flex flex-col bg-white border-t border-gray-100">
+          <footer
+            className={`shrink-0 flex flex-col bg-white border-t border-gray-100 ${
+              isScanner ? "landscape:hidden" : ""
+            }`}
+          >
             <BottomNav />
             <div
               style={{ height: "env(safe-area-inset-bottom)" }}

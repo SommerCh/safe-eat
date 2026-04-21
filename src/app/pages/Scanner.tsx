@@ -6,7 +6,10 @@ import { useTranslation } from "react-i18next";
 import { ImageIcon, RefreshCw } from "lucide-react";
 import appLogo from "../../../assets/logo.png";
 
-const resizeImage = (img: HTMLImageElement | HTMLVideoElement, canvas: HTMLCanvasElement): string => {
+const resizeImage = (
+  img: HTMLImageElement | HTMLVideoElement,
+  canvas: HTMLCanvasElement,
+): string => {
   const ctx = canvas.getContext("2d");
   if (!ctx) return "";
 
@@ -46,7 +49,9 @@ export function Scanner() {
 
   const [isScanning, setIsScanning] = useState(false);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
-  const [facingMode, setFacingMode] = useState<"environment" | "user">("environment");
+  const [facingMode, setFacingMode] = useState<"environment" | "user">(
+    "environment",
+  );
 
   useEffect(() => {
     isMounted.current = true;
@@ -64,7 +69,7 @@ export function Scanner() {
       } catch (err) {
         toast.error(
           t("scanner_camera_error", "Kunne ikke få adgang til kameraet"),
-          { id: "camera-error" }
+          { id: "camera-error" },
         );
       }
     }
@@ -81,11 +86,14 @@ export function Scanner() {
     setFacingMode((prev) => (prev === "environment" ? "user" : "environment"));
   };
 
-const processImageAndNavigate = async (base64Data: string) => {
+  const processImageAndNavigate = async (base64Data: string) => {
     try {
       const combinedList = [...profile.allergies, ...profile.nolist];
-      const userAllergies = combinedList.length > 0 ? combinedList.join(", ") : "none";
-      const currentLang = i18n.language?.startsWith("da") ? "Danish" : "English";
+      const userAllergies =
+        combinedList.length > 0 ? combinedList.join(", ") : "none";
+      const currentLang = i18n.language?.startsWith("da")
+        ? "Danish"
+        : "English";
 
       const promptText = `
       You are a strict and highly accurate ingredient analyzer. Your response must be in JSON format.
@@ -113,33 +121,56 @@ const processImageAndNavigate = async (base64Data: string) => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ base64Image: base64Data, promptText }),
-      }).catch(err => {
-        alert("NETVÆRKSFEJL DETALJER:\nNavn: " + err.name + "\nBesked: " + err.message + "\nURL forsøgt: " + apiUrl);
+      }).catch((err) => {
+        alert(
+          "NETVÆRKSFEJL DETALJER:\nNavn: " +
+            err.name +
+            "\nBesked: " +
+            err.message +
+            "\nURL forsøgt: " +
+            apiUrl,
+        );
         throw err;
       });
 
       const data = await response.json();
-      
+
       if (!response.ok) {
         let errorCode = data.code;
-        if (!errorCode && data.error && (String(data.error).includes("Quota exceeded") || String(data.error).includes("429"))) {
+        if (
+          !errorCode &&
+          data.error &&
+          (String(data.error).includes("Quota exceeded") ||
+            String(data.error).includes("429"))
+        ) {
           errorCode = "rate_limit";
         }
-        throw new Error(errorCode ? t(`api_errors.${errorCode}`) : `${data.error || t("api_errors.server_error")}`);
+        throw new Error(
+          errorCode
+            ? t(`api_errors.${errorCode}`)
+            : `${data.error || t("api_errors.server_error")}`,
+        );
       }
 
       const resultText = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
       if (resultText) {
-        const cleanJson = resultText.replace(/```json\n?/g, "").replace(/```/g, "").trim();
+        const cleanJson = resultText
+          .replace(/```json\n?/g, "")
+          .replace(/```/g, "")
+          .trim();
         const aiResult = JSON.parse(cleanJson);
 
         if (aiResult.isUnreadable) {
-          toast.error(aiResult.message || t("scanner_retry_msg", "Billedet er for sløret. Prøv igen."), { id: "scan-retry" });
+          toast.error(
+            aiResult.message ||
+              t("scanner_retry_msg", "Billedet er for sløret. Prøv igen."),
+            { id: "scan-retry" },
+          );
           resetScanner();
           return;
         }
-        
+
         if (fileInputRef.current) fileInputRef.current.value = "";
         navigate("/result", { state: { aiResult } });
       }
@@ -158,19 +189,25 @@ const processImageAndNavigate = async (base64Data: string) => {
   const handleCapture = (source: HTMLImageElement | HTMLVideoElement) => {
     if (!canvasRef.current) return;
     const dataUrl = resizeImage(source, canvasRef.current);
-    
+
     if (!dataUrl || dataUrl === "data:,") {
-      toast.error(t("scanner_image_error", "Kameraet fangede ikke billedet. Prøv igen."));
+      toast.error(
+        t("scanner_image_error", "Kameraet fangede ikke billedet. Prøv igen."),
+      );
       resetScanner();
       return;
     }
 
     setCapturedImage(dataUrl);
-    
-    const base64Only = dataUrl.includes("base64,") ? dataUrl.split("base64,")[1] : dataUrl;
-    
+
+    const base64Only = dataUrl.includes("base64,")
+      ? dataUrl.split("base64,")[1]
+      : dataUrl;
+
     if (!base64Only || base64Only.length < 100) {
-      toast.error(t("scanner_image_error", "Billedet blev for utydeligt. Prøv igen."));
+      toast.error(
+        t("scanner_image_error", "Billedet blev for utydeligt. Prøv igen."),
+      );
       resetScanner();
       return;
     }
@@ -181,10 +218,10 @@ const processImageAndNavigate = async (base64Data: string) => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    
+
     setIsScanning(true);
     const reader = new FileReader();
-    
+
     reader.onload = (ev) => {
       const img = new Image();
       img.onerror = () => {
@@ -194,12 +231,12 @@ const processImageAndNavigate = async (base64Data: string) => {
       img.onload = () => handleCapture(img);
       img.src = ev.target?.result as string;
     };
-    
+
     reader.onerror = () => {
       toast.error(t("scanner_image_error"));
       resetScanner();
     };
-    
+
     reader.readAsDataURL(file);
   };
 
@@ -226,8 +263,11 @@ const processImageAndNavigate = async (base64Data: string) => {
       <div className="relative flex-1 flex flex-col z-10">
         <div className="flex justify-center px-6 pt-[calc(env(safe-area-inset-top)+16px)]">
           {!capturedImage && (
-            <div className="bg-black/60 backdrop-blur-md text-white px-5 py-3 rounded-full text-sm font-medium border border-white/10 shadow-lg">
-              {t("scanner_instruction", "Scan")} <span className="font-bold text-[#F4642B]">{t("scanner_target", "ingredienser")}</span>
+            <div className="landscape:hidden bg-black/60 backdrop-blur-md text-white px-5 py-3 rounded-full text-sm font-medium border border-white/10 shadow-lg">
+              {t("scanner_instruction", "Scan")}{" "}
+              <span className="font-bold text-[#F4642B]">
+                {t("scanner_target", "ingredienser")}
+              </span>
             </div>
           )}
         </div>
@@ -277,7 +317,11 @@ const processImageAndNavigate = async (base64Data: string) => {
       {capturedImage && (
         <div className="absolute inset-0 bg-black/80 backdrop-blur-md flex flex-col items-center justify-center z-20">
           <div className="text-center px-8 space-y-4 flex flex-col items-center">
-            <img src={appLogo} alt="Loading" className="h-24 w-auto object-contain animate-pulse mb-4" />
+            <img
+              src={appLogo}
+              alt="Loading"
+              className="h-24 w-auto object-contain animate-pulse mb-4"
+            />
             <p className="text-white/60 font-medium text-sm">
               {t("scanner_analyzing", "Analyserer ingredienser...")}
             </p>
