@@ -69,7 +69,7 @@ export function Paywall({ onSuccess }: PaywallProps) {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col pb-8 shadow-none">
+    <div className="min-h-screen bg-white flex flex-col pb-8 shadow-none pt-[calc(env(safe-area-inset-top)+16px)]">
       <style>{`
         .hide-scrollbar::-webkit-scrollbar {
           display: none;

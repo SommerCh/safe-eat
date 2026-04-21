@@ -224,7 +224,7 @@ const processImageAndNavigate = async (base64Data: string) => {
       />
 
       <div className="relative flex-1 flex flex-col z-10">
-        <div style={{ paddingTop: "calc(env(safe-area-inset-top)+16px)" }} className="flex justify-center px-6">
+        <div className="flex justify-center px-6 pt-[calc(env(safe-area-inset-top)+16px)]">
           {!capturedImage && (
             <div className="bg-black/60 backdrop-blur-md text-white px-5 py-3 rounded-full text-sm font-medium border border-white/10 shadow-lg">
               {t("scanner_instruction", "Scan")} <span className="font-bold text-[#F4642B]">{t("scanner_target", "ingredienser")}</span>
