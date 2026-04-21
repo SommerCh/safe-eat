@@ -283,7 +283,7 @@ export function Scanner() {
           )}
         </div>
 
-        <div className="pb-10 px-10 flex justify-center gap-10 items-center">
+        <div className="absolute bottom-10 landscape:bottom-6 left-0 right-0 flex justify-center gap-10 items-center z-50">
           {!capturedImage && (
             <>
               <button
