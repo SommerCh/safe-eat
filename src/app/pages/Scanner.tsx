@@ -274,16 +274,16 @@ export function Scanner() {
 
         <div className="flex-1 flex items-center justify-center px-10">
           {!capturedImage && (
-            <div className="w-full aspect-[3/4] border border-white/20 rounded-3xl relative max-w-sm">
-              <div className="absolute -top-1 -left-1 w-12 h-12 border-t-4 border-l-4 border-[#F4642B] rounded-tl-2xl" />
-              <div className="absolute -top-1 -right-1 w-12 h-12 border-t-4 border-r-4 border-[#F4642B] rounded-tr-2xl" />
-              <div className="absolute -bottom-1 -left-1 w-12 h-12 border-b-4 border-l-4 border-[#F4642B] rounded-bl-2xl" />
-              <div className="absolute -bottom-1 -right-1 w-12 h-12 border-b-4 border-r-4 border-[#F4642B] rounded-br-2xl" />
+            <div className="w-full aspect-[3/4] landscape:aspect-auto landscape:h-[220px] border border-white/20 rounded-3xl relative max-w-sm shrink-0">
+              <div className="absolute top-[-1px] left-[-1px] w-12 h-12 border-t-4 border-l-4 border-[#F4642B] rounded-tl-3xl" />
+              <div className="absolute top-[-1px] right-[-1px] w-12 h-12 border-t-4 border-r-4 border-[#F4642B] rounded-tr-3xl" />
+              <div className="absolute bottom-[-1px] left-[-1px] w-12 h-12 border-b-4 border-l-4 border-[#F4642B] rounded-bl-3xl" />
+              <div className="absolute bottom-[-1px] right-[-1px] w-12 h-12 border-b-4 border-r-4 border-[#F4642B] rounded-br-3xl" />
             </div>
           )}
         </div>
 
-        <div className="absolute bottom-10 landscape:bottom-6 left-0 right-0 flex justify-center gap-10 items-center z-50">
+        <div className="pb-10 landscape:pb-4 px-10 flex justify-center gap-10 items-center shrink-0">
           {!capturedImage && (
             <>
               <button
@@ -300,7 +300,7 @@ export function Scanner() {
                     handleCapture(videoRef.current);
                   }
                 }}
-                className="w-20 h-20 rounded-full bg-white shadow-xl ring-4 ring-white/20 active:scale-90 transition-all"
+                className="w-20 h-20 rounded-full bg-white shadow-xl ring-4 ring-white/20 active:scale-90 transition-all shrink-0"
               />
 
               <button

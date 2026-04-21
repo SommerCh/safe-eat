@@ -60,14 +60,7 @@ export function Layout() {
   return (
     <>
       <ScrollRestoration />
-      <div className="h-[100dvh] flex flex-col bg-white overflow-hidden">
-        {!isScanner && (
-          <div
-            style={{ height: "env(safe-area-inset-top))" }}
-            className="shrink-0 bg-white"
-          />
-        )}
-
+      <div className="h-[100dvh] flex flex-col bg-white overflow-hidden pt-[env(safe-area-inset-top)] pb-[calc(env(safe-area-inset-bottom)+16px)]">
         <main className="flex-1 relative overflow-y-auto">
           <Outlet />
         </main>
@@ -79,10 +72,6 @@ export function Layout() {
             }`}
           >
             <BottomNav />
-            <div
-              style={{ height: "env(safe-area-inset-bottom)" }}
-              className="bg-white"
-            />
           </footer>
         )}
       </div>
