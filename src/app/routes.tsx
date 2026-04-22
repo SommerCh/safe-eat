@@ -3,7 +3,7 @@ import { createBrowserRouter, useNavigate, useLocation, Outlet } from "react-rou
 import { supabase } from "./lib/supabase";
 import { Layout } from "./components/Layout";
 import { Onboarding } from "./pages/Onboarding";
-import { Home } from "./pages/Home";
+import { Info } from "./pages/Info";
 import { ProfileSetup } from "./pages/ProfileSetup";
 import { Scanner } from "./pages/Scanner";
 import { Result } from "./pages/Result";
@@ -22,7 +22,7 @@ function AuthGuard() {
       const { data: { session } } = await supabase.auth.getSession();
       
       if (session && location.pathname === "/") {
-        navigate("/home", { replace: true });
+        navigate("/info", { replace: true });
       } else if (!session && location.pathname !== "/" && location.pathname !== "/terms") {
         navigate("/", { replace: true });
       }
@@ -34,7 +34,7 @@ function AuthGuard() {
 
     const { data: authListener } = supabase.auth.onAuthStateChange((event) => {
       if (event === "SIGNED_IN" && location.pathname === "/") {
-        navigate("/home", { replace: true });
+        navigate("/info", { replace: true });
       } else if (event === "SIGNED_OUT") {
         navigate("/", { replace: true });
       }
@@ -62,8 +62,8 @@ export const router = createBrowserRouter([
             Component: Onboarding,
           },
           {
-            path: "home",
-            Component: Home,
+            path: "info",
+            Component: Info,
           },
           {
             path: "setup",

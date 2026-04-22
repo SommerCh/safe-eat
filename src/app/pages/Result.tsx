@@ -87,10 +87,9 @@ export function Result() {
 
   const finalMessage = aiResult.isSafe
     ? t("result_safe_msg", "Ingen forbudte ingredienser fundet.")
-    : `${t(
-        "result_contains",
-        "Produktet indeholder:",
-      )} ${aiResult.foundAllergens?.join(", ")}`;
+    : `${t("result_contains", "Produktet indeholder:")} ${
+        aiResult.foundAllergens?.join(", ") || ""
+      }`;
 
   return (
     <div className="bg-white min-h-screen pb-[env(safe-area-inset-bottom)]">
@@ -98,6 +97,7 @@ export function Result() {
         <button
           onClick={() => navigate("/scanner")}
           className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center border border-slate-100 active:scale-95 transition-all"
+          aria-label="Gå tilbage"
         >
           <ChevronLeft className="w-6 h-6 text-slate-700" />
         </button>
@@ -114,6 +114,7 @@ export function Result() {
               setIsModalOpen(true);
             }
           }}
+          aria-label="Tilføj til favoritter"
           className={`w-12 h-12 rounded-full flex items-center justify-center transition-all border ${
             isFavorite
               ? "bg-red-50 border-red-100 text-red-500"
@@ -173,11 +174,13 @@ export function Result() {
             {aiResult.extractedIngredients?.map((ing: string, i: number) => {
               const isAllergen = aiResult.foundAllergens?.some(
                 (allergen: string) =>
-                  ing.toLowerCase().includes(allergen.toLowerCase()),
+                  String(ing)
+                    .toLowerCase()
+                    .includes(String(allergen).toLowerCase()),
               );
               return (
                 <span
-                  key={i}
+                  key={`${ing}-${i}`}
                   className={`px-4 py-2 rounded-2xl text-[11px] font-bold border shadow-sm ${
                     isAllergen
                       ? "bg-rose-100 text-rose-700 border-rose-200"

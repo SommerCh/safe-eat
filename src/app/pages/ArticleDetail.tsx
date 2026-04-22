@@ -3,7 +3,7 @@ import { useLocation, useNavigate, useParams } from "react-router";
 import { useTranslation } from "react-i18next";
 import { ChevronLeft, Share, ChevronUp, Heart } from "lucide-react";
 import { ImageWithFallback } from "../components/ImageWithFallback";
-import { ARTICLES } from "../components/articles/articleData";
+import { ARTICLES } from "../lib/articleData";
 import { useProfile } from "../context/ProfileContext";
 
 export function ArticleDetail() {

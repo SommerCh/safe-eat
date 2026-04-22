@@ -1,3 +1,337 @@
+// import { useState, useRef, useEffect } from "react";
+// import { useNavigate } from "react-router";
+// import { useProfile } from "../context/ProfileContext";
+// import { toast } from "sonner";
+// import { useTranslation } from "react-i18next";
+// import { ImageIcon, RefreshCw } from "lucide-react";
+// import appLogo from "../../../assets/logo.png";
+
+// const resizeImage = (
+//   img: HTMLImageElement | HTMLVideoElement,
+//   canvas: HTMLCanvasElement,
+// ): string => {
+//   const ctx = canvas.getContext("2d");
+//   if (!ctx) return "";
+
+//   const MAX_DIM = 800;
+//   let w = img instanceof HTMLVideoElement ? img.videoWidth : img.width;
+//   let h = img instanceof HTMLVideoElement ? img.videoHeight : img.height;
+
+//   if (w > h) {
+//     if (w > MAX_DIM) {
+//       h = (h * MAX_DIM) / w;
+//       w = MAX_DIM;
+//     }
+//   } else {
+//     if (h > MAX_DIM) {
+//       w = (w * MAX_DIM) / h;
+//       h = MAX_DIM;
+//     }
+//   }
+
+//   canvas.width = w;
+//   canvas.height = h;
+//   ctx.drawImage(img, 0, 0, w, h);
+
+//   return canvas.toDataURL("image/jpeg", 0.5);
+// };
+
+// export function Scanner() {
+//   const navigate = useNavigate();
+//   const { t, i18n } = useTranslation();
+//   const { profile } = useProfile();
+
+//   const videoRef = useRef<HTMLVideoElement>(null);
+//   const streamRef = useRef<MediaStream | null>(null);
+//   const canvasRef = useRef<HTMLCanvasElement>(null);
+//   const fileInputRef = useRef<HTMLInputElement>(null);
+//   const isMounted = useRef(true);
+
+//   const [isScanning, setIsScanning] = useState(false);
+//   const [capturedImage, setCapturedImage] = useState<string | null>(null);
+//   const [facingMode, setFacingMode] = useState<"environment" | "user">(
+//     "environment",
+//   );
+
+//   useEffect(() => {
+//     isMounted.current = true;
+//     async function startCamera() {
+//       try {
+//         const stream = await navigator.mediaDevices.getUserMedia({
+//           video: { facingMode: facingMode },
+//         });
+//         if (isMounted.current) {
+//           streamRef.current = stream;
+//           if (videoRef.current) videoRef.current.srcObject = stream;
+//         } else {
+//           stream.getTracks().forEach((track) => track.stop());
+//         }
+//       } catch (err) {
+//         toast.error(
+//           t("scanner_camera_error", "Kunne ikke få adgang til kameraet"),
+//           { id: "camera-error" },
+//         );
+//       }
+//     }
+
+//     startCamera();
+
+//     return () => {
+//       isMounted.current = false;
+//       streamRef.current?.getTracks().forEach((track) => track.stop());
+//     };
+//   }, [t, facingMode]);
+
+//   const toggleCamera = () => {
+//     setFacingMode((prev) => (prev === "environment" ? "user" : "environment"));
+//   };
+
+//   const processImageAndNavigate = async (base64Data: string) => {
+//     try {
+//       const combinedList = [...profile.allergies, ...profile.nolist];
+//       const userAllergies =
+//         combinedList.length > 0 ? combinedList.join(", ") : "none";
+//       const currentLang = i18n.language?.startsWith("da")
+//         ? "Danish"
+//         : "English";
+
+//       const promptText = `
+//       You are a strict and highly accurate ingredient analyzer. Your response must be in JSON format.
+//       The user's language is ${currentLang}.
+//       The user wants to avoid these ingredients: [${userAllergies}].
+
+//       CRITICAL RULES:
+//       1. If the image is blurry, distant, or you cannot clearly read ALL ingredients, you MUST set "isUnreadable": true. Do not guess. Do not assume the product is safe.
+//       2. If you find ANY of the user's prohibited ingredients, "isSafe" MUST be false.
+
+//       Analyze the image and provide the following JSON structure:
+//       {
+//         "productType": "FOOD" | "OTHER",
+//         "isSafe": boolean,
+//         "foundAllergens": ["list of prohibited ingredients you found"],
+//         "extractedIngredients": ["list of all ingredients you could read from the label"],
+//         "isUnreadable": boolean,
+//         "message": "A short, factual summary in ${currentLang}."
+//       }
+//     `;
+
+//       const apiUrl = "https://safe-eat-rho.vercel.app/api/scan";
+
+//       const response = await fetch(apiUrl, {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({ base64Image: base64Data, promptText }),
+//       }).catch((err) => {
+//         alert(
+//           "NETVÆRKSFEJL DETALJER:\nNavn: " +
+//             err.name +
+//             "\nBesked: " +
+//             err.message +
+//             "\nURL forsøgt: " +
+//             apiUrl,
+//         );
+//         throw err;
+//       });
+
+//       const data = await response.json();
+
+//       if (!response.ok) {
+//         let errorCode = data.code;
+//         if (
+//           !errorCode &&
+//           data.error &&
+//           (String(data.error).includes("Quota exceeded") ||
+//             String(data.error).includes("429"))
+//         ) {
+//           errorCode = "rate_limit";
+//         }
+//         throw new Error(
+//           errorCode
+//             ? t(`api_errors.${errorCode}`)
+//             : `${data.error || t("api_errors.server_error")}`,
+//         );
+//       }
+
+//       const resultText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+//       if (resultText) {
+//         const cleanJson = resultText
+//           .replace(/```json\n?/g, "")
+//           .replace(/```/g, "")
+//           .trim();
+//         const aiResult = JSON.parse(cleanJson);
+
+//         if (aiResult.isUnreadable) {
+//           toast.error(
+//             aiResult.message ||
+//               t("scanner_retry_msg", "Billedet er for sløret. Prøv igen."),
+//             { id: "scan-retry" },
+//           );
+//           resetScanner();
+//           return;
+//         }
+
+//         if (fileInputRef.current) fileInputRef.current.value = "";
+//         navigate("/result", { state: { aiResult } });
+//       }
+//     } catch (error: any) {
+//       alert("APP FEJL-LOG:\n" + error.message);
+//       resetScanner();
+//     }
+//   };
+
+//   const resetScanner = () => {
+//     setIsScanning(false);
+//     setCapturedImage(null);
+//     if (fileInputRef.current) fileInputRef.current.value = "";
+//   };
+
+//   const handleCapture = (source: HTMLImageElement | HTMLVideoElement) => {
+//     if (!canvasRef.current) return;
+//     const dataUrl = resizeImage(source, canvasRef.current);
+
+//     if (!dataUrl || dataUrl === "data:,") {
+//       toast.error(
+//         t("scanner_image_error", "Kameraet fangede ikke billedet. Prøv igen."),
+//       );
+//       resetScanner();
+//       return;
+//     }
+
+//     setCapturedImage(dataUrl);
+
+//     const base64Only = dataUrl.includes("base64,")
+//       ? dataUrl.split("base64,")[1]
+//       : dataUrl;
+
+//     if (!base64Only || base64Only.length < 100) {
+//       toast.error(
+//         t("scanner_image_error", "Billedet blev for utydeligt. Prøv igen."),
+//       );
+//       resetScanner();
+//       return;
+//     }
+
+//     processImageAndNavigate(base64Only);
+//   };
+
+//   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     const file = e.target.files?.[0];
+//     if (!file) return;
+
+//     setIsScanning(true);
+//     const reader = new FileReader();
+
+//     reader.onload = (ev) => {
+//       const img = new Image();
+//       img.onerror = () => {
+//         toast.error(t("scanner_image_error"));
+//         resetScanner();
+//       };
+//       img.onload = () => handleCapture(img);
+//       img.src = ev.target?.result as string;
+//     };
+
+//     reader.onerror = () => {
+//       toast.error(t("scanner_image_error"));
+//       resetScanner();
+//     };
+
+//     reader.readAsDataURL(file);
+//   };
+
+//   return (
+//     <div className="relative w-full h-full bg-black overflow-hidden flex flex-col">
+//       <canvas ref={canvasRef} className="hidden" />
+
+//       <input
+//         type="file"
+//         accept="image/*"
+//         ref={fileInputRef}
+//         onChange={handleFileChange}
+//         className="hidden"
+//       />
+
+//       <video
+//         ref={videoRef}
+//         autoPlay
+//         playsInline
+//         muted
+//         className="absolute inset-0 w-full h-full object-cover"
+//       />
+
+//       <div className="relative flex-1 flex flex-col z-10">
+//         <div className="flex justify-center px-6 pt-[calc(env(safe-area-inset-top)+8px)]">
+//           {!capturedImage && (
+//             <div className="landscape:hidden bg-black/60 backdrop-blur-md text-white px-5 py-3 rounded-full text-sm font-medium border border-white/10 shadow-lg">
+//               {t("scanner_instruction", "Scan")}{" "}
+//               <span className="font-bold text-[#F4642B]">
+//                 {t("scanner_target", "ingredienser")}
+//               </span>
+//             </div>
+//           )}
+//         </div>
+
+//         <div className="flex-1 flex items-center justify-center px-10">
+//           {!capturedImage && (
+//             <div className="landscape:hidden w-full aspect-[3/4] border border-white/20 rounded-3xl relative max-w-sm">
+//               <div className="absolute -top-1 -left-1 w-12 h-12 border-t-4 border-l-4 border-[#F4642B] rounded-tl-2xl" />
+//               <div className="absolute -top-1 -right-1 w-12 h-12 border-t-4 border-r-4 border-[#F4642B] rounded-tr-2xl" />
+//               <div className="absolute -bottom-1 -left-1 w-12 h-12 border-b-4 border-l-4 border-[#F4642B] rounded-bl-2xl" />
+//               <div className="absolute -bottom-1 -right-1 w-12 h-12 border-b-4 border-r-4 border-[#F4642B] rounded-br-2xl" />
+//             </div>
+//           )}
+//         </div>
+
+//         <div className="pb-10 landscape:pb-4 px-10 flex justify-center gap-10 items-center shrink-0">
+//           {!capturedImage && (
+//             <>
+//               <button
+//                 onClick={() => fileInputRef.current?.click()}
+//                 className="w-14 h-14 rounded-full bg-black/40 backdrop-blur-md border border-white/20 flex items-center justify-center active:scale-95 transition-all"
+//               >
+//                 <ImageIcon className="w-6 h-6 text-white" />
+//               </button>
+
+//               <button
+//                 onClick={() => {
+//                   if (videoRef.current && !isScanning) {
+//                     setIsScanning(true);
+//                     handleCapture(videoRef.current);
+//                   }
+//                 }}
+//                 className="w-20 h-20 rounded-full bg-white shadow-xl ring-4 ring-white/20 active:scale-90 transition-all"
+//               />
+
+//               <button
+//                 onClick={toggleCamera}
+//                 className="w-14 h-14 rounded-full bg-black/40 backdrop-blur-md border border-white/20 flex items-center justify-center active:scale-95 transition-all"
+//               >
+//                 <RefreshCw className="w-6 h-6 text-white" />
+//               </button>
+//             </>
+//           )}
+//         </div>
+//       </div>
+
+//       {capturedImage && (
+//         <div className="absolute inset-0 bg-black/80 backdrop-blur-md flex flex-col items-center justify-center z-20">
+//           <div className="text-center px-8 space-y-4 flex flex-col items-center">
+//             <img
+//               src={appLogo}
+//               alt="Loading"
+//               className="h-24 w-auto object-contain animate-pulse mb-4"
+//             />
+//             <p className="text-white/60 font-medium text-sm">
+//               {t("scanner_analyzing", "Analyserer ingredienser...")}
+//             </p>
+//           </div>
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
+
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useProfile } from "../context/ProfileContext";
@@ -45,7 +379,6 @@ export function Scanner() {
   const streamRef = useRef<MediaStream | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const isMounted = useRef(true);
 
   const [isScanning, setIsScanning] = useState(false);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
@@ -54,33 +387,37 @@ export function Scanner() {
   );
 
   useEffect(() => {
-    isMounted.current = true;
+    let mounted = true;
+
     async function startCamera() {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: facingMode },
         });
-        if (isMounted.current) {
+        if (mounted) {
           streamRef.current = stream;
           if (videoRef.current) videoRef.current.srcObject = stream;
         } else {
           stream.getTracks().forEach((track) => track.stop());
         }
       } catch (err) {
-        toast.error(
-          t("scanner_camera_error", "Kunne ikke få adgang til kameraet"),
-          { id: "camera-error" },
-        );
+        if (mounted) {
+          toast.error(
+            t("scanner_camera_error", "Kunne ikke få adgang til kameraet"),
+            { id: "camera-error" },
+          );
+        }
       }
     }
 
     startCamera();
 
     return () => {
-      isMounted.current = false;
+      mounted = false;
       streamRef.current?.getTracks().forEach((track) => track.stop());
+      if (videoRef.current) videoRef.current.srcObject = null;
     };
-  }, [t, facingMode]);
+  }, [facingMode]);
 
   const toggleCamera = () => {
     setFacingMode((prev) => (prev === "environment" ? "user" : "environment"));
@@ -115,22 +452,14 @@ export function Scanner() {
       }
     `;
 
-      const apiUrl = "https://safe-eat-rho.vercel.app/api/scan";
+      const apiUrl =
+        import.meta.env.VITE_API_URL ||
+        "https://safe-eat-rho.vercel.app/api/scan";
 
       const response = await fetch(apiUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ base64Image: base64Data, promptText }),
-      }).catch((err) => {
-        alert(
-          "NETVÆRKSFEJL DETALJER:\nNavn: " +
-            err.name +
-            "\nBesked: " +
-            err.message +
-            "\nURL forsøgt: " +
-            apiUrl,
-        );
-        throw err;
       });
 
       const data = await response.json();
@@ -155,11 +484,17 @@ export function Scanner() {
       const resultText = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
       if (resultText) {
-        const cleanJson = resultText
-          .replace(/```json\n?/g, "")
-          .replace(/```/g, "")
-          .trim();
-        const aiResult = JSON.parse(cleanJson);
+        const jsonMatch = resultText.match(/\{[\s\S]*\}/);
+        const cleanJson = jsonMatch ? jsonMatch[0] : resultText;
+
+        let aiResult;
+        try {
+          aiResult = JSON.parse(cleanJson);
+        } catch (e) {
+          throw new Error(
+            t("api_errors.ai_error", "Kunne ikke læse AI-svaret"),
+          );
+        }
 
         if (aiResult.isUnreadable) {
           toast.error(
@@ -175,7 +510,10 @@ export function Scanner() {
         navigate("/result", { state: { aiResult } });
       }
     } catch (error: any) {
-      alert("APP FEJL-LOG:\n" + error.message);
+      toast.error(
+        error.message ||
+          t("api_errors.default", "Noget gik galt under scanningen."),
+      );
       resetScanner();
     }
   };
@@ -225,7 +563,7 @@ export function Scanner() {
     reader.onload = (ev) => {
       const img = new Image();
       img.onerror = () => {
-        toast.error(t("scanner_image_error"));
+        toast.error(t("scanner_image_error", "Kunne ikke behandle billedet"));
         resetScanner();
       };
       img.onload = () => handleCapture(img);
@@ -233,7 +571,7 @@ export function Scanner() {
     };
 
     reader.onerror = () => {
-      toast.error(t("scanner_image_error"));
+      toast.error(t("scanner_image_error", "Kunne ikke behandle billedet"));
       resetScanner();
     };
 
@@ -261,8 +599,8 @@ export function Scanner() {
       />
 
       <div className="relative flex-1 flex flex-col z-10">
-        <div className="flex justify-center px-6 pt-[calc(env(safe-area-inset-top)+16px)]">
-          {!capturedImage && (
+        <div className="flex justify-center px-6 pt-[calc(env(safe-area-inset-top)+8px)]">
+          {!isScanning && !capturedImage && (
             <div className="landscape:hidden bg-black/60 backdrop-blur-md text-white px-5 py-3 rounded-full text-sm font-medium border border-white/10 shadow-lg">
               {t("scanner_instruction", "Scan")}{" "}
               <span className="font-bold text-[#F4642B]">
@@ -273,18 +611,18 @@ export function Scanner() {
         </div>
 
         <div className="flex-1 flex items-center justify-center px-10">
-          {!capturedImage && (
-            <div className="w-full aspect-[3/4] landscape:aspect-auto landscape:h-[220px] border border-white/20 rounded-3xl relative max-w-sm shrink-0">
-              <div className="absolute top-[-1px] left-[-1px] w-12 h-12 border-t-4 border-l-4 border-[#F4642B] rounded-tl-3xl" />
-              <div className="absolute top-[-1px] right-[-1px] w-12 h-12 border-t-4 border-r-4 border-[#F4642B] rounded-tr-3xl" />
-              <div className="absolute bottom-[-1px] left-[-1px] w-12 h-12 border-b-4 border-l-4 border-[#F4642B] rounded-bl-3xl" />
-              <div className="absolute bottom-[-1px] right-[-1px] w-12 h-12 border-b-4 border-r-4 border-[#F4642B] rounded-br-3xl" />
+          {!isScanning && !capturedImage && (
+            <div className="landscape:hidden w-full aspect-[3/4] border border-white/20 rounded-3xl relative max-w-sm">
+              <div className="absolute -top-1 -left-1 w-12 h-12 border-t-4 border-l-4 border-[#F4642B] rounded-tl-2xl" />
+              <div className="absolute -top-1 -right-1 w-12 h-12 border-t-4 border-r-4 border-[#F4642B] rounded-tr-2xl" />
+              <div className="absolute -bottom-1 -left-1 w-12 h-12 border-b-4 border-l-4 border-[#F4642B] rounded-bl-2xl" />
+              <div className="absolute -bottom-1 -right-1 w-12 h-12 border-b-4 border-r-4 border-[#F4642B] rounded-br-2xl" />
             </div>
           )}
         </div>
 
-        <div className="pb-10 px-10 flex justify-center gap-10 items-center">
-          {!capturedImage && (
+        <div className="pb-10 landscape:pb-4 px-10 flex justify-center gap-10 items-center shrink-0">
+          {!isScanning && !capturedImage && (
             <>
               <button
                 onClick={() => fileInputRef.current?.click()}
@@ -314,7 +652,7 @@ export function Scanner() {
         </div>
       </div>
 
-      {capturedImage && (
+      {(isScanning || capturedImage) && (
         <div className="absolute inset-0 bg-black/80 backdrop-blur-md flex flex-col items-center justify-center z-20">
           <div className="text-center px-8 space-y-4 flex flex-col items-center">
             <img

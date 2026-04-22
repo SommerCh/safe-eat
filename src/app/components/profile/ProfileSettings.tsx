@@ -66,10 +66,8 @@ export function ProfileSettings() {
   }, []);
 
   const toggleLanguage = () => {
-    const newLang = i18n.language.startsWith("da") ? "en" : "da";
-    i18n.changeLanguage(newLang).then(() => {
-      localStorage.setItem("i18nextLng", newLang);
-    });
+    const newLang = i18n.language?.startsWith("da") ? "en" : "da";
+    i18n.changeLanguage(newLang);
   };
 
   const autoSaveField = async (type: "name" | "email") => {
@@ -131,6 +129,7 @@ export function ProfileSettings() {
 
   const handleDeleteProfile = async () => {
     toast.error(t("profile.delete_confirm"), {
+      duration: 10000,
       action: {
         label: t("profile.btn_delete_profile"),
         onClick: async () => {
@@ -159,6 +158,7 @@ export function ProfileSettings() {
         </div>
         <button
           onClick={() => navigate(-1)}
+          aria-label="Gå tilbage"
           className="w-10 h-10 flex items-center justify-center bg-slate-100 rounded-full hover:bg-slate-200 transition-colors"
         >
           <ChevronLeft className="w-6 h-6 text-slate-700 pr-1" />
@@ -173,7 +173,7 @@ export function ProfileSettings() {
           <div className="flex items-center gap-3">
             <Globe className="w-5 h-5 text-slate-400" />
             <span className="font-semibold text-slate-700">
-              {i18n.language.startsWith("da") ? "Dansk" : "English"}
+              {i18n.language?.startsWith("da") ? "Dansk" : "English"}
             </span>
           </div>
           <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
@@ -196,12 +196,16 @@ export function ProfileSettings() {
 
         <div className="space-y-8">
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-slate-700 ml-1">
+            <label
+              htmlFor="profile-name"
+              className="text-sm font-semibold text-slate-700 ml-1"
+            >
               {t("profile.label_name")}
             </label>
             <div className="relative">
               <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
               <input
+                id="profile-name"
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -213,12 +217,16 @@ export function ProfileSettings() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-slate-700 ml-1">
+            <label
+              htmlFor="profile-email"
+              className="text-sm font-semibold text-slate-700 ml-1"
+            >
               {t("profile.label_email")}
             </label>
             <div className="relative">
               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
               <input
+                id="profile-email"
                 type="email"
                 required
                 value={email}
@@ -230,12 +238,16 @@ export function ProfileSettings() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-slate-700 ml-1">
+            <label
+              htmlFor="profile-password"
+              className="text-sm font-semibold text-slate-700 ml-1"
+            >
               {t("profile.label_password")}
             </label>
             <div className="relative group">
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
               <input
+                id="profile-password"
                 type="password"
                 value={password}
                 autoComplete="new-password"

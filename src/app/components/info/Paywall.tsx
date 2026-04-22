@@ -1,4 +1,5 @@
-import { useNavigate } from "react-router";
+import { useState } from "react";
+import { useNavigate, Link } from "react-router";
 import { useTranslation } from "react-i18next";
 import {
   ChevronLeft,
@@ -6,10 +7,10 @@ import {
   Search,
   MessageSquare,
   Star,
+  ShieldCheck,
 } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Purchases } from "@revenuecat/purchases-capacitor";
-import { Capacitor } from "@capacitor/core";
 import { supabase } from "../../lib/supabase";
 import appLogo from "../../../../assets/LogoAndText.png";
 import { toast } from "sonner";
@@ -21,6 +22,7 @@ interface PaywallProps {
 export function Paywall({ onSuccess }: PaywallProps) {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubscribe = async () => {
     const {
@@ -32,19 +34,7 @@ export function Paywall({ onSuccess }: PaywallProps) {
       return;
     }
 
-    if (Capacitor.getPlatform() === "web") {
-      const { error } = await supabase
-        .from("profiles")
-        .update({ is_premium: true })
-        .eq("id", user.id);
-
-      if (error) {
-        toast.error(t("paywall.error", "Fejl: ") + error.message);
-      } else {
-        onSuccess();
-      }
-      return;
-    }
+    setIsLoading(true);
 
     try {
       const offerings = await Purchases.getOfferings();
@@ -54,22 +44,57 @@ export function Paywall({ onSuccess }: PaywallProps) {
         });
 
         if (customerInfo.entitlements.active["Safe Eat Pro"]) {
-          await supabase
+          const { error: updateError } = await supabase
             .from("profiles")
             .update({ is_premium: true })
             .eq("id", user.id);
-          onSuccess();
+
+          if (updateError) {
+            toast.error(t("paywall.error", "Fejl: ") + updateError.message);
+          } else {
+            onSuccess();
+          }
         }
+      } else {
+        toast.error(t("paywall.error", "Fejl: ") + "Ingen pakker fundet.");
       }
     } catch (error: any) {
       if (!error.userCancelled) {
         toast.error(error.message);
       }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleRestore = async () => {
+    setIsLoading(true);
+    try {
+      const { customerInfo } = await Purchases.restorePurchases();
+      if (customerInfo.entitlements.active["Safe Eat Pro"]) {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (user) {
+          await supabase
+            .from("profiles")
+            .update({ is_premium: true })
+            .eq("id", user.id);
+          toast.success(t("paywall.restore_success", "Køb gendannet!"));
+          onSuccess();
+        }
+      } else {
+        toast.error(t("paywall.restore_empty", "Ingen tidligere køb fundet."));
+      }
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col shadow-none pt-[calc(env(safe-area-inset-top)+16px)]">
+    <div className="min-h-screen bg-white flex flex-col shadow-none">
       <style>{`
         .hide-scrollbar::-webkit-scrollbar {
           display: none;
@@ -80,7 +105,7 @@ export function Paywall({ onSuccess }: PaywallProps) {
         }
       `}</style>
 
-      <div className="pt-6 pb-4 flex items-center justify-between bg-white border-b border-slate-100 shadow-none shrink-0">
+      <div className="bg-white px-6 pt-[calc(env(safe-area-inset-top)+16px)] pb-6 sticky top-0 z-10 border-b border-slate-100 flex justify-between items-center shrink-0">
         <button
           onClick={() => navigate(-1)}
           className="w-10 h-10 flex items-center justify-center bg-slate-100 rounded-full hover:bg-slate-200 transition-colors"
@@ -91,7 +116,7 @@ export function Paywall({ onSuccess }: PaywallProps) {
         <img
           src={appLogo}
           alt="Safe Eat Logo"
-          className="h-14 w-auto object-contain"
+          className="h-12 w-auto object-contain"
         />
 
         <div className="w-10" />
@@ -113,18 +138,26 @@ export function Paywall({ onSuccess }: PaywallProps) {
 
           <div className="w-full space-y-3 shadow-none">
             <div className="p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl flex items-center gap-4">
-              <Search className="w-5 h-5 text-[#F4642B]" />
+              <Search className="w-5 h-5 text-[#F4642B] shrink-0" />
               <p className="font-semibold text-slate-900 text-sm">
                 {t("paywall.feature_ai", "Ubegrænset AI-scanning af varer")}
               </p>
             </div>
+
             <div className="p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl flex items-center gap-4">
-              <MessageSquare className="w-5 h-5 text-[#F4642B]" />
+              <ShieldCheck className="w-5 h-5 text-[#F4642B] shrink-0" />
               <p className="font-semibold text-slate-900 text-sm">
                 {t(
-                  "paywall.feature_discord",
-                  "Adgang til Safe Eat Discord",
+                  "paywall.feature_privacy",
+                  "100% privat. Ingen data videresælges. Ingen reklamer.",
                 )}
+              </p>
+            </div>
+
+            <div className="p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl flex items-center gap-4">
+              <MessageSquare className="w-5 h-5 text-[#F4642B] shrink-0" />
+              <p className="font-semibold text-slate-900 text-sm">
+                {t("paywall.feature_discord", "Adgang til Safe Eat Discord")}
               </p>
             </div>
           </div>
@@ -150,7 +183,7 @@ export function Paywall({ onSuccess }: PaywallProps) {
                   )}
                 </p>
                 <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-wide">
-                  — Charlotte
+                  — {t("paywall.review_1_author", "Charlotte")}
                 </p>
               </div>
 
@@ -170,7 +203,7 @@ export function Paywall({ onSuccess }: PaywallProps) {
                   )}
                 </p>
                 <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-wide">
-                  — Jacob
+                  — {t("paywall.review_2_author", "Jacob")}
                 </p>
               </div>
 
@@ -190,7 +223,7 @@ export function Paywall({ onSuccess }: PaywallProps) {
                   )}
                 </p>
                 <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-wide">
-                  — Maria
+                  — {t("paywall.review_3_author", "Maria")}
                 </p>
               </div>
 
@@ -210,7 +243,7 @@ export function Paywall({ onSuccess }: PaywallProps) {
                   )}
                 </p>
                 <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-wide">
-                  — Morten
+                  — {t("paywall.review_4_author", "Morten")}
                 </p>
               </div>
             </div>
@@ -235,14 +268,37 @@ export function Paywall({ onSuccess }: PaywallProps) {
         </div>
       </div>
 
-      <div className="px-6 pt-4 shrink-0 shadow-none">
+      <div className="px-6 pt-4 pb-[calc(env(safe-area-inset-bottom)+24px)] shrink-0 shadow-none">
         <Button
           onClick={handleSubscribe}
+          disabled={isLoading}
           className="w-full h-16 bg-black text-white rounded-2xl text-base font-bold flex items-center justify-center gap-3 shadow-none active:scale-[0.98] transition-all"
         >
           <CreditCard className="w-5 h-5" />
-          {t("paywall.subscribe_button", "Abonner nu")}
+          {isLoading
+            ? t("profile.btn_saving", "Gemmer...")
+            : t("paywall.subscribe_button", "Abonner nu")}
         </Button>
+
+        <button
+          onClick={handleRestore}
+          disabled={isLoading}
+          className="w-full mt-5 text-slate-500 font-semibold text-sm hover:text-slate-700 transition-colors"
+        >
+          {t("paywall.restore_purchases", "Gendan tidligere køb")}
+        </button>
+
+        <div className="mt-6 text-center">
+          <Link
+            to="/terms"
+            className="text-xs text-slate-400 hover:text-slate-600 underline underline-offset-2 transition-colors"
+          >
+            {t(
+              "auth.terms_agreement_link",
+              "Vilkår, betingelser & privatlivspolitik",
+            )}
+          </Link>
+        </div>
       </div>
     </div>
   );

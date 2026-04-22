@@ -1,14 +1,8 @@
 import { useState, useEffect } from "react";
-import { SearchBar } from "../ui/SearchBar";
 import { supabase } from "../../lib/supabase";
 import { useTranslation } from "react-i18next";
 
-interface HomeHeaderProps {
-  searchQuery: string;
-  setSearchQuery: (query: string) => void;
-}
-
-export function HomeHeader({ searchQuery, setSearchQuery }: HomeHeaderProps) {
+export function InfoHeader() {
   const { t } = useTranslation();
   const [firstName, setFirstName] = useState("");
 
@@ -47,9 +41,8 @@ export function HomeHeader({ searchQuery, setSearchQuery }: HomeHeaderProps) {
   };
 
   return (
-    <div className="bg-white px-6 pt-[calc(env(safe-area-inset-top)+16px)] pb-6 sticky top-0 z-10 border-b border-slate-100">
-      {" "}
-      <div className="mb-6">
+<div className="bg-white px-6 pt-[calc(env(safe-area-inset-top)+16px)] pb-6 sticky top-0 z-10 border-b border-slate-100 flex justify-between items-start">
+      <div>
         <h1 className="text-3xl font-bold tracking-tight text-slate-900">
           {getGreeting()}
           {firstName ? ` ${firstName}` : ""}
@@ -58,14 +51,7 @@ export function HomeHeader({ searchQuery, setSearchQuery }: HomeHeaderProps) {
           {t("home_subtitle", "Find inspiration til din hverdag")}
         </p>
       </div>
-      <SearchBar
-        value={searchQuery}
-        onChange={setSearchQuery}
-        placeholder={t(
-          "search_placeholder",
-          "Søg i artikler, tips og opskrifter...",
-        )}
-      />
+      <div className="w-12 h-12" /> 
     </div>
   );
 }

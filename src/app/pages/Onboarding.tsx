@@ -1,9 +1,17 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, Link } from "react-router";
 import { Button } from "../components/ui/button";
-import { AppleIcon, Chrome, Mail, Lock, Eye, EyeOff, User, X } from "lucide-react";
+import {
+  // AppleIcon,
+  // Chrome,
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  User,
+  X,
+} from "lucide-react";
 import { supabase } from "../../app/lib/supabase";
-import { Link } from "react-router";
 import { useTranslation } from "react-i18next";
 import appLogo from "../../../assets/logotext.svg";
 
@@ -63,7 +71,7 @@ export function Onboarding() {
     if (error) {
       setErrorMsg(t("auth.error_prefix") + error.message);
     } else {
-      navigate("/home");
+      navigate("/info");
     }
 
     setLoading(false);
@@ -74,41 +82,68 @@ export function Onboarding() {
       <div className="w-full max-w-md space-y-8">
         <div className="flex flex-col items-center space-y-4">
           <img src={appLogo} alt="SafeEat logo" className="w-full h-auto p-4" />
-          <p className="text-center text-slate-500 max-w-xs">{t("auth.onboarding_subtitle")}</p>
+          <p className="text-center text-slate-500 max-w-xs">
+            {t("auth.onboarding_subtitle")}
+          </p>
         </div>
 
+        {/* Skjult indtil Apple/Google login er implementeret for at undgå App Store afvisning (Guideline 2.1)
         <div className="space-y-4 pt-8 text-center">
-          <Button disabled className="w-full h-14 bg-black/40 text-white/70 rounded-2xl text-base shadow-md cursor-not-allowed">
+          <Button
+            disabled
+            className="w-full h-14 bg-black/40 text-white/70 rounded-2xl text-base shadow-md cursor-not-allowed"
+          >
             <AppleIcon className="w-5 h-5 mr-2" />
             {t("auth.login_apple")}
           </Button>
 
-          <Button variant="outline" disabled className="w-full h-14 border-2 border-slate-100 text-slate-400 rounded-2xl text-base shadow-sm cursor-not-allowed">
+          <Button
+            variant="outline"
+            disabled
+            className="w-full h-14 border-2 border-slate-100 text-slate-400 rounded-2xl text-base shadow-sm cursor-not-allowed"
+          >
             <Chrome className="w-5 h-5 mr-2" />
             {t("auth.login_google")}
           </Button>
 
           <div className="relative py-4">
-            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-200"></div></div>
-            <div className="relative flex justify-center text-sm"><span className="px-4 bg-white text-slate-500 italic">{t("auth.use_email_instead")}</span></div>
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-slate-200"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-4 bg-white text-slate-500 italic">
+                {t("auth.use_email_instead")}
+              </span>
+            </div>
           </div>
-
-          <form onSubmit={isLogin ? handleLogin : handleSignUp} className="space-y-4 text-left">
+        </div>
+        */}
+        <div className="space-y-4 pt-8 text-center">
+          <form
+            onSubmit={isLogin ? handleLogin : handleSignUp}
+            className="space-y-4 text-left"
+          >
             {!isLogin && (
               <div className="relative group">
                 <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                 <input
                   type="text"
                   required
+                  aria-label={t("auth.name_placeholder", "Navn")}
+                  autoComplete="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder={t("auth.name_placeholder")}
                   className="peer w-full h-14 pl-12 pr-12 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:border-slate-400 focus:bg-slate-50 focus:ring-0 focus:ring-transparent outline-none transition-all"
                 />
                 {name && (
-                  <button 
-                    type="button" 
-                    onMouseDown={(e) => { e.preventDefault(); setName(""); }}
+                  <button
+                    type="button"
+                    aria-label="Ryd navn"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      setName("");
+                    }}
                     className="opacity-0 group-focus-within:opacity-100 absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center transition-opacity"
                   >
                     <X className="w-4 h-4 text-slate-400 hover:text-slate-600" />
@@ -122,15 +157,21 @@ export function Onboarding() {
               <input
                 type="email"
                 required
+                aria-label={t("auth.email_placeholder", "E-mailadresse")}
+                autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder={t("auth.email_placeholder")}
                 className="peer w-full h-14 pl-12 pr-12 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:border-slate-400 focus:bg-slate-50 focus:ring-0 focus:ring-transparent outline-none transition-all"
               />
               {email && (
-                <button 
-                  type="button" 
-                  onMouseDown={(e) => { e.preventDefault(); setEmail(""); }}
+                <button
+                  type="button"
+                  aria-label="Ryd e-mail"
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    setEmail("");
+                  }}
                   className="opacity-0 group-focus-within:opacity-100 absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center transition-opacity"
                 >
                   <X className="w-4 h-4 text-slate-400 hover:text-slate-600" />
@@ -143,27 +184,51 @@ export function Onboarding() {
               <input
                 type={showPassword ? "text" : "password"}
                 required
+                aria-label={
+                  isLogin
+                    ? t("auth.password_placeholder_login", "Din adgangskode")
+                    : t("auth.password_placeholder_signup", "Adgangskode")
+                }
+                autoComplete={isLogin ? "current-password" : "new-password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder={isLogin ? t("auth.password_placeholder_login") : t("auth.password_placeholder_signup")}
+                placeholder={
+                  isLogin
+                    ? t("auth.password_placeholder_login")
+                    : t("auth.password_placeholder_signup")
+                }
                 className="peer w-full h-14 pl-12 pr-20 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:border-slate-400 focus:bg-slate-50 focus:ring-0 focus:ring-transparent outline-none transition-all"
               />
               <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
                 {password && (
-                  <button 
-                    type="button" 
-                    onMouseDown={(e) => { e.preventDefault(); setPassword(""); }}
+                  <button
+                    type="button"
+                    aria-label="Ryd adgangskode"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      setPassword("");
+                    }}
                     className="opacity-0 group-focus-within:opacity-100 w-8 h-8 flex items-center justify-center transition-opacity"
                   >
                     <X className="w-4 h-4 text-slate-400 hover:text-slate-600" />
                   </button>
                 )}
-                <button 
-                  type="button" 
-                  onMouseDown={(e) => { e.preventDefault(); setShowPassword(!showPassword); }} 
+                <button
+                  type="button"
+                  aria-label={
+                    showPassword ? "Skjul adgangskode" : "Vis adgangskode"
+                  }
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    setShowPassword(!showPassword);
+                  }}
                   className="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-600"
                 >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  {showPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
                 </button>
               </div>
             </div>
@@ -177,22 +242,45 @@ export function Onboarding() {
                   onChange={(e) => setRememberMe(e.target.checked)}
                   className="w-4 h-4 rounded border-slate-300 text-black accent-black focus:ring-black cursor-pointer"
                 />
-                <label htmlFor="remember" className="ml-2 text-sm text-slate-600 cursor-pointer select-none">
+                <label
+                  htmlFor="remember"
+                  className="ml-2 text-sm text-slate-600 cursor-pointer select-none"
+                >
                   {t("auth.remember_me")}
                 </label>
               </div>
             )}
 
-            {errorMsg && <p className="text-red-500 text-sm text-center">{errorMsg}</p>}
+            {errorMsg && (
+              <p className="text-red-500 text-sm text-center">{errorMsg}</p>
+            )}
 
-            <Button type="submit" disabled={loading} className="w-full h-14 bg-black text-white rounded-2xl text-base shadow-md">
-              {loading ? (isLogin ? t("auth.logging_in") : t("auth.creating_account")) : (isLogin ? t("auth.login_button") : t("auth.create_profile_button"))}
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full h-14 bg-black text-white rounded-2xl text-base shadow-md"
+            >
+              {loading
+                ? isLogin
+                  ? t("auth.logging_in")
+                  : t("auth.creating_account")
+                : isLogin
+                ? t("auth.login_button")
+                : t("auth.create_profile_button")}
             </Button>
           </form>
 
           <p className="text-center text-sm text-slate-600">
-            {isLogin ? t("auth.no_account_prompt") : t("auth.have_account_prompt")}
-            <button onClick={() => { setIsLogin(!isLogin); setErrorMsg(""); }} className="font-semibold text-slate-900 ml-1">
+            {isLogin
+              ? t("auth.no_account_prompt")
+              : t("auth.have_account_prompt")}
+            <button
+              onClick={() => {
+                setIsLogin(!isLogin);
+                setErrorMsg("");
+              }}
+              className="font-semibold text-slate-900 ml-1"
+            >
               {isLogin ? t("auth.signup_link") : t("auth.login_link")}
             </button>
           </p>

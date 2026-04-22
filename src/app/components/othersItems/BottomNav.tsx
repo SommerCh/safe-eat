@@ -1,4 +1,4 @@
-import { Home, ScanLine, User } from "lucide-react";
+import { Info, ScanLine, User } from "lucide-react";
 import { Link, useLocation } from "react-router";
 import { useTranslation } from "react-i18next";
 
@@ -7,7 +7,7 @@ export function BottomNav() {
   const location = useLocation();
 
   const navItems = [
-    { path: "/home", icon: Home, label: t("nav.home", "Hjem") },
+    { path: "/info", icon: Info, label: t("nav.info", "Info") },
     { path: "/setup", icon: User, label: t("nav.profile", "Profil") },
     { path: "/scanner", icon: ScanLine, label: t("nav.scan", "Scan") },
   ];
@@ -16,7 +16,9 @@ export function BottomNav() {
     <nav className="w-full bg-white border-t border-gray-100 shrink-0">
       <div className="max-w-md mx-auto flex justify-around items-center h-16 px-4">
         {navItems.map((item) => {
-          const isActive = location.pathname === item.path;
+          const isActive =
+            location.pathname === item.path ||
+            (item.path === "/info" && location.pathname === "/");
           const Icon = item.icon;
 
           return (

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Outlet, useLocation, ScrollRestoration } from "react-router";
 import { BottomNav } from "./othersItems/BottomNav";
-import { Paywall } from "../components/home/Paywall";
+import { Paywall } from "../components/info/Paywall";
 import { supabase } from "../lib/supabase";
 
 export function Layout() {
@@ -60,14 +60,18 @@ export function Layout() {
   return (
     <>
       <ScrollRestoration />
-      <div className="h-[100dvh] flex flex-col bg-white overflow-hidden pt-[env(safe-area-inset-top)] pb-[calc(env(safe-area-inset-bottom)+16px)]">
+      <div
+        className={`h-[100dvh] flex flex-col bg-white overflow-hidden ${
+          isScanner ? "landscape:p-0" : ""
+        }`}
+      >
         <main className="flex-1 relative overflow-y-auto">
           <Outlet />
         </main>
 
         {!hideNav && (
           <footer
-            className={`shrink-0 flex flex-col bg-white border-t border-gray-100 ${
+            className={`shrink-0 flex flex-col bg-white border-t border-gray-100 pb-[env(safe-area-inset-bottom)] ${
               isScanner ? "landscape:hidden" : ""
             }`}
           >

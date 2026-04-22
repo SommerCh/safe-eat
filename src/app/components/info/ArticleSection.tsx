@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
-import { useNavigate } from "react-router";
+import { Link } from "react-router";
 import { useTranslation } from "react-i18next";
 import { ImageWithFallback } from "../ImageWithFallback";
-import { ARTICLES, CATEGORIES } from "../articles/articleData";
+import { ARTICLES, CATEGORIES } from "../../lib/articleData";
 
 interface ArticleSectionProps {
   searchQuery: string;
@@ -10,7 +10,6 @@ interface ArticleSectionProps {
 
 export function ArticleSection({ searchQuery }: ArticleSectionProps) {
   const { t, i18n } = useTranslation();
-  const navigate = useNavigate();
 
   const currentLang = i18n.language?.startsWith("en") ? "en" : "da";
   const currentCategories = CATEGORIES[currentLang];
@@ -29,8 +28,12 @@ export function ArticleSection({ searchQuery }: ArticleSectionProps) {
         article.category === activeCategory;
       const searchMatch =
         !searchQuery ||
-        article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        article.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
+        (article.title || "")
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        (article.excerpt || "")
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase());
       return categoryMatch && searchMatch;
     });
   }, [currentArticles, activeCategory, currentCategories, searchQuery]);
@@ -68,10 +71,10 @@ export function ArticleSection({ searchQuery }: ArticleSectionProps) {
 
         <div className="space-y-4">
           {filteredArticles.map((article) => (
-            <div
+            <Link
               key={article.id}
-              onClick={() => navigate(`/article/${article.id}`)}
-              className="bg-white rounded-2xl p-3 shadow-sm border border-slate-50 flex gap-4 cursor-pointer hover:bg-slate-50 active:scale-[0.98] transition-all group"
+              to={`/article/${article.id}`}
+              className="bg-white rounded-2xl p-3 shadow-sm border border-slate-50 flex gap-4 cursor-pointer hover:bg-slate-50 active:scale-[0.98] transition-all group text-left"
             >
               <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 relative">
                 <ImageWithFallback
@@ -89,7 +92,7 @@ export function ArticleSection({ searchQuery }: ArticleSectionProps) {
                   {article.title}
                 </h3>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </section>

@@ -15,7 +15,7 @@ import {
 import { useProfile } from "../context/ProfileContext";
 import { SaveProduct } from "../components/othersItems/SaveProduct";
 import { toast } from "sonner";
-import { ARTICLES } from "../components/articles/articleData";
+import { ARTICLES } from "../lib/articleData";
 import foodData from "../lib/dicData";
 
 export function Favorites() {
@@ -27,7 +27,7 @@ export function Favorites() {
   const [selectedStore, setSelectedStore] = useState<string | null>(null);
 
   const currentLang = i18n.language?.startsWith("en") ? "en" : "da";
-  const currentArticles = ARTICLES[currentLang];
+  const currentArticles = ARTICLES[currentLang] || [];
 
   const favoritedArticles = currentArticles.filter((article) =>
     favorites.some((fav) =>
@@ -106,8 +106,12 @@ export function Favorites() {
         console.log(err);
       }
     } else {
-      navigator.clipboard.writeText(fullText);
-      toast.success(t("favorites.list_copied"));
+      try {
+        await navigator.clipboard.writeText(fullText);
+        toast.success(t("favorites.list_copied"));
+      } catch (err) {
+        toast.error("Kunne ikke kopiere teksten.");
+      }
     }
   };
 
@@ -132,6 +136,7 @@ export function Favorites() {
           <div className="flex gap-2">
             <button
               onClick={() => navigate(-1)}
+              aria-label="Gå tilbage"
               className="w-10 h-10 flex items-center justify-center bg-slate-100 rounded-full hover:bg-slate-200 transition-colors"
             >
               <ChevronLeft className="w-6 h-6 text-slate-700 pr-1" />
@@ -140,6 +145,7 @@ export function Favorites() {
             {savedProducts.length > 0 && (
               <button
                 onClick={handleShare}
+                aria-label="Del favoritter"
                 className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center transition-colors"
               >
                 <Share className="w-5 h-5 text-slate-700" />
@@ -202,6 +208,8 @@ export function Favorites() {
                   {filteredProducts.map((product: any) => (
                     <div
                       key={product.id}
+                      role="button"
+                      tabIndex={0}
                       onClick={() => setEditingProduct(product)}
                       className="bg-white border-2 border-slate-100 rounded-[24px] p-4 flex items-center gap-4"
                     >
@@ -245,6 +253,7 @@ export function Favorites() {
                       </div>
 
                       <button
+                        aria-label="Fjern fra favoritter"
                         onClick={(e) => handleHeartClick(e, product)}
                         className="w-10 h-10 flex items-center justify-center rounded-full bg-red-50"
                       >
@@ -265,6 +274,8 @@ export function Favorites() {
                   {favoritedFoods.map((food) => (
                     <div
                       key={food.id}
+                      role="button"
+                      tabIndex={0}
                       onClick={() => navigate("/guide")}
                       className="bg-slate-50/50 border-2 border-slate-100 rounded-[24px] p-4 flex items-center gap-4 active:scale-[0.98] transition-all"
                     >
@@ -283,6 +294,7 @@ export function Favorites() {
                         </p>
                       </div>
                       <button
+                        aria-label="Fjern fra favoritter"
                         onClick={(e) => handleHeartClick(e, food.id)}
                         className="w-10 h-10 flex items-center justify-center rounded-full bg-red-50"
                       >
@@ -303,6 +315,8 @@ export function Favorites() {
                   {favoritedArticles.map((article) => (
                     <div
                       key={article.id}
+                      role="button"
+                      tabIndex={0}
                       onClick={() => navigate(`/article/${article.id}`)}
                       className="bg-white border-2 border-slate-100 rounded-[24px] p-5 flex items-center gap-4 active:scale-[0.98] transition-all"
                     >
@@ -318,6 +332,7 @@ export function Favorites() {
                         </p>
                       </div>
                       <button
+                        aria-label="Fjern fra favoritter"
                         onClick={(e) => handleHeartClick(e, article.id)}
                         className="w-10 h-10 flex items-center justify-center rounded-full bg-red-50"
                       >
