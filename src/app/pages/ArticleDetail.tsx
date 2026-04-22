@@ -1,10 +1,11 @@
 import { useEffect, useRef } from "react";
-import { useLocation, useNavigate, useParams } from "react-router";
+import { useLocation, useNavigate, useParams, Link } from "react-router";
 import { useTranslation } from "react-i18next";
 import { ChevronLeft, Share, ChevronUp, Heart } from "lucide-react";
 import { ImageWithFallback } from "../components/ImageWithFallback";
 import { ARTICLES } from "../lib/articleData";
 import { useProfile } from "../context/ProfileContext";
+import { toast } from "sonner";
 
 export function ArticleDetail() {
   const { id } = useParams();
@@ -63,6 +64,28 @@ export function ArticleDetail() {
 
   const isFavorite = favorites.includes(article.id);
 
+  const handleShare = async () => {
+    const shareData = {
+      title: article.title,
+      text: article.excerpt,
+      url: window.location.href,
+    };
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        console.log(err);
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        toast.success(t("favorites.list_copied", "Linket er kopieret!"));
+      } catch (err) {
+        toast.error("Kunne ikke kopiere linket.");
+      }
+    }
+  };
+
   const relatedArticles = currentArticles
     .filter((a) => a.id !== article.id && a.category === article.category)
     .slice(0, 9);
@@ -85,6 +108,7 @@ export function ArticleDetail() {
         {" "}
         <button
           onClick={() => navigate(-1)}
+          aria-label="Gå tilbage"
           className="w-10 h-10 flex items-center justify-center bg-slate-100 rounded-full hover:bg-slate-200 transition-colors"
         >
           <ChevronLeft className="w-6 h-6 text-slate-700 pr-1" />
@@ -92,6 +116,9 @@ export function ArticleDetail() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => toggleFavorite(article.id)}
+            aria-label={
+              isFavorite ? "Fjern fra favoritter" : "Tilføj til favoritter"
+            }
             className={`w-10 h-10 flex items-center justify-center rounded-full transition-colors ${
               isFavorite ? "bg-red-50" : "bg-slate-100"
             }`}
@@ -103,7 +130,11 @@ export function ArticleDetail() {
             />
           </button>
 
-          <button className="w-10 h-10 flex items-center justify-center bg-slate-100 rounded-full hover:bg-slate-200 transition-colors">
+          <button
+            onClick={handleShare}
+            aria-label="Del artikel"
+            className="w-10 h-10 flex items-center justify-center bg-slate-100 rounded-full hover:bg-slate-200 transition-colors"
+          >
             <Share className="w-5 h-5 text-slate-700" />
           </button>
         </div>
@@ -151,10 +182,10 @@ export function ArticleDetail() {
 
             <div className="flex overflow-x-auto gap-4 pb-6 px-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
               {relatedArticles.map((relArticle) => (
-                <div
+                <Link
                   key={relArticle.id}
-                  onClick={() => navigate(`/article/${relArticle.id}`)}
-                  className="w-[240px] flex-shrink-0 bg-white rounded-2xl p-3 shadow-sm border border-slate-100 flex flex-col gap-3 cursor-pointer hover:bg-slate-50 active:scale-[0.98] transition-all group"
+                  to={`/article/${relArticle.id}`}
+                  className="w-[240px] flex-shrink-0 bg-white rounded-2xl p-3 shadow-sm border border-slate-100 flex flex-col gap-3 cursor-pointer hover:bg-slate-50 active:scale-[0.98] transition-all group text-left"
                 >
                   <div className="w-full h-32 rounded-xl overflow-hidden relative">
                     <ImageWithFallback
@@ -171,7 +202,7 @@ export function ArticleDetail() {
                       {relArticle.title}
                     </h3>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
@@ -180,6 +211,7 @@ export function ArticleDetail() {
         <div className="mt-8 flex justify-center">
           <button
             onClick={scrollToTop}
+            aria-label="Gå til toppen"
             className="w-12 h-12 flex items-center justify-center bg-slate-100 rounded-full hover:bg-slate-200 transition-colors"
           >
             <ChevronUp className="w-6 h-6 text-slate-700" />

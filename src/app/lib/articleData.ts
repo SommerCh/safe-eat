@@ -109,7 +109,7 @@ export const ARTICLES = {
       excerpt:
         "Savner du en klassisk basilikumpesto? Denne opskrift bruger ristede frø og snyder selv de mest inkarnerede madelskere ved bordet.",
       image:
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Pesto_con_basilico_genovese.jpg/1024px-Pesto_con_basilico_genovese.jpg",
+        "https://images.unsplash.com/photo-1445847562439-f251c3799ea5?q=80&w=1080&auto=format&fit=crop",
       featured: false,
       content: {
         paragraphs: [

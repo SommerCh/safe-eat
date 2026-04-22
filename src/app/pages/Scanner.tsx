@@ -452,9 +452,7 @@ export function Scanner() {
       }
     `;
 
-      const apiUrl =
-        import.meta.env.VITE_API_URL ||
-        "https://safe-eat-rho.vercel.app/api/scan";
+      const apiUrl = "https://safe-eat-rho.vercel.app/api/scan";
 
       const response = await fetch(apiUrl, {
         method: "POST",
@@ -484,17 +482,12 @@ export function Scanner() {
       const resultText = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
       if (resultText) {
-        const jsonMatch = resultText.match(/\{[\s\S]*\}/);
-        const cleanJson = jsonMatch ? jsonMatch[0] : resultText;
+        let cleanJson = resultText
+          .replace(/```json\n?/g, "")
+          .replace(/```/g, "")
+          .trim();
 
-        let aiResult;
-        try {
-          aiResult = JSON.parse(cleanJson);
-        } catch (e) {
-          throw new Error(
-            t("api_errors.ai_error", "Kunne ikke læse AI-svaret"),
-          );
-        }
+        const aiResult = JSON.parse(cleanJson);
 
         if (aiResult.isUnreadable) {
           toast.error(
