@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, Link } from "react-router";
 import { useProfile } from "../context/ProfileContext";
 import { useTranslation } from "react-i18next";
 import { Settings, ArrowRight, Heart, ChevronRight } from "lucide-react";
@@ -125,6 +125,7 @@ export function ProfileSetup() {
         </div>
         <button
           onClick={() => navigate("/settings")}
+          aria-label="Indstillinger"
           className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center border border-slate-100 transition-colors active:scale-95"
         >
           <Settings className="w-6 h-6 text-slate-700" />
@@ -158,9 +159,9 @@ export function ProfileSetup() {
             <ArrowRight className="w-5 h-5" />
           </Button>
 
-          <button
-            onClick={() => navigate("/favorites")}
-            className="w-full flex items-center gap-4 p-4 bg-white border border-slate-100 rounded-2xl transition-all active:scale-[0.98]"
+          <Link
+            to="/favorites"
+            className="w-full flex items-center gap-4 p-4 bg-white border border-slate-100 rounded-2xl transition-all active:scale-[0.98] text-left"
           >
             <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center">
               <Heart className="w-5 h-5 text-red-500 fill-red-500" />
@@ -174,7 +175,7 @@ export function ProfileSetup() {
               </span>
             </div>
             <ChevronRight className="w-5 h-5 text-slate-300" />
-          </button>
+          </Link>
         </div>
       </div>
     </div>
