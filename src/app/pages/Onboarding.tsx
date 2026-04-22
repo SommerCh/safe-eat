@@ -87,7 +87,7 @@ export function Onboarding() {
           </p>
         </div>
 
-        {/* Skjult indtil Apple/Google login er implementeret for at undgå App Store afvisning (Guideline 2.1)
+        {/* Skjult indtil Apple/Google login er implementeret
         <div className="space-y-4 pt-8 text-center">
           <Button
             disabled

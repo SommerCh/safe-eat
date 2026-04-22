@@ -65,24 +65,26 @@ export function ArticleDetail() {
   const isFavorite = favorites.includes(article.id);
 
   const handleShare = async () => {
-    const shareData = {
-      title: article.title,
-      text: article.excerpt,
-      url: window.location.href,
-    };
+    const shareText = `${article.title}\n${article.excerpt}\n\nLæs mere i Safe Eat appen!`;
+
     if (navigator.share) {
       try {
-        await navigator.share(shareData);
-      } catch (err) {
-        console.log(err);
+        await navigator.share({
+          title: article.title,
+          text: shareText,
+        });
+        return; 
+      } catch (err: any) {
+        if (err.name === "AbortError") return;
+        console.log("Native share fejlede:", err);
       }
-    } else {
-      try {
-        await navigator.clipboard.writeText(window.location.href);
-        toast.success(t("favorites.list_copied", "Linket er kopieret!"));
-      } catch (err) {
-        toast.error("Kunne ikke kopiere linket.");
-      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(shareText);
+      toast.success(t("favorites.list_copied", "Teksten er kopieret!"));
+    } catch (err) {
+      toast.error("Kunne ikke kopiere teksten.");
     }
   };
 

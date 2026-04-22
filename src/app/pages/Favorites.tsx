@@ -228,7 +228,6 @@ export function Favorites() {
                           <h3 className="text-slate-950 font-bold text-base truncate">
                             {product.productName}
                           </h3>
-                          {/* HER ER ÆNDRINGEN: Package-ikonet skifter nu farve ligesom resultatskærmen */}
                           {product.productType === "OTHER" ? (
                             <Package
                               className={`w-4 h-4 shrink-0 ${
