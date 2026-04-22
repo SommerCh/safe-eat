@@ -10,7 +10,7 @@ const resources = {
       greeting_forenoon: "God formiddag",
       greeting_afternoon: "God eftermiddag",
       greeting_evening: "Godaften",
-      home_subtitle: "Find inspiration til din hverdag",
+      info_subtitle: "Find inspiration til din hverdag",
       search_placeholder: "Søg i artikler, tips og opskrifter...",
       latest_news_and_guides: "Seneste nyt & guides",
       articles_count: "artikler",
@@ -480,12 +480,12 @@ const resources = {
   },
   en: {
     translation: {
-      nav: { info: "Home", profile: "Profile", scan: "Scan" },
+      nav: { info: "Info", profile: "Profile", scan: "Scan" },
       greeting_morning: "Good morning",
       greeting_forenoon: "Good morning",
       greeting_afternoon: "Good afternoon",
       greeting_evening: "Good evening",
-      home_subtitle: "Find inspiration for your daily life",
+      info_subtitle: "Find inspiration for your daily life",
       search_placeholder: "Search articles, tips and recipes...",
       latest_news_and_guides: "Latest news & guides",
       articles_count: "articles",

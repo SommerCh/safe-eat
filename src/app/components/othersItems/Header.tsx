@@ -48,7 +48,7 @@ export function InfoHeader() {
           {firstName ? ` ${firstName}` : ""}
         </h1>
         <p className="text-slate-500 mt-2 font-medium">
-          {t("home_subtitle", "Find inspiration til din hverdag")}
+          {t("info_subtitle", "Find inspiration til din hverdag")}
         </p>
       </div>
       <div className="w-12 h-12" /> 
