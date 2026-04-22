@@ -73,7 +73,7 @@ export function ArticleDetail() {
           title: article.title,
           text: shareText,
         });
-        return; 
+        return;
       } catch (err: any) {
         if (err.name === "AbortError") return;
         console.log("Native share fejlede:", err);
@@ -107,11 +107,16 @@ export function ArticleDetail() {
       />
 
       <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md px-4 pt-[calc(env(safe-area-inset-top)+16px)] pb-4 flex items-center justify-between border-b border-slate-100">
-        {" "}
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => {
+            if (location.key === "default") {
+              navigate("/info");
+            } else {
+              navigate(-1);
+            }
+          }}
           aria-label="Gå tilbage"
-          className="w-10 h-10 flex items-center justify-center bg-slate-100 rounded-full hover:bg-slate-200 transition-colors"
+          className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center border border-slate-100 transition-colors active:scale-95"
         >
           <ChevronLeft className="w-6 h-6 text-slate-700 pr-1" />
         </button>
@@ -121,8 +126,10 @@ export function ArticleDetail() {
             aria-label={
               isFavorite ? "Fjern fra favoritter" : "Tilføj til favoritter"
             }
-            className={`w-10 h-10 flex items-center justify-center rounded-full transition-colors ${
-              isFavorite ? "bg-red-50" : "bg-slate-100"
+            className={`w-12 h-12 rounded-full flex items-center justify-center transition-all border ${
+              isFavorite
+                ? "bg-red-50 border-red-100"
+                : "bg-slate-50 border-slate-100 active:scale-95"
             }`}
           >
             <Heart
@@ -135,7 +142,7 @@ export function ArticleDetail() {
           <button
             onClick={handleShare}
             aria-label="Del artikel"
-            className="w-10 h-10 flex items-center justify-center bg-slate-100 rounded-full hover:bg-slate-200 transition-colors"
+            className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center border border-slate-100 transition-colors active:scale-95"
           >
             <Share className="w-5 h-5 text-slate-700" />
           </button>
@@ -214,7 +221,7 @@ export function ArticleDetail() {
           <button
             onClick={scrollToTop}
             aria-label="Gå til toppen"
-            className="w-12 h-12 flex items-center justify-center bg-slate-100 rounded-full hover:bg-slate-200 transition-colors"
+            className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center border border-slate-100 transition-colors active:scale-95"
           >
             <ChevronUp className="w-6 h-6 text-slate-700" />
           </button>

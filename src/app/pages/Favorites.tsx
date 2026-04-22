@@ -137,7 +137,7 @@ export function Favorites() {
             <button
               onClick={() => navigate(-1)}
               aria-label="Gå tilbage"
-              className="w-10 h-10 flex items-center justify-center bg-slate-100 rounded-full hover:bg-slate-200 transition-colors"
+              className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center border border-slate-100 transition-colors active:scale-95"
             >
               <ChevronLeft className="w-6 h-6 text-slate-700 pr-1" />
             </button>
@@ -146,7 +146,7 @@ export function Favorites() {
               <button
                 onClick={handleShare}
                 aria-label="Del favoritter"
-                className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center transition-colors"
+                className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center border border-slate-100 transition-colors active:scale-95"
               >
                 <Share className="w-5 h-5 text-slate-700" />
               </button>
@@ -319,7 +319,7 @@ export function Favorites() {
                       onClick={() => navigate(`/article/${article.id}`)}
                       className="bg-white border-2 border-slate-100 rounded-[24px] p-5 flex items-center gap-4 active:scale-[0.98] transition-all"
                     >
-                      <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center flex-shrink-0">
                         <BookOpen className="w-6 h-6 text-slate-400" />
                       </div>
                       <div className="flex-1 min-w-0">

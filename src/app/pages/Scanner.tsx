@@ -438,8 +438,9 @@ export function Scanner() {
       The user wants to avoid these ingredients: [${userAllergies}].
 
       CRITICAL RULES:
-      1. If the image is blurry, distant, or you cannot clearly read ALL ingredients, you MUST set "isUnreadable": true. Do not guess. Do not assume the product is safe.
-      2. If you find ANY of the user's prohibited ingredients, "isSafe" MUST be false.
+      1. ONLY output valid JSON. No markdown (like \`\`\`json), and absolutely NO conversational text before or after the JSON.
+      2. If the image is blurry, distant, or you cannot clearly read ALL ingredients, you MUST set "isUnreadable": true. Do not guess. Do not assume the product is safe.
+      3. If you find ANY of the user's prohibited ingredients, "isSafe" MUST be false.
 
       Analyze the image and provide the following JSON structure:
       {
@@ -452,7 +453,9 @@ export function Scanner() {
       }
     `;
 
-      const apiUrl = "https://safe-eat-rho.vercel.app/api/scan";
+      const apiUrl =
+        import.meta.env.VITE_API_URL ||
+        "https://safe-eat-rho.vercel.app/api/scan";
 
       const response = await fetch(apiUrl, {
         method: "POST",
@@ -462,32 +465,61 @@ export function Scanner() {
 
       const data = await response.json();
 
-      if (!response.ok) {
-        let errorCode = data.code;
+      // Mange API'er returnerer 200 OK, men lægger selve fejlen indeni data
+      if (!response.ok || data.error) {
+        const errorData = data.error || data;
+        let errorCode = errorData.code;
         if (
           !errorCode &&
-          data.error &&
-          (String(data.error).includes("Quota exceeded") ||
-            String(data.error).includes("429"))
+          (String(errorData.message || errorData).includes("Quota") ||
+            String(errorData.message || errorData).includes("429"))
         ) {
           errorCode = "rate_limit";
         }
         throw new Error(
           errorCode
             ? t(`api_errors.${errorCode}`)
-            : `${data.error || t("api_errors.server_error")}`,
+            : `${t("api_errors.server_error")} (HTTP Kode: ${
+                response.status
+              }). Ekstra info: ${JSON.stringify(errorData).substring(0, 100)}`,
         );
       }
 
-      const resultText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      const candidate = data.candidates?.[0];
+      const resultText = candidate?.content?.parts?.[0]?.text;
+
+      if (candidate?.finishReason === "SAFETY") {
+        throw new Error(
+          "Billedet blev afvist af AI'ens sikkerhedsfilter. Prøv et andet billede.",
+        );
+      }
+
+      if (!resultText) {
+        // Hvis der ingen tekst er, udskriver vi det rå API-svar på skærmen
+        throw new Error(
+          "API-svar mangler tekst: " + JSON.stringify(data).substring(0, 100),
+        );
+      }
 
       if (resultText) {
         let cleanJson = resultText
-          .replace(/```json\n?/g, "")
+          .replace(/```json\n?/gi, "")
           .replace(/```/g, "")
           .trim();
+        const firstBrace = cleanJson.indexOf("{");
+        const lastBrace = cleanJson.lastIndexOf("}");
 
-        const aiResult = JSON.parse(cleanJson);
+        if (firstBrace !== -1 && lastBrace !== -1) {
+          cleanJson = cleanJson.slice(firstBrace, lastBrace + 1);
+        }
+
+        let aiResult;
+        try {
+          aiResult = JSON.parse(cleanJson);
+        } catch (e) {
+          console.error("JSON Parse Fejl! AI'en svarede følgende:", resultText);
+          throw new Error("Kunne ikke formatere AI-svaret: Ugyldigt JSON.");
+        }
 
         if (aiResult.isUnreadable) {
           toast.error(

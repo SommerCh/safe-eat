@@ -32,7 +32,7 @@ const resources = {
       result_contains: "Produktet indeholder:",
       found_ingredients_label: "Fundne Ingredienser:",
       scan_next_button: "Scan næste vare",
-      edit_profile_link: "Rediger min madprofil",
+      edit_profile_link: "Rediger min profil",
       result_info_title: "Produkt Info",
       result_info_default: "Her er indholdet af varen.",
       found_contents_label: "Indholdsstoffer:",
@@ -49,7 +49,7 @@ const resources = {
       },
       auth: {
         error_prefix: "Fejl: ",
-        onboarding_subtitle: "Scan ingredienser og lav din personlige madprofil",
+        onboarding_subtitle: "Scan ingredienser og lav din personlige profil",
         login_apple: "Log ind med Apple",
         login_google: "Log ind med Google",
         social_coming_soon: "Socialt login kommer snart",
@@ -71,7 +71,7 @@ const resources = {
         terms_agreement_link: "vilkår, betingelser & privatlivspolitik"
       },
       profile: {
-        title: "Din madprofil",
+        title: "Din profil",
         subtitle: "Gemmes automatisk",
         allergy_title: "Vælg dine allergier",
         diet_title: "Vælg dine diæter",
@@ -510,7 +510,7 @@ const resources = {
       found_contents_label: "Contents / Ingredients:",
       found_ingredients_label: "Found Ingredients:",
       scan_next_button: "Scan next item",
-      edit_profile_link: "Edit my food profile",
+      edit_profile_link: "Edit my profile",
       tips: {
         header: "Quick tips",
         double_check_title: "Always double check",
@@ -524,7 +524,7 @@ const resources = {
       },
       auth: {
         error_prefix: "Error: ",
-        onboarding_subtitle: "Scan ingredients and create your personal food profile",
+        onboarding_subtitle: "Scan ingredients and create your personal profile",
         login_apple: "Log in with Apple",
         login_google: "Log in with Google",
         social_coming_soon: "Social login coming soon",
@@ -546,7 +546,7 @@ const resources = {
         terms_agreement_link: "terms, conditions & privacy policy"
       },
       profile: {
-        title: "Your food profile",
+        title: "Your profile",
         subtitle: "Saved automatically",
         allergy_title: "Select your allergies",
         diet_title: "Select your diets",

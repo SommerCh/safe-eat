@@ -17,9 +17,10 @@ import { toast } from "sonner";
 
 interface PaywallProps {
   onSuccess: () => void;
+  onClose?: () => void;
 }
 
-export function Paywall({ onSuccess }: PaywallProps) {
+export function Paywall({ onSuccess, onClose }: PaywallProps) {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
@@ -30,7 +31,12 @@ export function Paywall({ onSuccess }: PaywallProps) {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      toast.error(t("paywall.login_required", "Log ind først"));
+      toast.error(t("paywall.login_required", "Log ind først"), {
+        action: {
+          label: t("auth.login_button", "Log ind"),
+          onClick: () => navigate("/"),
+        },
+      });
       return;
     }
 
@@ -107,7 +113,14 @@ export function Paywall({ onSuccess }: PaywallProps) {
 
       <div className="bg-white px-6 pt-[calc(env(safe-area-inset-top)+16px)] pb-6 sticky top-0 z-10 border-b border-slate-100 flex justify-between items-center shrink-0">
         <button
-          onClick={() => navigate(-1)}
+          onClick={async () => {
+            if (onClose) {
+              onClose();
+            } else {
+              await supabase.auth.signOut(); // Sikrer at en evt. route guard ikke blokerer dig
+              window.location.href = "/"; // Ultimativ fallback der tvinger en genindlæsning af login-skærmen
+            }
+          }}
           className="w-10 h-10 flex items-center justify-center bg-slate-100 rounded-full hover:bg-slate-200 transition-colors"
         >
           <ChevronLeft className="w-6 h-6 text-slate-700 pr-1" />

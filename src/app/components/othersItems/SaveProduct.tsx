@@ -119,17 +119,17 @@ export function SaveProduct({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[110] flex items-end justify-center sm:items-center p-4">
+    <div className="fixed inset-0 z-[110] flex items-end justify-center sm:items-center p-4 pb-0 sm:pb-4">
       <div
         className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300"
         onClick={onClose}
       />
 
-      <div className="relative bg-white w-full max-w-md rounded-t-[32px] sm:rounded-[32px] p-8 pb-32 shadow-2xl animate-in slide-in-from-bottom duration-300 z-10 max-h-[90vh] overflow-y-auto text-slate-950">
+      <div className="relative bg-white w-full max-w-md rounded-t-[32px] sm:rounded-[32px] px-5 py-8 pb-32 shadow-2xl animate-in slide-in-from-bottom duration-300 z-10 max-h-[90vh] overflow-y-auto text-slate-950">
         <div className="flex justify-between items-start mb-6 text-slate-950">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">
-              {initialData
+              {initialData?.id
                 ? t("save_product.edit_title")
                 : t("save_product.save_title")}
             </h1>
@@ -146,7 +146,6 @@ export function SaveProduct({
           <input
             type="file"
             accept="image/*"
-            capture="environment"
             ref={fileInputRef}
             onChange={handleFileChange}
             className="hidden"
@@ -191,18 +190,18 @@ export function SaveProduct({
               {t("save_product.label_name")}
             </label>
             <div className="relative">
-              <Tag className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
               <input
                 type="text"
                 value={productName}
                 onChange={(e) => setProductName(e.target.value)}
-                className="w-full h-14 pl-12 pr-12 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:bg-white focus:border-slate-400 outline-none font-medium text-slate-950"
+                className="w-full h-14 pl-10 pr-10 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:bg-white focus:border-slate-400 outline-none font-medium text-slate-950"
               />
               {productName && (
                 <button
                   type="button"
                   onClick={() => setProductName("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center"
                 >
                   <X className="w-4 h-4 text-slate-600" />
                 </button>
@@ -215,18 +214,18 @@ export function SaveProduct({
               {t("save_product.label_store")}
             </label>
             <div className="relative">
-              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
               <input
                 type="text"
                 value={storeName}
                 onChange={(e) => setStoreName(e.target.value)}
-                className="w-full h-14 pl-12 pr-12 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:bg-white focus:border-slate-400 outline-none font-medium text-slate-950"
+                className="w-full h-14 pl-10 pr-10 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:bg-white focus:border-slate-400 outline-none font-medium text-slate-950"
               />
               {storeName && (
                 <button
                   type="button"
                   onClick={() => setStoreName("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center"
                 >
                   <X className="w-4 h-4 text-slate-600" />
                 </button>
@@ -239,17 +238,17 @@ export function SaveProduct({
               {t("save_product.label_notes")}
             </label>
             <div className="relative">
-              <AlignLeft className="absolute left-4 top-5 w-5 h-5 text-slate-400" />
+              <AlignLeft className="absolute left-3 top-5 w-5 h-5 text-slate-400" />
               <textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                className="w-full h-32 pl-12 pr-12 pt-4 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:bg-white focus:border-slate-400 outline-none font-medium text-slate-950 resize-none"
+                className="w-full h-32 pl-10 pr-10 pt-4 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:bg-white focus:border-slate-400 outline-none font-medium text-slate-950 resize-none"
               />
               {notes && (
                 <button
                   type="button"
                   onClick={() => setNotes("")}
-                  className="absolute right-3 top-4 w-8 h-8 flex items-center justify-center"
+                  className="absolute right-2 top-4 w-8 h-8 flex items-center justify-center"
                 >
                   <X className="w-4 h-4 text-slate-600" />
                 </button>
@@ -264,7 +263,7 @@ export function SaveProduct({
           >
             {loading
               ? t("save_product.btn_saving")
-              : initialData
+              : initialData?.id
               ? t("save_product.btn_update")
               : t("save_product.btn_save")}
           </Button>

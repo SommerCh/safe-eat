@@ -11,7 +11,7 @@ export function LegalPage() {
       <header className="sticky top-0 bg-white/80 backdrop-blur-md border-b border-slate-100 px-6 pt-[calc(env(safe-area-inset-top)+16px)] pb-4 flex items-center z-10">
         <button
           onClick={() => navigate(-1)}
-          className="w-10 h-10 flex items-center justify-center bg-slate-100 rounded-full hover:bg-slate-200 transition-colors"
+          className="w-12 h-12 flex items-center justify-center bg-slate-100 rounded-full hover:bg-slate-200 transition-colors"
         >
           <ChevronLeft className="w-6 h-6 text-slate-700 pr-1" />
         </button>

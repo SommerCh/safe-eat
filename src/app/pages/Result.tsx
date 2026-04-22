@@ -207,7 +207,7 @@ export function Result() {
             onClick={() => navigate("/setup")}
             className="w-full py-4 text-slate-400 font-bold text-[10px] uppercase tracking-widest active:text-slate-600 transition-colors"
           >
-            {t("edit_profile_link", "Rediger min madprofil")}
+            {t("edit_profile_link", "Rediger min profil")}
           </button>
         </div>
 
@@ -216,7 +216,7 @@ export function Result() {
             onClick={() => navigate("/favorites")}
             className="w-full flex items-center gap-4 p-4 bg-white border border-slate-100 rounded-2xl transition-all active:scale-[0.98]"
           >
-            <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center">
+            <div className="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center">
               <Heart className="w-5 h-5 text-red-500 fill-red-500" />
             </div>
             <div className="flex-1 text-left">
